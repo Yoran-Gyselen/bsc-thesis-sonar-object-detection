@@ -1,51 +1,62 @@
 %---------- Inleiding ---------------------------------------------------------
 
-% TODO: Is dit voorstel gebaseerd op een paper van Research Methods die je
-% vorig jaar hebt ingediend? Heb je daarbij eventueel samengewerkt met een
-% andere student?
-% Zo ja, haal dan de tekst hieronder uit commentaar en pas aan.
-
-%\paragraph{Opmerking}
-
-% Dit voorstel is gebaseerd op het onderzoeksvoorstel dat werd geschreven in het
-% kader van het vak Research Methods dat ik (vorig/dit) academiejaar heb
-% uitgewerkt (met medesturent VOORNAAM NAAM als mede-auteur).
-% 
-
 \section{Inleiding}%
 \label{sec:inleiding}
 
-Waarover zal je bachelorproef gaan? Introduceer het thema en zorg dat volgende zaken zeker duidelijk aanwezig zijn:
+Exail Robotics is op zoek naar een oplossing om bepaalde objecten te detecteren in grote datasets gegenereerd door metingen met behulp van sonar. Binnen deze probleemstelling zijn er heel wat mogelijkheden tot het uitdiepen en onderzoeken van bepaalde details. Aangezien het officiële onderwerp nog niet gekend is (cf. supra), zal ik hieronder proberen enkele mogelijke onderwerpen duidelijker voor te stellen.
 
-\begin{itemize}
-  \item kaderen thema
-  \item de doelgroep
-  \item de probleemstelling en (centrale) onderzoeksvraag
-  \item de onderzoeksdoelstelling
-\end{itemize}
+\subsection{Optimalisatie van Objectdetectie op Sonarbeelden}
 
-Denk er aan: een typische bachelorproef is \textit{toegepast onderzoek}, wat betekent dat je start vanuit een concrete probleemsituatie in bedrijfscontext, een \textbf{casus}. Het is belangrijk om je onderwerp goed af te bakenen: je gaat voor die \textit{ene specifieke probleemsituatie} op zoek naar een goede oplossing, op basis van de huidige kennis in het vakgebied.
+\textbf{Hoofdvraag:} Hoe kunnen Deep Learning-modellen worden geoptimaliseerd om objecten nauwkeurig te detecteren en classificeren op sonar-afbeeldingen? \\
 
-De doelgroep moet ook concreet en duidelijk zijn, dus geen algemene of vaag gedefinieerde groepen zoals \emph{bedrijven}, \emph{developers}, \emph{Vlamingen}, enz. Je richt je in elk geval op it-professionals, een bachelorproef is geen populariserende tekst. Eén specifiek bedrijf (die te maken hebben met een concrete probleemsituatie) is dus beter dan \emph{bedrijven} in het algemeen.
+De bedoeling binnen dit onderzoek is om verschillende technieken te vergelijken om Deep Learning-modellen te optimaliseren en verbeteren. Specifiek zou dit gaan om het onderzoeken van verschillende neurale netwerkarchitecturen (bv. CNNs, YOLO, of transformer-based modellen). Daarnaast wil ik preprocessing-technieken zoals ruisonderdrukking of contrastverhoging onderzoeken om het model te verbeteren. Ook zou ik graag de mogelijkheid tot transfer learning-technieken onderzoeken om training te verbeteren. \\
 
-Formuleer duidelijk de onderzoeksvraag! De begeleiders lezen nog steeds te veel voorstellen waarin we geen onderzoeksvraag terugvinden.
+\textbf{Uitkomst:} Een benchmark van verschillende technieken en een prototype van een optimaal model.
 
-Schrijf ook iets over de doelstelling. Wat zie je als het concrete eindresultaat van je onderzoek, naast de uitgeschreven scriptie? Is het een proof-of-concept, een rapport met aanbevelingen, \ldots Met welk eindresultaat kan je je bachelorproef als een succes beschouwen?
+\subsection{Labeling van Sonardata met behulp van Semi- of Self-supervised Learning}
+
+\textbf{Hoofdvraag:} Hoe kan het gebruik van semi- of self-supervised learning het labelproces versnellen met minimaal verlies in nauwkeurigheid? \\
+
+De bedoeling binnen dit onderzoek is om een self-supervised strategie te ontwikkelen met behulp van verschillende technieken (bv. BYOL). Ook wil ik een analyse doen van hoeveel gelabelde data nodig is voor een goed presterend model. \\
+
+\textbf{Uitkomst:} Een proces om detectie te verbeteren met minimale gelabelde data.
+
+\subsection{Anomaliedetectie voor Automatische Identificatie van Onbekende Objecten}
+
+\textbf{Hoofdvraag:} Hoe kunnen afwijkende objecten automatisch worden geïdentificeerd op sonar-beelden, zonder dat er specifieke labels voor deze objecten zijn? \\
+
+De bedoeling binnen dit onderzoek is om verschillende unsupervised learning technieken (zoals autoencoders of clustering-methoden) toe te passen om abnormale patronen te detecteren en deze te vergelijken met elkaar. Daarnaast wil ik deze technieken evalueren op sonar-specifieke datasets. \\
+
+\textbf{Uitkomst:} Een framework voor het detecteren van onbekende objecten.
+
+\subsection{Vergelijking van Data-Augmentatie technieken voor Sonardata}
+
+\textbf{Hoofdvraag:} Welke data-augmentatiestrategieën verbeteren de prestaties van detectiemodellen op sonar-beelden? \\
+
+De bedoeling binnen dit onderzoek is om verschillende technieken om extra data te genereren uit een bestaande dataset. Dit kan gaan van simpele technieken zoals rotatie, reflectie, of intensiteitsveranderingen tot het trainen van bepaalde modellen om bijkomende (nieuwe) data te genereren. \\
+
+\textbf{Uitkomst:} Richtlijnen en best practices voor data-augmentatie in sonar-projecten.
+
+\subsection{Explainable AI (XAI) voor Objectdetectie op Sonardata}
+
+\textbf{Hoofdvraag:} Hoe kunnen de beslissingen van objectdetectiemodellen op sonarbeelden beter geïnterpreteerd en verklaard worden? \\
+
+De bedoeling binnen dit onderzoek is om verschillende XAI-technieken toe te passen zoals SHAP, LIME of saliency maps. Ook zou ik graag een visueel interpretatiemodel ontwikkelen specifiek voor sonar-data. Tot slot wil ik een enquête doen naar de acceptatie en bruikbaarheid van XAI door eindgebruikers. \\
+
+\textbf{Uitkomst:} Tools en inzichten die de transparantie van AI-modellen verbeteren.
 
 %---------- Stand van zaken ---------------------------------------------------
 
 \section{Literatuurstudie}%
 \label{sec:literatuurstudie}
 
-Hier beschrijf je de \emph{state-of-the-art} rondom je gekozen onderzoeksdomein, d.w.z.\ een inleidende, doorlopende tekst over het onderzoeksdomein van je bachelorproef. Je steunt daarbij heel sterk op de professionele \emph{vakliteratuur}, en niet zozeer op populariserende teksten voor een breed publiek. Wat is de huidige stand van zaken in dit domein, en wat zijn nog eventuele open vragen (die misschien de aanleiding waren tot je onderzoeksvraag!)?
+Objectdetectie is een tak binnen het domein van computer vision dat gericht is op het identificeren en lokaliseren van objecten binnen beelddata (zoals foto's en video's). Objectdetectie wordt gebruikt in verschillende domeinen, zoals beveiligingssystemen (bv. om inbrekers te detecteren) of de medische wereld (bv. om tumoren op te sporen). Door de jaren heen is objectdetectie aanzienlijk geëvolueerd dankzij de vooruitgang in Deep Learning en de grote beschikbaarheid van datasets met beeldmateriaal. \autocite{He_2016}
 
-Je mag de titel van deze sectie ook aanpassen (literatuurstudie, stand van zaken, enz.). Zijn er al gelijkaardige onderzoeken gevoerd? Wat concluderen ze? Wat is het verschil met jouw onderzoek?
+Objectdetectie combineert twee belangrijke taken in computer vision: objectlokalisatie en objectclassificatie. Objectlokalisatie bepaalt de positie van objecten, meestal in de vorm van bounding boxes \autocite{Tompson_2015}, terwijl objectclassificatie bepaalt tot welke categorie een gedetecteerd object behoort. Samen geeft dit de mogelijkheid tot het herkennen van verschillende objecten op één foto.
 
-Verwijs bij elke introductie van een term of bewering over het domein naar de vakliteratuur, bijvoorbeeld~\autocite{Hykes2013}! Denk zeker goed na welke werken je refereert en waarom.
+Sonardata vormt een unieke uitdaging voor objectdetectie vanwege de specifieke kenmerken van akoestische beelden, zoals ruis, lage resolutie en reflecties. De meeste technieken zijn echter oorspronkelijk ontwikkeld voor visuele data. Er zijn dus verschillende aanpassingen nodig om deze methoden effectief te laten werken op sonarafbeeldingen. Één van deze aanpassingen zit hem in het preprocessen van de data met behulp van filters om ruis te onderdrukken en het contrast te verbeteren. Ook kan er gebruik gemaakt worden van aangepaste modellen die speciaal kunnen worden ontworpen om beter te werken met sonardata. Dit kan door rekening te houden met hoe objecten in de data ruimtelijk met elkaar verbonden zijn en met specifieke geluidspatronen die in sonarbeelden voorkomen. \autocite{Karimanzira_2020}
 
-Draag zorg voor correcte literatuurverwijzingen! Een bronvermelding hoort thuis \emph{binnen} de zin waar je je op die bron baseert, dus niet er buiten! Maak meteen een verwijzing als je gebruik maakt van een bron. Doe dit dus \emph{niet} aan het einde van een lange paragraaf. Baseer nooit teveel aansluitende tekst op eenzelfde bron.
-
-Als je informatie over bronnen verzamelt in JabRef, zorg er dan voor dat alle nodige info aanwezig is om de bron terug te vinden (zoals uitvoerig besproken in de lessen Research Methods).
+Daarnaast is het formaat van de data cruciaal. Er wordt (hoogstwaarschijnlijk) gebruik gemaakt van stacked GeoTIFF. Hierbij wordt het GeoTIFF formaat gebruikt om meerdere lagen geografische data te combineren in één bestand. GeoTIFF is een uitbreiding van het standaard TIFF (Tagged Image File Format) en wordt gebruikt om rasterafbeeldingen te koppelen aan geografische coördinaten. \autocite{Ritter_1997}
 
 % Voor literatuurverwijzingen zijn er twee belangrijke commando's:
 % \autocite{KEY} => (Auteur, jaartal) Gebruik dit als de naam van de auteur
@@ -54,31 +65,15 @@ Als je informatie over bronnen verzamelt in JabRef, zorg er dan voor dat alle no
 %   functie heeft in de zin (bv. ``Uit onderzoek door Doll & Hill (1954) bleek
 %   ...'')
 
-Je mag deze sectie nog verder onderverdelen in subsecties als dit de structuur van de tekst kan verduidelijken.
-
 %---------- Methodologie ------------------------------------------------------
 \section{Methodologie}%
 \label{sec:methodologie}
 
-Hier beschrijf je hoe je van plan bent het onderzoek te voeren. Welke onderzoekstechniek ga je toepassen om elk van je onderzoeksvragen te beantwoorden? Gebruik je hiervoor literatuurstudie, interviews met belanghebbenden (bv.~voor requirements-analyse), experimenten, simulaties, vergelijkende studie, risico-analyse, PoC, \ldots?
-
-Valt je onderwerp onder één van de typische soorten bachelorproeven die besproken zijn in de lessen Research Methods (bv.\ vergelijkende studie of risico-analyse)? Zorg er dan ook voor dat we duidelijk de verschillende stappen terug vinden die we verwachten in dit soort onderzoek!
-
-Vermijd onderzoekstechnieken die geen objectieve, meetbare resultaten kunnen opleveren. Enquêtes, bijvoorbeeld, zijn voor een bachelorproef informatica meestal \textbf{niet geschikt}. De antwoorden zijn eerder meningen dan feiten en in de praktijk blijkt het ook bijzonder moeilijk om voldoende respondenten te vinden. Studenten die een enquête willen voeren, hebben meestal ook geen goede definitie van de populatie, waardoor ook niet kan aangetoond worden dat eventuele resultaten representatief zijn.
-
-Uit dit onderdeel moet duidelijk naar voor komen dat je bachelorproef ook technisch voldoen\-de diepgang zal bevatten. Het zou niet kloppen als een bachelorproef informatica ook door bv.\ een student marketing zou kunnen uitgevoerd worden.
-
-Je beschrijft ook al welke tools (hardware, software, diensten, \ldots) je denkt hiervoor te gebruiken of te ontwikkelen.
-
-Probeer ook een tijdschatting te maken. Hoe lang zal je met elke fase van je onderzoek bezig zijn en wat zijn de concrete \emph{deliverables} in elke fase?
+Afhankelijk van welk onderwerp gekozen wordt, zal de methodologie ietwat anders zijn. In grote lijnen komen de stappen in het onderzoek wel overeen. Eerst en vooral wordt de data verzameld. Deze data wordt aangeleverd in stacked GeoTIFF-formaat. Daarna worden bepaalde preprocessingtechnieken toegepast op de data, zoals ruisonderdrukking, normalisatie en het extraheren van relevante lagen uit de GeoTIFF-bestanden, zoals intensiteit en topografische gegevens. Vervolgens wordt indien nodig data-augmentatie toegepast, bijvoorbeeld door rotatie of schaling, om het model robuuster te maken. Het model wordt ontwikkeld. Dit is enorm afhankelijk van het onderwerp en zal later verder uitgediept worden. Uiteindelijk wordt het model geëvalueerd met behulp van verschillende metrieken. Afhankelijk van deze metrieken wordt het model geoptimaliseerd om de nauwkeurigheid te verbeteren en de fout te verkleinen. Ten slotte wordt het model getest op een onafhankelijke dataset en geëvalueerd op prestaties in real-world scenario's, zoals verschillende wateromstandigheden en objecttypes.
 
 %---------- Verwachte resultaten ----------------------------------------------
 \section{Verwacht resultaat, conclusie}%
 \label{sec:verwachte_resultaten}
 
-Hier beschrijf je welke resultaten je verwacht. Als je metingen en simulaties uitvoert, kan je hier al mock-ups maken van de grafieken samen met de verwachte conclusies. Benoem zeker al je assen en de onderdelen van de grafiek die je gaat gebruiken. Dit zorgt ervoor dat je concreet weet welk soort data je moet verzamelen en hoe je die moet meten.
-
-Wat heeft de doelgroep van je onderzoek aan het resultaat? Op welke manier zorgt jouw bachelorproef voor een meerwaarde?
-
-Hier beschrijf je wat je verwacht uit je onderzoek, met de motivatie waarom. Het is \textbf{niet} erg indien uit je onderzoek andere resultaten en conclusies vloeien dan dat je hier beschrijft: het is dan juist interessant om te onderzoeken waarom jouw hypothesen niet overeenkomen met de resultaten.
+Ik verwacht, onafhankelijk van het onderwerp, een werkend model te ontwikkelen dat het specifiek beschreven probleem in het onderwerp kan oplossen. Dit doe zal ik doen door geavanceerde ML- en Deep Learning-technieken te combineren met gespecialiseerde preprocessingmethoden voor sonardata. Het uiteindelijke model zal niet alleen een waardevol hulpmiddel zijn voor mijn stagebedrijf, maar kan ook als basis dienen voor verdere toepassingen in maritiem onderzoek en sonarbeeldanalyse.
 
