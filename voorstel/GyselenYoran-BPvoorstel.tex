@@ -7,6 +7,7 @@
 \documentclass{hogent-article}
 
 % Invoegen bibliografiebestand
+\usepackage[backend=biber]{biblatex}
 \addbibresource{voorstel.bib}
 
 % Informatie over de opleiding, het vak en soort opdracht
@@ -35,6 +36,8 @@
 
 \tableofcontents
 
+% De hoofdtekst van het voorstel zit in een apart bestand, zodat het makkelijk
+% kan opgenomen worden in de bijlagen van de bachelorproef zelf.
 \input{voorstel-inhoud}
 
 \printbibliography[heading=bibintoc]
