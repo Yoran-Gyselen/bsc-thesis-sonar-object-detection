@@ -5,12 +5,6 @@
 
 \documentclass[dutch,dit,thesis]{hogentreport}
 
-% TODO:
-% - If necessary, replace the option `dit`' with your own department!
-%   Valid entries are dbo, dbt, dgz, dit, dlo, dog, dsa, soa
-% - If you write your thesis in English (remark: only possible after getting
-%   explicit approval!), remove the option "dutch," or replace with "english".
-
 \usepackage{lipsum} % For blind text, can be removed after adding actual content
 
 %% Pictures to include in the text can be put in the graphics/ folder
@@ -48,17 +42,16 @@
 % Other packages not already included can be imported here
 
 %%---------- Document metadata -------------------------------------------------
-% TODO: Replace this with your own information
-\author{Ernst Aarden}
-\supervisor{Dhr. F. Van Houte}
-\cosupervisor{Mevr. S. Beeckman}
-\title[Optionele ondertitel]%
-    {Titel van de bachelorproef}
+\author{Yoran Gyselen}
+\supervisor{Mevr. C. Teerlinck}
+\cosupervisor{Mevr. S. Duyck}
+\title[Efficiënte classificatie met geavanceerde leertechnieken]%
+    {Categoriseren van Sonardata met behulp van Semi- of Self-supervised \\ Learning}
 \academicyear{\advance\year by -1 \the\year--\advance\year by 1 \the\year}
-\examperiod{1}
+\examperiod{2}
 \degreesought{\IfLanguageName{dutch}{Professionele bachelor in de toegepaste informatica}{Bachelor of applied computer science}}
 \partialthesis{false} %% To display 'in partial fulfilment'
-%\institution{Internshipcompany BVBA.}
+\institution{Exail Robotics Belgium}
 
 %% Add global exceptions to the hyphenation here
 \hyphenation{back-slash}
@@ -153,9 +146,11 @@
 Het onderwerp van deze bachelorproef is gebaseerd op een onderzoeksvoorstel dat vooraf werd beoordeeld door de promotor. Dat voorstel is opgenomen in deze bijlage.
 
 %% TODO: 
-%\section*{Samenvatting}
+\section*{Samenvatting}
 
-% Kopieer en plak hier de samenvatting (abstract) van je onderzoeksvoorstel.
+Sinds de opkomst en popularisatie van AI-modellen is data steeds een cruciale resource geweest. Voor simpele modellen is de benodigde data vaak ook simpel van vorm en is er (relatief) weinig van nodig om een performant en goed werkend model te creëren. Echter stijgen de data-requirements voor grotere en complexere modellen exponentieel. De benodigde data om een objectdetectiemodel voor sonardata te trainen zorgt voor moeilijkheden: dit soort datasets zijn online niet off-the-shelf beschikbaar en zijn dus zeer tijdrovend en kostbaar om te maken. De hoofdvraag van dit onderzoek is daarom: Op welke manieren kan het gebruik van semi- of self-supervised learning het labelproces versnellen zonder significante verlies in nauwkeurigheid? Door verschillende technieken toe te passen, zal een pretraining-strategie ontwikkeld worden die gebruikmaakt van ongelabelde data om representaties aan te leren. Vervolgens zal onderzocht worden hoeveel gelabelde data nodig is om een goed presterend detectiemodel te trainen. Het doel is een methodologie te ontwikkelen die de afhankelijkheid van handmatig gelabelde data minimaliseert, terwijl de prestaties van het detectiemodel behouden blijven. De resultaten kunnen bijdragen aan efficiëntere workflows voor data-analyse in sonarbeeldvorming en andere domeinspecifieke contexten.
+
+\newpage
 
 % Verwijzing naar het bestand met de inhoud van het onderzoeksvoorstel
 \input{../voorstel/voorstel-inhoud}
