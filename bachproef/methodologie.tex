@@ -26,5 +26,42 @@
 %% Maak voor elke fase (behalve het literatuuronderzoek) een NIEUW HOOFDSTUK aan
 %% en geef het een gepaste titel.
 
-\lipsum[21-25]
+Dit onderzoek volgt een gestructureerde aanpak om semi- en self-supervised learning technieken te evalueren voor objectdetectie in sonardata. De methodologie is onderverdeeld in zes fasen: literatuurstudie, data pre-processing, modelontwikkeling, training en evaluatie.
 
+\section{Literatuurstudie}
+
+De eerste fase richt zich op het verzamelen van gedetailleerde informatie over het domein en de huidige stand van zaken hierbinnen. Specifiek gaat dit om het verzamelen, bestuderen en analyseren van wetenschappelijke artikelen. Op basis hiervan zal het onderzoek verder uitgewerkt worden.
+
+\section{Data}
+
+\subsection{Zoeken naar \& verzamelen van data}
+
+De tweede fase richt zich op het verzamelen, pre-processen en verdelen van de benodigde data voor dit onderzoek. Er wordt gebruik gemaakt van sonarafbeeldingen in gestapeld GeoTIFF-formaat. Deze data bevat verschillende lagen, zoals intensiteit en diepte-informatie, die dienen als input voor het model.
+
+\subsection{Pre-processen van de data}
+
+Daarna zal pre-processing op de data toegepast worden. Er zal gebruik gemaakt worden van normalisatie, waarbij ruis en artefacten worden verminderd door technieken zoals median filtering.
+
+\subsection{Data-augmentatie}
+
+Daarnaast zullen augmentaties zoals rotatie, ruisinjectie en schaling worden toegepast om variatie in de dataset te vergroten en robuustheid van het model te verbeteren.
+
+\subsection{Data opsplitsen \& verdelen}
+
+Uiteindelijk wordt de data opgedeeld in een gelabelde en een grotere ongesuperviseerde subset. Dit maakt het mogelijk om zowel semi- als self-supervised technieken te testen.
+
+\section{Implementatie van de verschillende modellen}
+
+De derde fase richt zich op de ontwikkeling van de modellen zelf. Een baseline-model zoals een convolutioneel neuraal netwerk (bijvoorbeeld Faster R-CNN of YOLO) wordt gebruikt als referentiepunt voor volledig gesuperviseerde prestaties. Daarna worden self-supervised- of semi-supervised-modellen getraind worden ter vergelijking met het baseline-model. Binnen semi-supervised learning zal er geëxperimenteerd worden met pseudo-labeling: ongesuperviseerde voorbeelden worden automatisch gelabeld door het model en toegevoegd aan de trainingsset. Ook technieken zoals FixMatch om consistente voorspellingen te leren zullen bekeken en besproken worden. Binnen self-supervised learning zullen methoden zoals SimCLR of BYOL toegepast worden om representaties te leren zonder labels. Ook zullen aanpassingen aan pretext-taken, zoals het voorspellen van ontbrekende delen van sonarafbeeldingen of contrastieve augmentaties die rekening houden met spatiële afhankelijkheden besproken worden.
+
+\section{Training \& optimalisatie van de modellen}
+
+De vierde fase richt zich op het trainen en optimaliseren van de ontwikkelde modellen. Dit omvat de pre-training, waarbij het model getraind wordt met ongesuperviseerde data om algemene representaties te leren. Daarnaast zal het model fine-tuning ondergaan: na pretraining wordt het model verder getraind met een kleine gelabelde dataset om objectdetectie te verfijnen. Ook hyperparameter-tuning behoort tot deze fase. Hierbij worden parameters zoals leersnelheid, batchgrootte en augmentatie-instellingen geoptimaliseerd om de prestaties te verbeteren.
+
+\section{Evaluatie van de modellen}
+
+De vijfde fase richt zich op de evaluatie van de verschillende modellen. Er worden verschillende metrieken gebruikt om de modellen te evalueren. Onder andere Mean Average Precision (mAP) voor objectdetectieprestaties, Intersection over Union (IoU) voor lokalisatienauwkeurigheid en label-efficiëntie (Hoe goed presteert het model met een beperkte hoeveelheid gelabelde data?) zullen gebruikt worden. Er zal ook een vergelijking gemaakt worden met het baseline-model. Dit zal uitsluitsel geven over de effectiviteit van semi-supervised en self-supervised learning tegenover supervised learning. Uiteindelijk zullen enkele robuustheidstests uitgevoerd worden. Het model wordt hierbij getest op ongeziene data met variërende omstandigheden, zoals ruisniveaus en objecttypes.
+
+\section{Evaluatie van de resultaten}
+
+De zesde fase richt zich op de praktische toepassing van het model. Ook zullen enkele experts in sonaranalyse de bruikbaarheid van de resultaten beoordelen en aanbevelingen geven voor verdere verbeteringen. Ten slotte zullen de methodologie, resultaten en code worden gedocumenteerd om reproduceerbaarheid te waarborgen.

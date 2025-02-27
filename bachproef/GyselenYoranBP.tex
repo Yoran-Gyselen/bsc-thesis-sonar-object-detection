@@ -6,16 +6,22 @@
 \documentclass[dutch,dit,thesis]{hogentreport}
 
 \usepackage{lipsum} % For blind text, can be removed after adding actual content
+\usepackage[acronym, toc]{glossaries}
+%\setglossarystyle{altlist}
+
+\input{woordenlijst_acroniemen}
+
+\makenoidxglossaries
 
 %% Pictures to include in the text can be put in the graphics/ folder
 \graphicspath{{../graphics/}}
 
 %% For source code highlighting, requires pygments to be installed
 %% Compile with the -shell-escape flag!
-%% \usepackage[chapter]{minted}
+\usepackage[chapter]{minted}
 %% If you compile with the make_thesis.{bat,sh} script, use the following
 %% import instead:
-\usepackage[chapter,outputdir=../output]{minted}
+%%\usepackage[chapter,outputdir=../output]{minted}
 \usemintedstyle{solarized-light}
 
 %% Formatting for minted environments.
@@ -112,6 +118,9 @@
 % Als je een lijst van afkortingen of termen wil toevoegen, dan hoort die
 % hier thuis. Gebruik bijvoorbeeld de ``glossaries'' package.
 % https://www.overleaf.com/learn/latex/Glossaries
+
+\printnoidxglossary[type=main, toctitle=Woordenlijst]
+\printnoidxglossary[type=acronym, toctitle=Acroniemen]
 
 %---------- Kern ---------------------------------------------------------------
 
