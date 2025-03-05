@@ -1,9 +1,22 @@
 % === Acroniemen ===
 \newacronym{auv}{AUV}{Autonomous underwater vehicle}
 \newacronym{mfls}{MFLS}{Multibeam forward-looking sonar}
-\newacronym{rcnn}{R-CNN}{Region-based Convolutional Neural Networks}
+\newacronym{rcnn}{R-CNN}{Region-based Convolutional Neural Network}
 \newacronym{yolo}{YOLO}{You Only Look Once}
 \newacronym{ssd}{SSD}{Single-shot Detector}
+\newacronym{ssl}{SSL}{Semi-supervised Learning}
+\newacronym{self-sl}{Self-SL}{Self-supervised Learning}
+\newacronym{iou}{IoU}{Intersection over Union}
+\newacronym{map}{mAP}{Mean Average Precision}
+\newacronym{simclr}{SimCLR}{Simple Framework for Contrastive Learning of Visual Representations}
+\newacronym{byol}{BYOL}{Bootstrap Your Own Latent}
+\newacronym{sss}{SSS}{Side-scan sonar}
+\newacronym[plural={MILCO's}]{milco}{MILCO}{MIne-Like COntact}
+\newacronym[plural={NOMBO's}]{nombo}{NOMBO}{NOn-Mine-like BOttom Object}
+\newacronym{dms3}{DMS 3}{Destacamento de Mergulhadores Sapadores}
+\newacronym[plural={ROV's}]{rov}{ROV}{Remotely operated vehicle}
+\newacronym{coco}{COCO}{Common Objects in Context}
+\newacronym{uxo}{UXO}{Unexploded ordnance}
 
 % === Termen ===
 \newglossaryentry{blindganger}
@@ -12,5 +25,75 @@
     text={blindganger},
     description={Explosief dat niet is afgegaan},
     plural={blindgangers},
-    descriptionplural={Explosieven die niet zijn afgegaan}
+    descriptionplural={Explosieven die niet zijn afgegaan.}
+}
+
+\newglossaryentry{bounding_box}
+{
+    name={Bounding box},
+    text={bounding box},
+    description={Rechthoek om een object op een afbeelding te identificeren en te lokaliseren},
+    plural={bounding boxes},
+    descriptionplural={Rechthoeken om objecten op een afbeelding te identificeren en te lokaliseren}
+}
+
+\newglossaryentry{batch}
+{
+    name={Batch},
+    text={batch},
+    description={Groep van samples die gebruikt worden in één trainingsstap. \autocite{Geron_2023}},
+    plural={batches},
+    descriptionplural={Groepen van samples die gebruikt worden in één trainingsstap. \autocite{Geron_2023}}    
+}
+
+\newglossaryentry{batch_size}
+{
+    name={Batch size},
+    text={batch size},
+    description={Het aantal samples die gebruikt worden in één trainingsstap. \autocite{Geron_2023}}
+}
+
+\newglossaryentry{mini_batch}
+{
+    name={Mini-batch},
+    text={mini-batch},
+    description={Kleine, meer behapbare subset van een batch om het geheugengebruik tijdens training te optimaliseren. \autocite{Geron_2023}},
+    plural={mini-batches},
+    descriptionplural={Kleine, meer behapbare subsets van een batch om het geheugengebruik tijdens training te optimaliseren. \autocite{Geron_2023}}    
+}
+
+\newglossaryentry{learning_rate}
+{
+    name={Learning rate},
+    text={learning rate},
+    description={Hyperparameter die bepaalt hoe snel het model convergeert richting het minimum van de loss-functie. \autocite{Geron_2023}},
+}
+
+\newglossaryentry{precision}
+{
+    name={Precision},
+    text={precision},
+    description={Een metriek om de accuraatheid van de positieve voorspellingen van het model te meten. Een hoge precision betekent dat het model een lage hoeveelheid \emph{false-positives} voorspelt. Wanneer dit model iets als positief voorspelt, is de kans groot dat dit correct is. 
+        $$
+        \text{Precision} = \frac{\text{True Positives}}{\text{True Positives} + \text{False Positives}}
+        $$
+        \autocite{Geron_2023}}
+}
+
+\newglossaryentry{recall}
+{
+    name={Recall},
+    text={recall},
+    description={Een metriek om te meten hoe goed het model alle relevante positieve datapunten kan voorspellen. Een hoge recall betekent dat het model heel goed is in het correct voorspellen van alle positieve datapunten, zelfs als dit betekent dat het meer \emph{false-positives} voorspelt.
+        $$
+        \text{Recall} = \frac{\text{True Positives}}{\text{True Positives} + \text{False Negatives}}
+        $$
+        \autocite{Geron_2023}}
+}
+
+\newglossaryentry{portaalkraan}
+{
+    name={Portaalkraan},
+    text={portaalkraan},
+    description={Een (meestal verrijdbaar) hijswerktuig, opgebouwd uit een portaal waarop een kraan gemonteerd is die verplaatsbaar is langs de horizontale draagbalk. Meestal wordt deze kraan gebruikt op kaden om o.a. containers uit te laden.}
 }

@@ -5,32 +5,17 @@
 \chapter{\IfLanguageName{dutch}{Methodologie}{Methodology}}%
 \label{ch:methodologie}
 
-%% TODO: In dit hoofstuk geef je een korte toelichting over hoe je te werk bent
-%% gegaan. Verdeel je onderzoek in grote fasen, en licht in elke fase toe wat
-%% de doelstelling was, welke deliverables daar uit gekomen zijn, en welke
-%% onderzoeksmethoden je daarbij toegepast hebt. Verantwoord waarom je
-%% op deze manier te werk gegaan bent.
-%% 
-%% Voorbeelden van zulke fasen zijn: literatuurstudie, opstellen van een
-%% requirements-analyse, opstellen long-list (bij vergelijkende studie),
-%% selectie van geschikte tools (bij vergelijkende studie, "short-list"),
-%% opzetten testopstelling/PoC, uitvoeren testen en verzamelen
-%% van resultaten, analyse van resultaten, ...
-%%
-%% !!!!! LET OP !!!!!
-%%
-%% Het is uitdrukkelijk NIET de bedoeling dat je het grootste deel van de corpus
-%% van je bachelorproef in dit hoofstuk verwerkt! Dit hoofdstuk is eerder een
-%% kort overzicht van je plan van aanpak.
-%%
-%% Maak voor elke fase (behalve het literatuuronderzoek) een NIEUW HOOFDSTUK aan
-%% en geef het een gepaste titel.
-
 Dit onderzoek volgt een gestructureerde aanpak om semi- en self-supervised learning technieken te evalueren voor objectdetectie in sonardata. De methodologie is onderverdeeld in zes fasen: literatuurstudie, data pre-processing, modelontwikkeling, training en evaluatie.
 
 \section{Literatuurstudie}
 
-De eerste fase richt zich op het verzamelen van gedetailleerde informatie over het domein en de huidige stand van zaken hierbinnen. Specifiek gaat dit om het verzamelen, bestuderen en analyseren van wetenschappelijke artikelen. Op basis hiervan zal het onderzoek verder uitgewerkt worden.
+De eerste fase richt zich op het verzamelen van gedetailleerde informatie over het domein en de huidige stand van zaken hierbinnen. Hierbij gaat het om het verzamelen, bestuderen en analyseren van wetenschappelijke artikelen. Op basis hiervan zal het onderzoek verder uitgewerkt worden. Dit begint met een algemene inleiding in sonarbeeldvorming, waarbij de fysische principes en toepassingen van sonar worden besproken, evenals de uitdagingen die gepaard gaan met de interpretatie van sonarbeelden, zoals ruis, resolutiebeperkingen en variërende omgevingsfactoren. Voorts zal worden ingegaan op de werking en toepassingen van objectdetectie en de integratie hiervan met sonarbeelden. Eerst zullen enkele klassieke technieken zoals filtertechnieken en thresholding besproken worden. Daarna worden enkele traditionele supervised learning-technieken -- zoals Faster \gls{rcnn}, \gls{yolo} en \gls{ssd} -- vergeleken. Hierbij wordt er ook een analyse gemaakt van hun beperkingen, zoals de noodzaak van grote hoeveelheden gelabelde data, wat in sonarbeeldvorming vaak een uitdaging vormt. \\
+
+Dit leidt tot het verkennen van verschillende machine learning-methoden die (mogelijks) enkele veelvoorkomende problemen bij sonarobjectdetectie kunnen oplossen. In dit onderzoek wordt gefocust op twee veelbelovende technieken, namelijk semi-supervised learning en self-supervised learning. Relevante onderzoeksartikelen en technische rapporten worden geanalyseerd, met een focus op de architecturen, trainingsstrategieën en prestaties van deze methoden bij vergelijkbare beeldverwerkingsproblemen. Voor beide technieken wordt besproken wat ze zijn, hoe ze werken en waarom ze nuttig (kunnen) zijn. Hierbij wordt specifiek ingegaan op de schaarste van gelabelde data. Ook worden telkens enkele methoden en implementaties van beide technieken besproken. Ten slotte wordt bekeken hoe deze technieken vertaald zouden kunnen worden om toegepast te worden in objectdetectie op sonarbeelden. \\
+
+Vervolgens wordt er een gedetailleerde vergelijking van de belangrijkste technieken die mogelijk relevant zijn voor dit onderzoek gegeven. Anders dan in de vorige secties (over semi- en self-supervised learning), waar deze technieken -- en de werking ervan -- beschreven werden, is het de bedoeling om daar in deze sectie een vergelijking van te maken. Hierbij wordt ingegaan op de voor- en nadelen van elke methode in de context van sonarobjectdetectie. Ook wordt besproken waarom sommige methoden beter om kunnen gaan met sonarbeelden dan andere. \\
+
+Ten slotte omvat de literatuurstudie een onderzoek naar bestaande openbare datasets en evaluatiemethoden die in eerder werk zijn gebruikt. Dit draagt bij aan het positioneren van het onderzoek binnen de bredere wetenschappelijke context en biedt inzichten in de structurering van experimenten. De verschillende datasets worden grondig besproken en met elkaar vergeleken. Ook wordt er een antwoord geboden op de vraag op welke verschillende manieren sonarafbeeldingen normaal gesproken gelabeld worden. Daarbij worden handmatige annotatie door experts en automatische labeling met elkaar vergeleken. Daarnaast worden verschillende uitdagingen bij het annotatieproces aangehaald, zoals ambiguïteit in de vorm van objecten, ruis, artefacten en het groot aantal ongelabelde beelden in \emph{real-world} datasets. Ten slotte wordt besproken hoe semi- en self-supervised learning hierbij de afhankelijkheid van annotaties kunnen verminderen.
 
 \section{Data}
 
@@ -52,7 +37,7 @@ Uiteindelijk wordt de data opgedeeld in een gelabelde en een grotere ongesupervi
 
 \section{Implementatie van de verschillende modellen}
 
-De derde fase richt zich op de ontwikkeling van de modellen zelf. Een baseline-model zoals een convolutioneel neuraal netwerk (bijvoorbeeld Faster R-CNN of YOLO) wordt gebruikt als referentiepunt voor volledig gesuperviseerde prestaties. Daarna worden self-supervised- of semi-supervised-modellen getraind worden ter vergelijking met het baseline-model. Binnen semi-supervised learning zal er geëxperimenteerd worden met pseudo-labeling: ongesuperviseerde voorbeelden worden automatisch gelabeld door het model en toegevoegd aan de trainingsset. Ook technieken zoals FixMatch om consistente voorspellingen te leren zullen bekeken en besproken worden. Binnen self-supervised learning zullen methoden zoals SimCLR of BYOL toegepast worden om representaties te leren zonder labels. Ook zullen aanpassingen aan pretext-taken, zoals het voorspellen van ontbrekende delen van sonarafbeeldingen of contrastieve augmentaties die rekening houden met spatiële afhankelijkheden besproken worden.
+De derde fase richt zich op de ontwikkeling van de modellen zelf. Een baseline-model zoals een convolutioneel neuraal netwerk (Faster \gls{rcnn}, \gls{yolo} of \gls{ssd}) wordt gebruikt als referentiepunt voor volledig gesuperviseerde prestaties. Daarna worden self-supervised- of semi-supervised-modellen getraind worden ter vergelijking met het baseline-model. Binnen semi-supervised learning zal er geëxperimenteerd worden met pseudo-labeling: ongesuperviseerde voorbeelden worden automatisch gelabeld door het model en toegevoegd aan de trainingsset. Ook technieken zoals FixMatch om consistente voorspellingen te leren zullen bekeken en besproken worden. Binnen self-supervised learning zullen methoden zoals SimCLR of BYOL toegepast worden om representaties te leren zonder labels. Ook zullen aanpassingen aan pretext-taken, zoals het voorspellen van ontbrekende delen van sonarafbeeldingen of contrastieve augmentaties die rekening houden met spatiële afhankelijkheden besproken worden.
 
 \section{Training \& optimalisatie van de modellen}
 
@@ -60,7 +45,7 @@ De vierde fase richt zich op het trainen en optimaliseren van de ontwikkelde mod
 
 \section{Evaluatie van de modellen}
 
-De vijfde fase richt zich op de evaluatie van de verschillende modellen. Er worden verschillende metrieken gebruikt om de modellen te evalueren. Onder andere Mean Average Precision (mAP) voor objectdetectieprestaties, Intersection over Union (IoU) voor lokalisatienauwkeurigheid en label-efficiëntie (Hoe goed presteert het model met een beperkte hoeveelheid gelabelde data?) zullen gebruikt worden. Er zal ook een vergelijking gemaakt worden met het baseline-model. Dit zal uitsluitsel geven over de effectiviteit van semi-supervised en self-supervised learning tegenover supervised learning. Uiteindelijk zullen enkele robuustheidstests uitgevoerd worden. Het model wordt hierbij getest op ongeziene data met variërende omstandigheden, zoals ruisniveaus en objecttypes.
+De vijfde fase richt zich op de evaluatie van de verschillende modellen. Er worden verschillende metrieken gebruikt om de modellen te evalueren. Onder andere \acrfull{map} voor objectdetectieprestaties, \acrfull{iou} voor lokalisatienauwkeurigheid en label-efficiëntie (Hoe goed presteert het model met een beperkte hoeveelheid gelabelde data?) zullen gebruikt worden. Er zal ook een vergelijking gemaakt worden met het baseline-model. Dit zal uitsluitsel geven over de effectiviteit van semi-supervised en self-supervised learning tegenover supervised learning. Uiteindelijk zullen enkele robuustheidstests uitgevoerd worden. Het model wordt hierbij getest op ongeziene data met variërende omstandigheden, zoals ruisniveaus en objecttypes.
 
 \section{Evaluatie van de resultaten}
 

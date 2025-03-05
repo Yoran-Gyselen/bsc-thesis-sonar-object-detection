@@ -3,11 +3,11 @@
 \section{Inleiding}%
 \label{sec:inleiding}
 
-Objectdetectie in sonardata speelt een cruciale rol in toepassingen zoals onderwaterverkenning, maritieme veiligheid en archeologisch onderzoek. Traditionele methoden voor objectdetectie vereisen echter grote hoeveelheden gelabelde data, wat een tijdrovend en duur proces is. Sonarafbeeldingen, gekenmerkt door ruis en unieke reflectiepatronen, vergen bovendien gespecialiseerde kennis voor annotatie. Dit maakt het labelen van datasets een grote uitdaging, vooral wanneer schaal en diversiteit van de data toenemen.
+Objectdetectie in sonardata speelt een cruciale rol in toepassingen zoals onderwaterverkenning, maritieme veiligheid en archeologisch onderzoek. Traditionele methoden voor objectdetectie vereisen echter grote hoeveelheden gelabelde data, wat een tijdrovend en duur proces is. Sonarafbeeldingen, gekenmerkt door ruis en unieke reflectiepatronen, vergen bovendien gespecialiseerde kennis voor annotatie. Dit maakt het labelen van datasets een grote uitdaging, vooral wanneer schaal en diversiteit van de data toenemen. \\
 
-Semi- en self-supervised learning bieden veelbelovende alternatieven om dit probleem te overbruggen. Deze technieken maken gebruik van ongesuperviseerde data om representaties te leren en beperken de afhankelijkheid van gelabelde gegevens. Moderne self-supervised methoden hebben indrukwekkende resultaten laten zien in domeinen zoals computer vision, maar hun toepassing op domeinspecifieke datasets, zoals sonar, is nog relatief onbekend terrein.
+Semi- en self-supervised learning bieden veelbelovende alternatieven om dit probleem te overbruggen. Deze technieken maken gebruik van ongesuperviseerde data om representaties te leren en beperken de afhankelijkheid van gelabelde gegevens. Moderne self-supervised methoden hebben indrukwekkende resultaten laten zien in domeinen zoals computer vision, maar hun toepassing op domeinspecifieke datasets, zoals sonar, is nog relatief onbekend terrein. \\
 
-Dit onderzoek richt zich op de vraag of semi- en self-supervised learning technieken effectief kunnen worden ingezet om het labelproces in sonarobjectdetectie te versnellen, zonder dat dit ten koste gaat van de nauwkeurigheid van het model. Door technieken aan te passen aan de specifieke eigenschappen van sonardata, wordt onderzocht hoe representaties kunnen worden geleerd die bijdragen aan een efficiëntere en kosteneffectieve workflow.
+Dit onderzoek richt zich op de vraag of semi- en self-supervised learning technieken effectief kunnen worden ingezet om het labelproces in sonarobjectdetectie te versnellen, zonder dat dit ten koste gaat van de nauwkeurigheid van het model. Door technieken aan te passen aan de specifieke eigenschappen van sonardata, wordt onderzocht hoe representaties kunnen worden geleerd die bijdragen aan een efficiëntere en kosteneffectieve workflow. \\
 
 Naast de vergelijking tussen semi-supervised / self-supervised en supervised learning, zullen verschillende details onderzocht worden. Dit gaat van hoeveelheid gelabelde data minimaal nodig om met semi-supervised learning vergelijkbare resultaten te behalen als volledig gesuperviseerde methoden tot pre-training-methoden uit self-supervised learning die het meest geschikt zijn voor sonardata. Daarnaast wordt onderzocht welke aanpassingen nodig zijn om bestaande semi- en self-supervised technieken effectief toe te passen op stacked GeoTIFF-sonardata. Uiteindelijk wordt uitgezocht welke evaluatiemethoden het beste de prestaties van semi- en self-supervised modellen in sonarobjectdetectie kunnen meten.
 
@@ -18,26 +18,25 @@ Naast de vergelijking tussen semi-supervised / self-supervised en supervised lea
 
 Objectdetectie in domeinspecifieke contexten zoals sonarbeeldvorming wordt vaak gehinderd door een gebrek aan gelabelde data. Traditioneel vereisen gesuperviseerde modellen grote hoeveelheden handmatig gelabelde gegevens om effectieve detectie en classificatie te leren. Semi-supervised en self-supervised learning bieden echter veelbelovende alternatieven door gebruik te maken van grote hoeveelheden ongesuperviseerde data om representaties te leren. Deze literatuurstudie bespreekt de huidige technieken en hun toepassing, met een specifieke focus op de unieke uitdagingen van sonardata.
 
-\paragraph{Gesuperviseerde Objectdetectie}
+\subsection{Gesuperviseerde Objectdetectie}
 
-Objectdetectie is een tak binnen het domein van computer vision dat gericht is op het identificeren en lokaliseren van objecten binnen beelddata (zoals foto's en video's). Dit wordt gebruikt in verschillende domeinen, zoals beveiligingssystemen (bv. om inbrekers te detecteren) of de medische wereld (bv. om tumoren op te sporen). Door de jaren heen is objectdetectie aanzienlijk geëvolueerd dankzij de vooruitgang in Deep Learning en de grote beschikbaarheid van datasets met beeldmateriaal. \autocite{He_2016} 
+Objectdetectie is een tak binnen het domein van computer vision dat gericht is op het identificeren en lokaliseren van objecten binnen beelddata (zoals foto's en video's). Dit wordt gebruikt in verschillende domeinen, zoals beveiligingssystemen (bv. om inbrekers te detecteren) of de medische wereld (bv. om tumoren op te sporen). Door de jaren heen is objectdetectie aanzienlijk geëvolueerd dankzij de vooruitgang in Deep Learning en de grote beschikbaarheid van datasets met beeldmateriaal. \autocite{He_2016} \\
 
-Objectdetectie combineert twee belangrijke zaken in computer vision: objectlokalisatie en objectclassificatie. Objectlokalisatie bepaalt de positie van objecten, meestal in de vorm van bounding boxes \autocite{Tompson_2015}, terwijl objectclassificatie bepaalt tot welke categorie een gedetecteerd object behoort. Samen geeft dit de mogelijkheid tot het herkennen van verschillende objecten op één foto.
+Objectdetectie combineert twee belangrijke zaken in computer vision: objectlokalisatie en objectclassificatie. Objectlokalisatie bepaalt de positie van objecten, meestal in de vorm van bounding boxes \autocite{Tompson_2015}, terwijl objectclassificatie bepaalt tot welke categorie een gedetecteerd object behoort. Samen geeft dit de mogelijkheid tot het herkennen van verschillende objecten op één foto. \\
 
 Traditioneel worden gesuperviseerde methoden -- zoals Faster R-CNN, YOLO en SSD -- gebruikt voor objectdetectie. \autocite{Redmon_2016} Deze modellen presteren uitstekend bij voldoende gelabelde data, maar de annotatiekosten en tijdsinvestering vormen een grote belemmering, vooral bij complexe datasets zoals sonar. Sonardata vereist namelijk gespecialiseerde kennis voor het labelen, wat de annotatie nog uitdagender maakt. \autocite{Long_2015}
 
-\paragraph{Semi-supervised learning}
+\subsection{Semi-supervised learning}
 
-Binnen het domein van machine learning bestaan er verschillende technieken om een model te trainen. Meestal wordt er gesproken van twee grote stromingen: supervised learning en unsupervised learning. Bij supervised learning wordt er gebruik gemaakt van een dataset en een uitkomst (hetgeen het model uiteindelijk moet kunnen voorspellen). Dit kan een label zijn of een bepaalde numerieke waarde. Belangrijk is dat zowel de input als de gewenste output gegeven zijn. Het model leert dus het verband tussen de twee. Bij unsupervised learning zijn er geen verwachte outputs. De volledige dataset wordt door het model gebruikt om patronen in te herkennen. Unsupervised learning wordt daarom ook meestal gebruikt om verkennende data-analyse uit te voeren. Echter hebben beide methoden enkele nadelen. Bij supervised learning is het traag en duur om alle data op een correcte manier te labelen. Unsupervised learning heeft dit probleem niet, maar heeft een beperkt aantal toepassingen en is minder accuraat. Een alternatief is semi-supervised learning, wat een compromis tussen zowel supervised als unsupervised learning is. \autocite{C_A_Padmanabha_Reddy_2018}
+Binnen het domein van machine learning bestaan er verschillende technieken om een model te trainen. Meestal wordt er gesproken van twee grote stromingen: supervised learning en unsupervised learning. Bij supervised learning wordt er gebruik gemaakt van een dataset en een uitkomst (hetgeen het model uiteindelijk moet kunnen voorspellen). Dit kan een label zijn of een bepaalde numerieke waarde. Belangrijk is dat zowel de input als de gewenste output gegeven zijn. Het model leert dus het verband tussen de twee. Bij unsupervised learning zijn er geen verwachte outputs. De volledige dataset wordt door het model gebruikt om patronen in te herkennen. Unsupervised learning wordt daarom ook meestal gebruikt om verkennende data-analyse uit te voeren. Echter hebben beide methoden enkele nadelen. Bij supervised learning is het traag en duur om alle data op een correcte manier te labelen. Unsupervised learning heeft dit probleem niet, maar heeft een beperkt aantal toepassingen en is minder accuraat. Een alternatief is semi-supervised learning, wat een compromis tussen zowel supervised als unsupervised learning is. \autocite{C_A_Padmanabha_Reddy_2018} \\
 
-Semi-supervised learning maakt gebruik van zowel gelabelde als ongelabelde data. Het algoritme traint eerst een basismodel op de beperkte hoeveelheid gelabelde data, waarna dit gebruikt wordt om de grotere ongelabelde dataset van labels te voorzien. Deze techniek wordt ook wel Pseudo-labeling genoemd. \autocite{Lee_2013}
+Semi-supervised learning maakt gebruik van zowel gelabelde als ongelabelde data. Het algoritme traint eerst een basismodel op de beperkte hoeveelheid gelabelde data, waarna dit gebruikt wordt om de grotere ongelabelde dataset van labels te voorzien. Deze techniek wordt ook wel Pseudo-labeling genoemd. \autocite{Lee_2013} \\
 
-Een andere populaire techniek binnen semi-supervised learning is Consistency Regularization. Deze techniek zorgt ervoor dat het model consistente voorspellingen aanleert door gebruik te maken van data-augmentatie. De inputdata wordt hierbij licht aangepast of verstoord. Het uitgangspunt is dat een goed model robuust moet zijn tegen kleine veranderingen in de input. \autocite{Fan_2022}.
-Deze twee populaire technieken kunnen ook gebruikt worden om een nog beter model te maken zoals in het FixMatch-algoritme van \textcite{Sohn_2020}.
+Een andere populaire techniek binnen semi-supervised learning is Consistency Regularization. Deze techniek zorgt ervoor dat het model consistente voorspellingen aanleert door gebruik te maken van data-augmentatie. De inputdata wordt hierbij licht aangepast of verstoord. Het uitgangspunt is dat een goed model robuust moet zijn tegen kleine veranderingen in de input. \autocite{Fan_2022}. Deze twee populaire technieken kunnen ook gebruikt worden om een nog beter model te maken zoals in het FixMatch-algoritme van \textcite{Sohn_2020}.
 
-\paragraph{Self-supervised learning}
+\subsection{Self-supervised learning}
 
-Anders dan bij semi-supervised learning is er bij self-supervised learning of SSL helemaal geen nood aan labels. Deze creëert het algoritme namelijk zelf tijdens een pre-training fase. Semi-supervised learning behoort echter niet helemaal tot het domein van unsupervised learning, hoewel het gebruik maakt van verschillende groeperings- en clusteringmethoden. Het uiteindelijke model maakt namelijk gebruik van -- door de pre-training -- gelabelde data. Deze techniek zorgt ervoor dat er veel complexere modellen getraind kunnen worden zonder een gigantische hoeveelheid aan data. Enkele nadelen zijn wel dat de techniek een grote hoeveelheid computerkracht nodig heeft en een lagere accuratie heeft dan supervised learning. \autocite{Gui_2024}
+Anders dan bij semi-supervised learning is er bij self-supervised learning of SSL helemaal geen nood aan labels. Deze creëert het algoritme namelijk zelf tijdens een pre-training fase. Semi-supervised learning behoort echter niet helemaal tot het domein van unsupervised learning, hoewel het gebruik maakt van verschillende groeperings- en clusteringmethoden. Het uiteindelijke model maakt namelijk gebruik van -- door de pre-training -- gelabelde data. Deze techniek zorgt ervoor dat er veel complexere modellen getraind kunnen worden zonder een gigantische hoeveelheid aan data. Enkele nadelen zijn wel dat de techniek een grote hoeveelheid computerkracht nodig heeft en een lagere accuratie heeft dan supervised learning. \autocite{Gui_2024} \\
 
 Ondanks deze nadelen blijken verschillende populaire technieken succesvol binnen het domein van computer vision.
 
@@ -57,15 +56,15 @@ Zowel SimCLR als BYOL hebben voordelen en nadelen. Toch zijn ze allebei uitermat
 
 Beide methoden hebben bewezen krachtig te zijn in self-supervised learning en kunnen worden aangepast voor domeinspecifieke data, zoals sonarafbeeldingen.
 
-\paragraph{Optimalisatie van sonardata}
+\subsection{Optimalisatie van sonardata}
 
 Sonardata vormt een unieke uitdaging voor objectdetectie vanwege de specifieke kenmerken van akoestische beelden, zoals ruis, lage resolutie en reflecties. De meeste technieken zijn echter oorspronkelijk ontwikkeld voor visuele data. Er zijn dus verschillende aanpassingen nodig om deze methoden effectief te laten werken op sonarafbeeldingen. Één van deze aanpassingen zit hem in het pre-processen van de data met behulp van filters om ruis te onderdrukken en het contrast te verbeteren. Ook kan er gebruik gemaakt worden van aangepaste modellen die speciaal kunnen worden ontworpen om beter te werken met sonardata. Dit kan door rekening te houden met hoe objecten in de data ruimtelijk met elkaar verbonden zijn en met specifieke geluidspatronen die in sonarbeelden voorkomen. \autocite{Karimanzira_2020}
 
-\paragraph{Formaat van de data}
+\subsection{Formaat van de data}
 
 Daarnaast is het formaat van de data cruciaal. Er wordt (hoogstwaarschijnlijk) gebruik gemaakt van stacked GeoTIFF. Hierbij wordt het GeoTIFF formaat gebruikt om meerdere lagen geografische data te combineren in één bestand. GeoTIFF is een uitbreiding van het standaard TIFF (Tagged Image File Format) en wordt gebruikt om rasterafbeeldingen te koppelen aan geografische coördinaten. \autocite{Ritter_1997}
 
-\paragraph{Uitdagingen \& opportuniteiten}
+\subsection{Uitdagingen \& opportuniteiten}
 
 De vorige paragrafen bespraken vooral het technische aspect van semi-supervised en self-supervised learning. De algemene consensus is dat deze technieken veelbelovend zijn om, bijvoorbeeld, een computervisie model te trainen. Een ander domein waar deze technieken zeer goed van pas komen, is NLP. Toch bestaan er enkele uitdagingen, al dan niet voor deze specifieke use-case:
 
@@ -75,7 +74,7 @@ De vorige paragrafen bespraken vooral het technische aspect van semi-supervised 
     \item Prestatievergelijking: het vaststellen van de minimale hoeveelheid gelabelde data die nodig is om vergelijkbare resultaten te bereiken als volledig gesuperviseerde methoden.
 \end{itemize}
 
-\paragraph{Conclusie}
+\subsection{Conclusie}
 
 De literatuur toont aan dat semi- en self-supervised learning krachtige technieken zijn om de afhankelijkheid van handmatige labeling te verminderen. Door deze methoden aan te passen aan de unieke eigenschappen van sonardata, zoals ruis en textuurkenmerken, kan de efficiëntie van het labelproces aanzienlijk worden verbeterd. Dit biedt een veelbelovende richting voor verder onderzoek en praktische toepassingen in sonarbeeldanalyse.
 
@@ -85,27 +84,27 @@ De literatuur toont aan dat semi- en self-supervised learning krachtige techniek
 
 Dit onderzoek volgt een gestructureerde aanpak om semi- en self-supervised learning technieken te evalueren voor objectdetectie in sonardata. De methodologie is onderverdeeld in zes fasen: literatuurstudie, data pre-processing, modelontwikkeling, training en evaluatie.
 
-\paragraph{Fase 1}
+\subsection{Fase 1}
 
 De eerste fase richt zich op het verzamelen van gedetailleerde informatie over het domein en de huidige stand van zaken hierbinnen. Specifiek gaat dit om het verzamelen, bestuderen en analyseren van wetenschappelijke artikelen. Op basis hiervan zal het onderzoek verder uitgewerkt worden.
 
-\paragraph{Fase 2}
+\subsection{Fase 2}
 
 De tweede fase richt zich op het verzamelen, pre-processen en verdelen van de benodigde data voor dit onderzoek. Er wordt gebruik gemaakt van sonarafbeeldingen in gestapeld GeoTIFF-formaat. Deze data bevat verschillende lagen, zoals intensiteit en diepte-informatie, die dienen als input voor het model. Daarna zal pre-processing op de data toegepast worden. Er zal gebruik gemaakt worden van normalisatie, waarbij ruis en artefacten worden verminderd door technieken zoals median filtering. Daarnaast zullen augmentaties zoals rotatie, ruisinjectie en schaling worden toegepast om variatie in de dataset te vergroten en robuustheid van het model te verbeteren. Uiteindelijk wordt de data opgedeeld in een gelabelde en een grotere ongesuperviseerde subset. Dit maakt het mogelijk om zowel semi- als self-supervised technieken te testen.
 
-\paragraph{Fase 3}
+\subsection{Fase 3}
 
 De derde fase richt zich op de ontwikkeling van de modellen zelf. Een baseline-model zoals een convolutioneel neuraal netwerk (bijvoorbeeld Faster R-CNN of YOLO) wordt gebruikt als referentiepunt voor volledig gesuperviseerde prestaties. Daarna worden self-supervised- of semi-supervised-modellen getraind worden ter vergelijking met het baseline-model. Binnen semi-supervised learning zal er geëxperimenteerd worden met pseudo-labeling: ongesuperviseerde voorbeelden worden automatisch gelabeld door het model en toegevoegd aan de trainingsset. Ook technieken zoals FixMatch om consistente voorspellingen te leren zullen bekeken en besproken worden. Binnen self-supervised learning zullen methoden zoals SimCLR of BYOL toegepast worden om representaties te leren zonder labels. Ook zullen aanpassingen aan pretext-taken, zoals het voorspellen van ontbrekende delen van sonarafbeeldingen of contrastieve augmentaties die rekening houden met spatiële afhankelijkheden besproken worden.
 
-\paragraph{Fase 4}
+\subsection{Fase 4}
 
 De vierde fase richt zich op het trainen en optimaliseren van de ontwikkelde modellen. Dit omvat de pre-training, waarbij het model getraind wordt met ongesuperviseerde data om algemene representaties te leren. Daarnaast zal het model fine-tuning ondergaan: na pretraining wordt het model verder getraind met een kleine gelabelde dataset om objectdetectie te verfijnen. Ook hyperparameter-tuning behoort tot deze fase. Hierbij worden parameters zoals leersnelheid, batchgrootte en augmentatie-instellingen geoptimaliseerd om de prestaties te verbeteren.
 
-\paragraph{Fase 5}
+\subsection{Fase 5}
 
 De vijfde fase richt zich op de evaluatie van de verschillende modellen. Er worden verschillende metrieken gebruikt om de modellen te evalueren. Onder andere Mean Average Precision (mAP) voor objectdetectieprestaties, Intersection over Union (IoU) voor lokalisatienauwkeurigheid en label-efficiëntie (Hoe goed presteert het model met een beperkte hoeveelheid gelabelde data?) zullen gebruikt worden. Er zal ook een vergelijking gemaakt worden met het baseline-model. Dit zal uitsluitsel geven over de effectiviteit van semi-supervised en self-supervised learning tegenover supervised learning. Uiteindelijk zullen enkele robuustheidstests uitgevoerd worden. Het model wordt hierbij getest op ongeziene data met variërende omstandigheden, zoals ruisniveaus en objecttypes.
 
-\paragraph{Fase 6}
+\subsection{Fase 6}
 
 De zesde fase richt zich op de validatie en praktische toepassing van het model. Hierbij worden de modellen getest op een onafhankelijke dataset van sonarafbeeldingen om generaliseerbaarheid te evalueren. Ook zullen enkele experts in sonaranalyse de bruikbaarheid van de resultaten beoordelen en aanbevelingen geven voor verdere verbeteringen. Ten slotte zullen de methodologie, resultaten en code worden gedocumenteerd om reproduceerbaarheid te waarborgen.
 
