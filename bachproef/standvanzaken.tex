@@ -344,6 +344,41 @@ Het maximum aantal \glspl{batch} werd ingesteld op 6000. Ook werd de \gls{learni
 
 \subsubsection{UXO}
 
-Ten slotte is er de \acrshort{uxo}-dataset. \acrshort{uxo} is de afkorting voor \acrlong{uxo}, de Engelse benaming voor \glspl{blindganger}. Dit is meteen ook de inhoud van deze dataset. Ze bevat namelijk 74 437 afbeeldingen van \glspl{blindganger} en is daarmee de grootste dataset die in dit onderzoek voorkomt. Het doel van deze dataset is om een validatieset te zijn en ze is samengesteld om onderzoek naar ontmijning in plassen, meren, zeeën en oceanen vooruit te helpen. Zoals al eerder vermeld is dit onderwerp zeer gevoelig en wordt er meestal (lees: bijna altijd) voor gekozen om deze datasets zo confidentieel mogelijk te houden. Daarom bevat deze dataset ook geen \emph{real-world}-afbeeldingen. In plaats daarvan zijn beelden in een gecontroleerde, experimentele omgeving gemaakt. \\
+Ten slotte is er de \acrshort{uxo}-dataset. \acrshort{uxo} is de afkorting voor \acrlong{uxo}, de Engelse benaming voor \glspl{blindganger}. Dit is meteen ook de inhoud van deze dataset. Ze bevat namelijk 74 437 afbeeldingen van \glspl{blindganger} en is daarmee de grootste dataset die in dit onderzoek voorkomt. Het doel van deze dataset is om een validatieset te zijn en ze is samengesteld om onderzoek naar ontmijning in plassen, meren, zeeën en oceanen vooruit te helpen. Zoals al eerder vermeld is dit onderwerp zeer gevoelig en wordt er meestal (lees: bijna altijd) voor gekozen om deze datasets zo confidentieel mogelijk te houden. Daarom bevat deze dataset ook geen \emph{real-world}-afbeeldingen. In plaats daarvan zijn beelden in een gecontroleerde, experimentele omgeving gemaakt. \autocite{Dahn_2024_UXO}
 
-Om deze dataset samen te stellen hebben de onderzoekers 
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{teaser_uxo.png}
+    \caption[Voorbeeld van sonarbeelden \& afbeeldingen in de UXO-dataset]{\label{fig:uxo_teaser}. Voorbeeld van sonarbeelden en overeenkomstige afbeeldingen van verschillende type \glspl{blindganger} in de UXO-dataset. \autocite{Dahn_2024_UXO}}
+\end{figure}
+
+Om deze dataset samen te stellen, hebben de onderzoekers een volledig gecontroleerde testopstelling gemaakt bij het \gls{dfki}, het Duits onderzoekscentrum voor artificiële intelligentie in Bremen. De dataset is gemaakt met een ARIS Explorer 3000 sonarmodule (voor de sonarbeelden) en een GoPro Hero 8 (voor de bijhorende 5,3K UHD afbeeldingen). Deze twee modules werden op een \gls{PTU} (de ARIS Rotator AR3) gemonteerd die vastzat aan een op maat gemaakte \gls{portaalkraan}. Deze kraan kon vrij in de $xyz$-assen bewegen en kon verschillende voorgeprogrammeerde banen heel precies volgen. Om de omgeving van de zee zo goed mogelijk te kunnen nabootsen, bouwden de onderzoekers een bassin gevuld met 20 000 liter zoetwater. Hierin plaatsten ze verschillende \emph{targets}, de \glspl{blindganger}. Deze waren aangeleverd door EGGERS Kampfmittelbergung GmbH, een bedrijf dat zich bezighoudt met het ontmijnen van verschillende sites. Om de veiligheid te garanderen, werden de \glspl{blindganger} voordien onschadelijk gemaakt. Er werden verschillende \glspl{blindganger} gebruikt om zo variëteit in de dataset te garanderen: een normale bom van ongeveer 51 kg, een vervormde fosforbom en een mortier. \autocite{Dahn_2024}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.5\textwidth]{uxo_setup.jpg}
+    \caption[Setup waarmee de UXO-dataset gemaakt is]{\label{fig:uxo_setup}. Afbeelding van de setup die gebruikt werd om data te verzamelen voor de UXO-dataset. \autocite{Dahn_2024_UXO}}
+\end{figure}
+
+De dataset is alles samen zo'n 94,7 GB groot. Ze is de meest uitgebreide die in dit onderzoek voorkomt, niet alleen qua grootte, maar ook qua inhoud. De dataset is onderverdeeld in verschillende mappen. De map \texttt{3d\_models} bevat 3D-modellen van de \glspl{blindganger}. De map \texttt{calibration} bevat dan weer de transformaties tussen de kraan en de sensors en de kalibraties van de GoPro. Het merendeel van de dataset zit in de map \texttt{recordings}. Deze bevat mappen per type \gls{blindganger}. In deze mappen zitten dan telkens weer mappen met de datum en tijd van elk experiment. Deze mappen bevatten verschillende mappen en bestanden die de \emph{core} van de data vormen. \autocite{Dahn_2024_UXO}
+
+\clearpage
+
+\begin{itemize}
+    \item \textbf{\texttt{aris\_raw}:} map die de \emph{raw} sonarbeelden bevat in PGM formaat. Dit is een eenvoudig rasterafbeeldingsformaat (zoals BMP, cf. figuur \ref{fig:bitmap_example_image}) dat grijswaardenafbeeldingen opslaat. PGM-bestanden kunnen in een ASCII (tekst) of binaire (snellere) variant worden opgeslagen. Elke pixel heeft een intensiteitswaarde tussen 0 (zwart) en een maximumwaarde (meestal 255, wit), waardoor verschillende grijstinten mogelijk zijn. De afbeelding bevat ook een header met het formaat, afmetingen en maximale intensiteit, gevolgd door de pixelgegevens. PGM wordt vaak gebruikt in beeldverwerking en wetenschappelijke toepassingen vanwege de eenvoud en brede compatibiliteit. \autocite{Poskanzer_2016}
+    \item \textbf{\texttt{aris\_polar}:} map die de poolgetransformeerde sonarbeelden bevat in PNG formaat.
+    \item \textbf{\texttt{gopro}:} map die de beelden in JPG formaat bevat die gemaakt zijn door de GoPro.
+    \item \textbf{\texttt{labels}:} map die annotatie van \glspl{bounding_box} bevat in JSON formaat.
+    \item \textbf{\texttt{aris\_file\_meta.yaml}:} YAML-bestand met de metadata van de sonar 
+    \item \textbf{\texttt{aris\_frame\_meta.csv}:} CSV-bestand met metadata voor elk sonarframe, inclusief \gls{ptu}-informatie.
+    \item \textbf{\texttt{gantry.csv}:} CSV-bestand met posities van de \gls{portaalkraan} bij elk sonarframe.
+    \item \textbf{\texttt{notes.txt}:} TXT-bestand met korte beschrijving over experiment.
+\end{itemize}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.5\textwidth]{uxo_preview.jpg}
+    \caption[UXO-setup in actie]{\label{fig:uxo_preview}. Preview van de setup waarmee de UXO-dataset is gemaakt in actie. \autocite{Dahn_2024_UXO}}
+\end{figure}
+
+\clearpage
