@@ -65,7 +65,7 @@ sudo apt install texstudio
 - **Language Checking**:
   - Default language: selecteer "nl_NL-Dutch", "nl-BE" of een gelijkaardige optie voor Nederlands zodat je gebruik kan maken van spellingcontrole. Is deze optie toch niet beschikbaar? Je kan een woordenboekbestand voor OpenOffice of LibreOffice downloaden en installeren. Het dialoogvenster heeft links die je meteen naar de juiste pagina leiden.
 
-#### Installeer JabRef
+##### Installeer JabRef
 
 Download en installeer de `.deb`-file van [jabref.org](https://jabref.org/). De versie in de Debian/Ubuntu-repositories is hopeloos verouderd.
 
