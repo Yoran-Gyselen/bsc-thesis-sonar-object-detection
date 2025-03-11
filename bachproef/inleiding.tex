@@ -2,7 +2,7 @@
 %% Inleiding
 %%=============================================================================
 
-\chapter{\IfLanguageName{dutch}{Inleiding}{Introduction}}%
+\chapter{Inleiding}%
 \label{ch:inleiding}
 
 De inleiding moet de lezer net genoeg informatie verschaffen om het onderwerp te begrijpen en in te zien waarom de onderzoeksvraag de moeite waard is om te onderzoeken. In de inleiding ga je literatuurverwijzingen beperken, zodat de tekst vlot leesbaar blijft. Je kan de inleiding verder onderverdelen in secties als dit de tekst verduidelijkt. Zaken die aan bod kunnen komen in de inleiding:
@@ -17,34 +17,38 @@ De inleiding moet de lezer net genoeg informatie verschaffen om het onderwerp te
   \item \ldots
 \end{itemize}
 
-\section{\IfLanguageName{dutch}{Probleemstelling}{Problem Statement}}%
+\section{Probleemstelling}%
 \label{sec:probleemstelling}
 
 Om een model te trainen die met hoge precisie objecten in afbeeldingen kan herkennen en aanduiden, is een grote hoeveelheid gelabelde data nodig. Dit wil zeggen dat er naast de afbeeldingen zelf telkens ook informatie over de positie van het object op de afbeelding nodig is. Na de training is het namelijk de bedoeling om het model deze informatie te laten voorspellen op ongekende afbeeldingen. Sinds de popularisatie van objectdetectie binnen het veld van machine learning zijn er verschillende datasets publiek ter beschikking gesteld die vrij gebruikt mogen worden om een dergelijk model te trainen. Dit is echter niet het geval bij sonardata. Hier zijn verschillende redenen voor. Allereerst is objectdetectie op sonarbeelden een redelijk niche probleem. Dit zorgt ervoor dat er maar weinig mensen de kennis en knowhow hebben om zo'n dataset samen te stellen en -- nog belangrijker -- juist te annoteren. Daarnaast is er het -- misschien wel nog belangrijker -- probleem van de data zelf. Dit soort data is niet zomaar met een camera te verzamelen. Er is een gespecialiseerde sonarinstallatie voor nodig. Het nut om zo'n installatie aan te schaffen is opnieuw redelijk beperkt. Deze worden echter wel gebruikt voor militaire doeleinden. Het probleem hierbij is dat nagenoeg alle data geproduceerd door deze instanties uit veiligheidsredenen geclassificeerd is. De probleemstelling is dus tweeledig: er is weinig gelabelde sonardata voor objectdetectie beschikbaar en het annoteren van een dergelijke dataset is moeilijk, tijdrovend en duur.
 
-\section{\IfLanguageName{dutch}{Onderzoeksvraag}{Research question}}%
+\section{Onderzoeksvraag}%
 \label{sec:onderzoeksvraag}
 
 Om kosten en tijd de besparen zou het dus handig zijn mocht er zo min mogelijk annotatie van de dataset nodig zijn. Bij supervised learning is dit nagenoeg onmogelijk, aangezien het model juist getraind wordt op basis van de annotatie. Echter bestaan er wel andere veelbelovende alternatieven, zoals semi- en self-supervised learning om dit probleem te overbruggen. Deze technieken maken namelijk gebruik van ongesuperviseerde data om representaties te leren en beperken de afhankelijkheid van gelabelde data. Moderne self-supervised methoden hebben indrukwekkende resultaten laten zien in domeinen zoals computer vision, maar hun toepassing op domeinspecifieke datasets, zoals sonar, is nog relatief onbekend terrein. De hoofdvraag van dit onderzoek is daarom: Op welke manieren kan het gebruik van semi- of self-supervised learning het labelproces versnellen zonder een significant verlies in nauwkeurigheid?
 
-\section{\IfLanguageName{dutch}{Onderzoeksdoelstelling}{Research objective}}%
+\section{Onderzoeksdoelstelling}%
 \label{sec:onderzoeksdoelstelling}
 
 Het onderzoek verwacht aan te tonen dat semi- en self-supervised learning effectief kunnen worden ingezet om het labelproces bij sonarobjectdetectie aanzienlijk te versnellen. Door technieken zoals SimCLR of BYOL te gebruiken voor pre-training, wordt verwacht dat het model sterke representaties leert van unsupervised sonardata, wat de behoefte aan grootschalige gelabelde datasets verkleint. Daarnaast zal een analyse inzicht geven in de minimale hoeveelheid gelabelde data die nodig is om vergelijkbare of betere prestaties te behalen dan met volledig supervised-learning methoden. Dit resulteert in een efficiëntere en kosteneffectieve aanpak voor objectdetectie in sonarbeelden, zonder verlies van nauwkeurigheid, en biedt een waardevolle methodologie voor verdere toepassingen in domeinen waar gelabelde data schaars is.
 
-\section{\IfLanguageName{dutch}{Opzet van deze bachelorproef}{Structure of this bachelor thesis}}%
+\section{Opzet van deze bachelorproef}%
 \label{sec:opzet-bachelorproef}
 
-% Het is gebruikelijk aan het einde van de inleiding een overzicht te
-% geven van de opbouw van de rest van de tekst. Deze sectie bevat al een aanzet
-% die je kan aanvullen/aanpassen in functie van je eigen tekst.
+De rest van deze bachelorproef is als volgt opgebouwd: \\
 
-De rest van deze bachelorproef is als volgt opgebouwd:
+In Hoofdstuk~\ref{ch:stand-van-zaken} wordt een overzicht gegeven van de stand van zaken binnen het onderzoeksdomein, op basis van een literatuurstudie. \\
 
-In Hoofdstuk~\ref{ch:stand-van-zaken} wordt een overzicht gegeven van de stand van zaken binnen het onderzoeksdomein, op basis van een literatuurstudie.
+In Hoofdstuk~\ref{ch:methodologie} wordt de methodologie toegelicht en worden de gebruikte onderzoekstechnieken besproken om een antwoord te kunnen formuleren op de onderzoeksvragen. \\
 
-In Hoofdstuk~\ref{ch:methodologie} wordt de methodologie toegelicht en worden de gebruikte onderzoekstechnieken besproken om een antwoord te kunnen formuleren op de onderzoeksvragen.
+In Hoofdstuk~\ref{ch:data} begint het eigenlijke onderzoek. In deze eerste fase wordt een beschikbare dataset gepreprocessed voor gebruik in volgende hoofdstukken. \\
 
-% TODO: Vul hier aan voor je eigen hoofstukken, één of twee zinnen per hoofdstuk
+In Hoofdstuk~\ref{ch:implementatie} worden de verschillende modellen die vooraf uitgekozen zijn uit de verschillende categorieën geïmplementeerd in Python met behulp van Keras en TensorFlow. \\
+
+In Hoofdstuk~\ref{ch:training-optimalisatie} worden de geïmplementeerde modellen getraind op de gepreprocesseerde dataset. Daarnaast worden de modellen geoptimaliseerd met behulp van hyperparameter tuning en andere technieken. \\
+
+In Hoofdstuk~\ref{ch:evaluatie-modellen} worden de getrainde modellen geëvalueerd op basis van verschillende criteria. Er wordt een vergelijking gemaakt tussen -- onder andere -- de performantie van elk model en er wordt bepaald welk model de beste is. \\
+
+In Hoofdstuk~\ref{ch:evaluatie-resultaten} wordt de praktische toepassing van de verschillende modellen geëvalueerd. Ook zullen enkele experts in sonaranalyse de bruikbaarheid van de resultaten beoordelen en aanbevelingen geven voor verdere verbeteringen. \\
 
 In Hoofdstuk~\ref{ch:conclusie}, tenslotte, wordt de conclusie gegeven en een antwoord geformuleerd op de onderzoeksvragen. Daarbij wordt ook een aanzet gegeven voor toekomstig onderzoek binnen dit domein.
