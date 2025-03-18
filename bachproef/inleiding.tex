@@ -5,32 +5,30 @@
 \chapter{Inleiding}%
 \label{ch:inleiding}
 
-De inleiding moet de lezer net genoeg informatie verschaffen om het onderwerp te begrijpen en in te zien waarom de onderzoeksvraag de moeite waard is om te onderzoeken. In de inleiding ga je literatuurverwijzingen beperken, zodat de tekst vlot leesbaar blijft. Je kan de inleiding verder onderverdelen in secties als dit de tekst verduidelijkt. Zaken die aan bod kunnen komen in de inleiding:
-
-\begin{itemize}
-  \item context, achtergrond
-  \item afbakenen van het onderwerp
-  \item verantwoording van het onderwerp, methodologie
-  \item probleemstelling
-  \item onderzoeksdoelstelling
-  \item onderzoeksvraag
-  \item \ldots
-\end{itemize}
+Objectdetectie heeft de afgelopen jaren enorme vooruitgang geboekt dankzij de opkomst van deep learning en de beschikbaarheid van grote, gelabelde datasets. In domeinen zoals computervisie, waar overvloedige trainingsdata gemakkelijk toegankelijk is, hebben deze technieken indrukwekkende prestaties bereikt. Echter beschikken niet alle vakgebieden over dergelijke datasets. In gespecialiseerde domeinen, zoals sonarbeeldanalyse, is gelabelde data schaars, wat het trainen van nauwkeurige detectiemodellen bemoeilijkt. Dit onderzoek richt zich op het verkennen van alternatieve leermethoden die deze afhankelijkheid van handmatige annotatie kunnen verminderen, zonder in te boeten op de prestaties van het model.
 
 \section{Probleemstelling}%
 \label{sec:probleemstelling}
 
-Om een model te trainen die met hoge precisie objecten in afbeeldingen kan herkennen en aanduiden, is een grote hoeveelheid gelabelde data nodig. Dit wil zeggen dat er naast de afbeeldingen zelf telkens ook informatie over de positie van het object op de afbeelding nodig is. Na de training is het namelijk de bedoeling om het model deze informatie te laten voorspellen op ongekende afbeeldingen. Sinds de popularisatie van objectdetectie binnen het veld van machine learning zijn er verschillende datasets publiek ter beschikking gesteld die vrij gebruikt mogen worden om een dergelijk model te trainen. Dit is echter niet het geval bij sonardata. Hier zijn verschillende redenen voor. Allereerst is objectdetectie op sonarbeelden een redelijk niche probleem. Dit zorgt ervoor dat er maar weinig mensen de kennis en knowhow hebben om zo'n dataset samen te stellen en -- nog belangrijker -- juist te annoteren. Daarnaast is er het -- misschien wel nog belangrijker -- probleem van de data zelf. Dit soort data is niet zomaar met een camera te verzamelen. Er is een gespecialiseerde sonarinstallatie voor nodig. Het nut om zo'n installatie aan te schaffen is opnieuw redelijk beperkt. Deze worden echter wel gebruikt voor militaire doeleinden. Het probleem hierbij is dat nagenoeg alle data geproduceerd door deze instanties uit veiligheidsredenen geclassificeerd is. De probleemstelling is dus tweeledig: er is weinig gelabelde sonardata voor objectdetectie beschikbaar en het annoteren van een dergelijke dataset is moeilijk, tijdrovend en duur.
+Om een model te trainen dat met hoge precisie objecten in afbeeldingen kan herkennen en aanduiden, is een grote hoeveelheid gelabelde data nodig. Dit betekent dat naast de afbeeldingen zelf ook informatie over de positie van het object op de afbeelding beschikbaar moet zijn. Na de training is het de bedoeling dat het model deze informatie kan voorspellen op ongekende afbeeldingen. Sinds de opkomst van objectdetectie binnen het veld van machine learning zijn verschillende datasets openbaar beschikbaar gesteld die vrij gebruikt mogen worden om een dergelijk model te trainen. Dit geldt echter niet voor sonardata, om meerdere redenen. \\
+
+Allereerst is objectdetectie op sonarbeelden een nicheprobleem. Hierdoor beschikken slechts weinig mensen over de kennis en expertise om zo’n dataset samen te stellen en, nog belangrijker, correct te annoteren. Daarnaast is er het – misschien nog grotere – probleem van de data zelf. Dit type gegevens kan niet eenvoudig met een camera worden verzameld; er is een gespecialiseerde sonarinstallatie voor nodig. Voor bedrijven is de aanschaf van zo’n installatie vaak weinig rendabel. Wel worden dergelijke systemen gebruikt voor militaire doeleinden, maar de data die hieruit voortkomt, is om veiligheidsredenen vrijwel altijd geclassificeerd. \\
+
+De probleemstelling is dus tweeledig: er is weinig gelabelde sonardata voor objectdetectie beschikbaar, en het annoteren van een dergelijke dataset is moeilijk, tijdrovend en kostbaar.
 
 \section{Onderzoeksvraag}%
 \label{sec:onderzoeksvraag}
 
-Om kosten en tijd de besparen zou het dus handig zijn mocht er zo min mogelijk annotatie van de dataset nodig zijn. Bij supervised learning is dit nagenoeg onmogelijk, aangezien het model juist getraind wordt op basis van de annotatie. Echter bestaan er wel andere veelbelovende alternatieven, zoals semi- en self-supervised learning om dit probleem te overbruggen. Deze technieken maken namelijk gebruik van ongesuperviseerde data om representaties te leren en beperken de afhankelijkheid van gelabelde data. Moderne self-supervised methoden hebben indrukwekkende resultaten laten zien in domeinen zoals computer vision, maar hun toepassing op domeinspecifieke datasets, zoals sonar, is nog relatief onbekend terrein. De hoofdvraag van dit onderzoek is daarom: Op welke manieren kan het gebruik van semi- of self-supervised learning het labelproces versnellen zonder een significant verlies in nauwkeurigheid?
+Om kosten en tijd te besparen, zou het dus ideaal zijn als er zo min mogelijk annotatie van de dataset nodig is. Bij supervised learning is dit echter nagenoeg onmogelijk, aangezien het model juist getraind wordt op basis van het verband tussen de afbeelding en de annotatie. Er bestaan echter veelbelovende alternatieven, zoals semi- en self-supervised learning, om dit probleem te overbruggen. Deze technieken maken gebruik van ongesuperviseerde data om representaties te leren en beperken zo de afhankelijkheid van gelabelde data. Moderne semi- en self-supervised methoden hebben indrukwekkende resultaten laten zien in domeinen zoals computer vision, maar hun toepassing op domeinspecifieke datasets, zoals sonar, is nog relatief onbekend terrein. \\
+
+De hoofdvraag van dit onderzoek is daarom: Op welke manieren kan het gebruik van semi- of self-supervised learning het labelproces versnellen zonder een significant verlies in nauwkeurigheid?
 
 \section{Onderzoeksdoelstelling}%
 \label{sec:onderzoeksdoelstelling}
 
-Het onderzoek verwacht aan te tonen dat semi- en self-supervised learning effectief kunnen worden ingezet om het labelproces bij sonarobjectdetectie aanzienlijk te versnellen. Door technieken zoals SimCLR of BYOL te gebruiken voor pre-training, wordt verwacht dat het model sterke representaties leert van unsupervised sonardata, wat de behoefte aan grootschalige gelabelde datasets verkleint. Daarnaast zal een analyse inzicht geven in de minimale hoeveelheid gelabelde data die nodig is om vergelijkbare of betere prestaties te behalen dan met volledig supervised-learning methoden. Dit resulteert in een efficiëntere en kosteneffectieve aanpak voor objectdetectie in sonarbeelden, zonder verlies van nauwkeurigheid, en biedt een waardevolle methodologie voor verdere toepassingen in domeinen waar gelabelde data schaars is.
+Het onderzoek verwacht aan te tonen dat semi- en self-supervised learning effectief kunnen worden ingezet om het labelproces bij sonarobjectdetectie aanzienlijk te versnellen. Door technieken zoals SimCLR, BYOL, Pseudo-Labeling en FixMatch te gebruiken voor pre-training, wordt verwacht dat het model sterke representaties leert van ongesuperviseerde sonardata, waardoor de behoefte aan grootschalige gelabelde datasets afneemt. Daarnaast zal een analyse inzicht geven in de minimale hoeveelheid gelabelde data die nodig is om vergelijkbare of betere prestaties te behalen dan met volledig supervised-learning methoden. \\
+
+Dit resulteert in een efficiëntere en kosteneffectieve aanpak voor objectdetectie in sonarbeelden, zonder verlies van nauwkeurigheid, en biedt een waardevolle methodologie voor verdere toepassingen in domeinen waar gelabelde data schaars is.
 
 \section{Opzet van deze bachelorproef}%
 \label{sec:opzet-bachelorproef}

@@ -2,13 +2,13 @@
 
 \subsection{Definitie en gebruik op sonarafbeeldingen}
 
-Objectdetectie is een tak binnen het domein van computer vision dat gericht is op het identificeren en lokaliseren van objecten binnen beelddata (zoals foto's en video's). Dit wordt gebruikt in verschillende domeinen, zoals beveiligingssystemen (bv. om inbrekers te detecteren) of de medische wereld (bv. om tumoren op te sporen). Door de jaren heen is objectdetectie aanzienlijk geëvolueerd dankzij de vooruitgang in Deep Learning en de grote beschikbaarheid van datasets met beeldmateriaal. \autocite{He_2016} \\
+Objectdetectie is een tak binnen het domein van computer vision dat gericht is op het identificeren en lokaliseren van objecten binnen beelddata (zoals foto's en video's). Dit wordt gebruikt in verschillende domeinen, zoals beveiligingssystemen (bv. om inbrekers te detecteren) of de medische wereld (bv. om tumoren op te sporen). Door de jaren heen is objectdetectie aanzienlijk geëvolueerd dankzij de vooruitgang in deep learning en de grote beschikbaarheid van datasets met beeldmateriaal. \autocite{He_2016} \\
 
 Objectdetectie combineert twee belangrijke zaken in computer vision: objectlokalisatie en objectclassificatie. Objectlokalisatie bepaalt de positie van objecten, meestal in de vorm van \glspl{bounding_box} \autocite{Tompson_2015}, terwijl objectclassificatie bepaalt tot welke categorie een gedetecteerd object behoort. Samen geeft dit de mogelijkheid tot het herkennen van verschillende soorten objecten op één foto. \\
 
-Objectdetectie heeft vele toepassingen, ook in domeinen die misschien niet zo voor de hand liggend zijn. Één van deze specialisaties binnen de -- algemene -- objectdetectie is objectdetectie op sonardata. Dit domein is over de laatste jaren erg gegroeid \autocite{Wang_2024}
+Objectdetectie heeft vele toepassingen, ook in domeinen die misschien niet zo voor de hand liggend zijn. Één van deze specialisaties binnen de -- algemene -- objectdetectie is objectdetectie op sonardata. Dit domein is over de laatste jaren erg gegroeid, vooral onder invloed van buitenlandse dreigingen. Zo wordt sonarobjectdetectie gebruikt voor het opsporen van mijnen in zee om ze later onschadelijk te kunnen maken. Naast detectie van mijnen wordt   de techniek ook gebruikt voor verschillende soorten onderzoeken, zoals archeologisch en maritiem onderzoek. Bij deze verschillende toepassingen wordt natuurlijk telkens een kleine variatie op deze techniek gebruikt om telkens andere dingen op te sporen. \autocite{Wang_2024} \\
 
-Traditioneel worden gesuperviseerde methoden -- zoals Faster \gls{rcnn}, \gls{yolo} en \gls{ssd} -- gebruikt voor objectdetectie. \autocite{Redmon_2016} Deze modellen presteren uitstekend bij voldoende gelabelde data, maar de annotatiekosten en tijdsinvestering vormen een grote belemmering, vooral bij complexe datasets zoals sonar. Sonardata vereist namelijk gespecialiseerde kennis voor het labelen, wat de annotatie nog uitdagender maakt. \autocite{Long_2015} \\
+Traditioneel worden supervised-learning methoden gebruikt voor objectdetectie. Voorbeelden van populaire architecturen binnen dit domein zijn onder andere Faster \gls{rcnn}, \gls{yolo} en \gls{ssd}. \autocite{Redmon_2016} Omdat dit supervised-learning modellen zijn, presteren  ze uitstekend bij voldoende gelabelde data. De annotatiekosten en tijdsinvestering vormen echter een grote belemmering, vooral bij complexe datasets zoals sonar. Sonardata vereist namelijk gespecialiseerde kennis voor het labelen, wat de annotatie nog uitdagender maakt. \autocite{Long_2015} \\
 
 \subsection{Typische uitdagingen bij sonarobjectdetectie}
 
@@ -16,7 +16,71 @@ Traditioneel worden gesuperviseerde methoden -- zoals Faster \gls{rcnn}, \gls{yo
 
 \subsection{Overzicht van bestaande technieken}
 
-\lipsum[1-3]
+Grofweg zijn er twee soorten stromingen die toegepast worden om objectdetectie op sonarafbeeldingen te doen. Enerzijds zijn er de klassieke methoden en anderzijds zijn er de moderne deep learning-technieken. De klassieke methoden werden vooral gebruikt in een tijd waar grote, complexe neurale netwerken trainen onmogelijk was bij gebrek aan voldoende computerkracht, maar worden de dag van vandaag nog altijd gebruikt als pre-processing technieken voor de datasets waarmee de moderne neurale netwerken getraind worden. Deze klassieke methoden berusten enkel op statistische technieken om zo objecten in afbeeldingen te proberen detecteren. Specifiek zijn deze vooral gericht op het verbeteren van beeldkwaliteit en het onderscheiden van objecten van de achtergrond.
+
+\subsubsection{Filtertechnieken}
+
+Een voorbeeld van een klassieke methode zijn filtertechnieken. Deze worden toegepast om ruis in sonarafbeeldingen te verminderen en de beeldkwaliteit te verbeteren. Er bestaan immens veel verschillende soorten filters die elk geoptimaliseerd voor een specifiek doel. Een veelgebruikte filtermethode is het gebruik van adaptieve filters die zich aanpassen aan de lokale kenmerken van het beeld. Een voorbeeld hiervan is te vinden in een artikel van \textcite{Aridgides_1995}. Merk op dat dit inderdaad een relatief oude publicatie is, wat aantoont dat deze technieken al gebruikt werden toen deep learning-gebaseerde objectdetectie niet mogelijk was. \\
+
+In dit artikel introduceren de auteurs een adaptieve filtertechniek die ontwikkeld is om mijnachtige doelen te onderscheiden van achtergrondruis in sonarbeelden. De filter onderdrukt achtergrondruis terwijl het de target behoudt. De procedure omvat vier stappen: het berekenen van een genormaliseerde gemiddelde target, het bepalen van de covariantiematrix van de achtergrondruis, het oplossen van normale vergelijkingen om een adaptief filter te verkrijgen en het toepassen van een 2D-filter op de gegevens. Dit algoritme bewijst dat, hoewel er geen gebruik gemaakt wordt van deep-learningtechnieken, ze toch complex kan zijn. De techniek heeft in verschillende testen prestaties geleverd die vergelijkbaar zijn met die van een ervaren sonaroperator. \\
+
+Adaptieve filters worden ook vandaag de dag nog gebruikt, wat aangetoond wordt door een paper van \textcite{Lourey_2017}. Hierin wordt ook een filtertechniek beschreven die toegepast kan worden op \gls{cas} om interferentie van de directe transmissie en de echo van de target van elkaar te onderscheiden. Deze methode kan als effectieve pre-processing techniek gebruikt worden voor trainingsdata.
+
+\subsubsection{Thresholding}
+
+Naast filtering bestaan er nog andere klassieke methoden. Een \emph{straightforward}-aanpak is een simpele \emph{threshold}. Thresholding is een techniek waarbij pixelwaarden worden vergeleken met een bepaalde drempelwaarde om objecten van de achtergrond te scheiden. Een klassieke benadering is de Otsu-methode, die de interklassevariantie minimaliseert om een optimale drempelwaarde te bepalen. Deze methode wordt beschreven in een artikel van \textcite{Otsu_1979}.
+
+\begin{figure}[H]
+    \centering
+    \begin{subfigure}{.5\textwidth}
+        \centering
+        \captionsetup{justification=centering}
+        \includegraphics[width=0.9\linewidth]{img_pre_otsu.jpg}
+        \caption[Afbeelding voor Otsu's thresholding]{Afbeelding voor Otsu's thresholding}
+        \label{fig:img_pre_otsu}
+    \end{subfigure}%
+    \begin{subfigure}{.5\textwidth}
+        \centering
+        \captionsetup{justification=centering}
+        \includegraphics[width=0.9\linewidth]{img_post_otsu.jpg}
+        \caption[Afbeelding na Otsu's thresholding]{Afbeelding na Otsu's thresholding}
+        \label{fig:img_post_otsu}
+    \end{subfigure}
+    \caption[Afbeelding voor en na Otsu's thresholding]{Afbeelding voor en na Otsu's thresholding}
+    \label{fig:imgs_otsu}
+\end{figure}
+
+Hoewel deze techniek oorspronkelijk is ontwikkeld voor visuele beelden, is deze ook toegepast op sonarafbeeldingen, zoals besproken in verschillende artikels, waaronder dat van \textcite{Yuan_2016} en dat van \textcite{Dimitrova_Grekow_2017}. Ondanks zijn simpliciteit kan deze techniek aanzienlijke verbeteringen teweegbrengen. Dit wordt onder andere aangehaald in een paper van \textcite{Komari_Alaie_2018}. Deze paper onderzoekt objectdetectie met passieve sonar in de Perzische Golf. Aangezien deze binnenzee ondiep is, is er sprake van een hoge hoeveelheid fouten tijdens de detectie. Een bepaald soort adaptieve thresholding-techniek kon de \gls{precision} van hun objectdetectiemodel met 24\% verbeteren.
+
+\subsubsection{Edge detection}
+
+Edge detection is een andere klassieke techniek die wordt gebruikt om de contouren van objecten in sonarafbeeldingen te identificeren. \autocite{Torre_1986} Een bekende methode is de Canny edge detector, die randen detecteert door het maximaliseren van de gradiëntgrootte. Deze techniek komt als beste uit de vergelijkende studie van \textcite{Awalludin_2022}. \\
+
+De Canny edge detector werkt in meerdere stappen om nauwkeurige en robuuste contourdetectie te realiseren. De eerste stap is Gaussian blurring, waarbij het beeld wordt vervaagd om ruis te verminderen en kleine details die geen significante randen vormen te onderdrukken. Vervolgens wordt de gradiënt van het beeld berekend met behulp van Sobel-operatoren in zowel de horizontale als verticale richting, waardoor de randen worden geaccentueerd. Daarna wordt non-maximum suppression toegepast, waarbij alleen de sterkste randen worden behouden en omliggende pixels met lagere gradiëntwaarden worden onderdrukt. De laatste stap is hysteresis thresholding, waarbij twee drempelwaarden worden gebruikt: pixels met een gradiëntsterkte boven de hoge drempel worden als randen geclassificeerd, terwijl pixels onder de lage drempel worden genegeerd. Pixels met tussenliggende waarden worden alleen als rand beschouwd als ze verbonden zijn met een sterke randpixel. Dankzij deze gefaseerde aanpak is de Canny-methode effectief in het detecteren van duidelijke randen, zelfs in ruisgevoelige omgevingen zoals sonarafbeeldingen. \autocite{Ding_2001} \\
+
+Ook edge detection wordt vandaag de dag nog gebruikt om een grote bijdrage te leveren aan bijvoorbeeld segmentatiemodellen. Het onderzoek van \textcite{Priyadharsini_2019} gebruikt gespecialiseerde edge detection als pre-processing voor de data naar een objectdetectiemodel gaat. \\
+
+Deze klassieke technieken vormen de basis voor objectdetectie in sonarafbeeldingen en hebben bijgedragen aan de ontwikkeling van meer geavanceerde methoden. Ze blijven relevant, vooral in situaties waarin resources beperkt zijn of wanneer eenvoud en interpretatie van het model belangrijk zijn. Ze worden tot op de dag van vandaag gebruikt als pre-processing stap, bijvoorbeeld. Doordat computerkracht steeds goedkoper en meer beschikbaar werd, wordt tegenwoordig vaak gekozen voor deep learning-oplossingen voor deze problemen. Er zijn gespecialiseerde architecturen ontwikkeld om objectdetectie uit te voeren. Hieronder worden er enkele besproken.
+
+\subsubsection{YOLO}
+
+\GLS{yolo} is een deep learning-gebaseerde architectuur voor objectdetectie dat bekend staat om zijn snelheid en efficiëntie. Het werd voor het eerst geïntroduceerd in een artikel van \textcite{Redmon_2016} en is sindsdien één van de populairste algoritmes in computervisie. In tegenstelling tot traditionele detectiemethoden, waar objecten in meerdere stappen geanalyseerd worden, verwerkt YOLO een afbeelding in één enkele \emph{pass} van het neurale netwerk. Dit zorgt ervoor dat real-time objectdetectie mogelijk is, waardoor het bijzonder geschikt is voor toepassingen zoals autonome voertuigen, videobewaking en \gls{ar}.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{yolo_architecture.png}
+    \caption[Originele YOLO-architectuur.]{\label{fig:yolo_architecture}Schematische voorstelling van de originele YOLO-architectuur. \autocite{Redmon_2016}}
+\end{figure}
+
+\gls{yolo} gebruikt een \gls{cnn} om objecten direct te lokaliseren en classificeren, wat bijdraagt aan de hoge nauwkeurigheid en snelheid van het model. De eerste stap is het herschalen van de afbeelding naar 448 $\times$ 448 pixels. Daarna wordt één \gls{cnn} op de afbeelding toegepast en ten slotte wordt \gls{nms} toegepast. Met de nieuwste versies, zoals YOLOv4 en YOLOv5, zijn verdere verbeteringen in precisie en rekenkundige efficiëntie doorgevoerd, waardoor het een krachtig hulpmiddel blijft in de wereld van kunstmatige intelligentie.
+
+\subsubsection{Faster R-CNN}
+
+\lipsum[1]
+
+\subsubsection{SSD}
+
+\lipsum[1]
 
 \subsection{Specifieke toepassingen}
 
