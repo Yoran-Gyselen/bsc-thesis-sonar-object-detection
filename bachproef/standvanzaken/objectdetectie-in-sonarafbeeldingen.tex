@@ -10,13 +10,57 @@ Objectdetectie heeft vele toepassingen, ook in domeinen die misschien niet zo vo
 
 Traditioneel worden supervised-learning methoden gebruikt voor objectdetectie. Voorbeelden van populaire architecturen binnen dit domein zijn onder andere Faster \gls{rcnn}, \gls{yolo} en \gls{ssd}. \autocite{Redmon_2016} Omdat dit supervised-learning modellen zijn, presteren  ze uitstekend bij voldoende gelabelde data. De annotatiekosten en tijdsinvestering vormen echter een grote belemmering, vooral bij complexe datasets zoals sonar. Sonardata vereist namelijk gespecialiseerde kennis voor het labelen, wat de annotatie nog uitdagender maakt. \autocite{Long_2015} \\
 
+Deze supervised objectdetectietechnieken vallen onder te verdelen in grofweg twee grote categorieën. Enerzijds zijn er de zogenaamde \emph{single-shot detectors}, anderzijds heb je de \emph{two-stage detectors}. Deze categorieën zijn gebaseerd op hoeveel keer de afbeelding door het netwerk gaat. Bij single-shot detectors gaat de afbeelding slechts één keer door het netwerk, bij two-stage detectors -- logischerwijs -- twee keer. \autocite{Carranza_Garcia_2020} \\
+
+Één van de eerste succesvolle toepassingen van deep learning binnen het domein van objectdetectie gebeurde in een bekend artikel van \textcite{Girshick_2013}. In dit artikel stelden de auteurs de \gls{rcnn}-architectuur voor. Deze veelbelovende architectuur behaalde een \gls{map} van 30\% meer dan de vorige topscore op een bekende publieke dataset (\acrshort{voc} 2012).
+
+\subsubsection{Single-shot objectdetectie}
+
+Zoals hierboven vermeld, is een single-shot detector een model waarbij de afbeelding slechts één keer door het netwerk gaat. Dit gebeurd door een \gls{cnn} te gebruiken dat zowel objectlocaties als bijbehorende classificaties voorspelt in één enkele \emph{pass}. Het voordeel van dit soort architectuur is dat ze zeer resource-efficiënt is, aangezien elke afbeelding slechts één keer behandeld wordt. Omwille van de efficiëntie, is deze architectuur dus uitermate geschikt voor real-time toepassingen zoals autonome voertuigen en bewakingssystemen. Een nadeel is echter dat het model niet altijd even precies is, aangezien het zowel locaties als klassen in één pass moet voorspellen. Vooral bij het detecteren van kleine objecten geeft dit een probleem. Om dit -- toch gedeeltelijk -- op te lossen, wordt soms gebruik gemaakt van meerdere schaalniveaus om objecten van verschillende groottes te detecteren, wat bijdraagt aan de robuustheid en precisie. \autocite{Carranza_Garcia_2020} \\
+
+Zowel \gls{yolo} als \gls{ssd} zijn single-shot detectors. Deze architecturen worden verder besproken in latere secties hieronder.
+
+\subsubsection{Two-stage objectdetectie}
+
+Zoals de naam doet vermoeden, is two-stage objectdetectie een type objectdetectie waarbij de afbeelding twee keer door het netwerk gaat. Het resultaat is nog steeds een voorspelling van locaties en klassen, maar in plaats van in één keer -- zoals bij single-shot objectdetectie -- gebeurt de voorspelling nu in twee afzonderlijke stappen. Het resultaat van de eerste \emph{pass} is een set van \emph{proposals} -- voorstellen -- en mogelijke locaties van objecten. Daarna zorgt de tweede \emph{pass} voor een verfijning van deze voorstellen. Dit zorgt dan ook voor de uiteindelijke voorspellingen. Het voordeel van dit type objectdetectie is dat het veel preciezer is dan single-shot objectdetectie, aangezien de afbeelding twee keer geanalyseerd wordt. Het nadeel is dat deze approach veel resource-intensiever is. Het is dus zaak om een afweging te maken tussen de precisie van de voorspellingen en het verbruik van resources. \autocite{Carranza_Garcia_2020} \\
+
+Over het algemeen wordt voor real-time applicaties single-shot objectdetectie gebruikt en voor cases waar de voorspellingen heel accuraat moeten zijn, wordt two-stage objectdetectie gebruikt. Een voorbeeld van een two-stage detector is de \gls{rcnn}-architectuur van \textcite{Girshick_2013}. Ook alle latere architecturen die hierop gebaseerd zijn, zijn two-stage detectors. Voorbeelden daarvan zijn Fast \gls{rcnn}, Faster \gls{rcnn} en Mask \gls{rcnn}. \autocite{Ren_2015}
+
+\subsection{Meten van performantie binnen objectdetectie}
+
+Gedurende dit onderzoek zal er gewerkt worden met verschillende soorten modellen en architecturen met elk hun sterktes en hun zwaktes. Het is de bedoeling dat al deze modellen vergeleken kunnen worden met elkaar om zo het best presterende model of de best presterende modellen te kunnen selecteren. Om dit te doen zijn er standaard metrieken nodig. Deze kunnen later (tijdens de trainingsfase) dan ook dienen als \gls{loss_functie}. Er zijn enorm veel verschillende metrieken om de performantie van objectdetectiemodellen te meten, maar twee van de bekendste en meest gebruikte zijn \gls{iou} en \gls{map}.
+
+\subsubsection{Intersection over Union (IoU)}
+
+\gls{iou} is een heel bekende metriek om de accuraatheid van de lokalisatie binnen objectdetectiemodellen te berekenen. Om de \gls{iou} te berekenen wordt gebruikt gemaakt van de echte \gls{bounding_box} en de voorspelde \gls{bounding_box}. Eerst wordt de overlappende oppervlakte (de doorsnede of \emph{intersection} in het Engels) van de twee \glspl{bounding_box} berekend. Daarna wordt de totale oppervlakte (de unie of \emph{union} in het engels) van de twee \glspl{bounding_box} berekend. \\
+
+Door de doorsnede te delen door de unie krijgt men een verhouding van de overlappende oppervlakte tot de totale oppervlakte. Dit geeft een goede indicatie van hoe dicht de voorspelde \gls{bounding_box} bij de echte \gls{bounding_box} ligt. Een lagere \gls{iou}-score duidt op een betere prestatie, aangezien de voorspelde \gls{bounding_box} niet dan weinig afwijkt van de echte \gls{bounding_box}. \autocite{Rezatofighi_2019}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.5\textwidth]{iou_equation.png}
+    \caption[Voorstelling van IoU.]{\label{fig:iou_equation}Formule en visuele voorstelling van de \acrfull{iou}.}
+\end{figure}
+
+\subsubsection{mean Average Precision (mAP)}
+
+Een andere -- zeer bekende -- metriek is de \acrfull{map}. Ze beoordeelt de nauwkeurigheid van een model op basis van zowel \gls{precision} als \gls{recall}. Het wordt berekend door de gemiddelde precisie (of \emph{average precision}, AP) over alle klassen en \gls{iou} drempels te bepalen. AP wordt verkregen door de oppervlakte onder de precisie-recallcurve van een specifieke klasse te berekenen door hem te integreren, en \gls{map} is vervolgens het gemiddelde van deze waarden over alle klassen. Een hogere mAP-score duidt op betere prestaties van een objectdetectiemodel, omdat het aangeeft hoe goed het model objecten correct detecteert en classificeert. \autocite{Wang_2022}
+
 \subsection{Typische uitdagingen bij sonarobjectdetectie}
 
-\lipsum[1-3]
+Objectdetectie op sonarbeelden die gemaakt zijn onderwater wordt geconfronteerd met verschillende uitdagingen die de nauwkeurigheid en betrouwbaarheid van detecties beïnvloeden.
+
+Ruis is een van de voornaamste obstakels bij sonarobjectdetectie. Onderwateromgevingen zijn inherent lawaaierig door factoren zoals luchtbellen, \glspl{thermocline} en biologische organismen, wat leidt tot significante ruis in sonarbeelden. Deze ruis bemoeilijkt het onderscheiden van echte objecten van artefacten typisch aan sonarbeelden, waardoor de betrouwbaarheid van de detecties afneemt. \autocite{Aubard_2024_Datasets} \\
+
+Een andere uitdaging is de lage resolutie van sonarbeelden. In vergelijking met optische sensoren leveren sonars vaak beelden met beperkte detailweergave, wat de identificatie en classificatie van objecten moeilijker maakt. Deze beperking is vooral problematisch bij het detecteren van kleine of complexe objecten, waar detailniveau essentieel is voor nauwkeurige herkenning. \autocite{Lee_2018} \\
+
+Daarnaast zorgen variërende omstandigheden in de onderwateromgeving voor extra complicaties. Factoren zoals veranderende waterdieptes, temperatuurverschillen, stromingen en de aanwezigheid van zwevende deeltjes kunnen de prestaties van sonarsystemen beïnvloeden. Deze dynamische omstandigheden kunnen leiden tot variaties in signaalsterkte en -kwaliteit, wat de consistentie van objectdetectie bemoeilijkt. \autocite{Valdenegro_Toro_2019} \\
+
+Het overwinnen van deze uitdagingen vereist geavanceerde signaalverwerkingstechnieken en robuuste algoritmen die kunnen omgaan met ruis, lage resolutie en variabele omgevingsfactoren. Door voortdurende technologische innovaties en onderzoek kunnen de prestaties van sonarobjectdetectiesystemen worden verbeterd, wat leidt tot betrouwbaardere toepassingen in onderwateromgevingen.
 
 \subsection{Overzicht van bestaande technieken}
 
-Grofweg zijn er twee soorten stromingen die toegepast worden om objectdetectie op sonarafbeeldingen te doen. Enerzijds zijn er de klassieke methoden en anderzijds zijn er de moderne deep learning-technieken. De klassieke methoden werden vooral gebruikt in een tijd waar grote, complexe neurale netwerken trainen onmogelijk was bij gebrek aan voldoende computerkracht, maar worden de dag van vandaag nog altijd gebruikt als pre-processing technieken voor de datasets waarmee de moderne neurale netwerken getraind worden. Deze klassieke methoden berusten enkel op statistische technieken om zo objecten in afbeeldingen te proberen detecteren. Specifiek zijn deze vooral gericht op het verbeteren van beeldkwaliteit en het onderscheiden van objecten van de achtergrond.
+Grofweg zijn er twee stromingen van objectdetectie op sonarafbeeldingen. Enerzijds zijn er de klassieke methoden en anderzijds zijn er de moderne deep learning-technieken. De klassieke methoden werden vooral gebruikt in een tijd waar grote, complexe neurale netwerken trainen onmogelijk was bij gebrek aan voldoende computerkracht, maar worden de dag van vandaag nog altijd gebruikt als pre-processing technieken voor de datasets waarmee de moderne neurale netwerken getraind worden. Deze klassieke methoden berusten enkel op statistische technieken om zo objecten in afbeeldingen te proberen detecteren. Specifiek zijn deze vooral gericht op het verbeteren van beeldkwaliteit en het onderscheiden van objecten van de achtergrond.
 
 \subsubsection{Filtertechnieken}
 
@@ -74,13 +118,28 @@ Deze klassieke technieken vormen de basis voor objectdetectie in sonarafbeelding
 
 \gls{yolo} gebruikt een \gls{cnn} om objecten direct te lokaliseren en classificeren, wat bijdraagt aan de hoge nauwkeurigheid en snelheid van het model. De eerste stap is het herschalen van de afbeelding naar 448 $\times$ 448 pixels. Daarna wordt één \gls{cnn} op de afbeelding toegepast en ten slotte wordt \gls{nms} toegepast. Met de nieuwste versies, zoals YOLOv4 en YOLOv5, zijn verdere verbeteringen in precisie en rekenkundige efficiëntie doorgevoerd, waardoor het een krachtig hulpmiddel blijft in de wereld van kunstmatige intelligentie.
 
+\autocite{Chen_2023}
+\autocite{Diwan_2022}
+\autocite{Jiang_2022}
+\autocite{Terven_2023}
+
 \subsubsection{Faster R-CNN}
 
 \lipsum[1]
 
+\autocite{Ren_2015}
+\autocite{Wang_2023}
+\autocite{Zeng_2021}
+\autocite{Yulin_2020}
+
 \subsubsection{SSD}
 
 \lipsum[1]
+
+\autocite{Ma_2020}
+\autocite{Kumar_2020}
+\autocite{Liu_2016}
+\autocite{Jiang_2020}
 
 \subsection{Specifieke toepassingen}
 
