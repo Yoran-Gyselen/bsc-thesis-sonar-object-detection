@@ -4,7 +4,7 @@
 \newacronym{cnn}{CNN}{Convolutioneel Neuraal Netwerk}
 \newacronym{rcnn}{R-CNN}{Region-based Convolutional Neural Network}
 \newacronym{yolo}{YOLO}{You Only Look Once}
-\newacronym{ssd}{SSD}{Single-Shot Detector}
+\newacronym{ssd}{SSD}{Single Shot Multibox Detector}
 \newacronym{ssl}{SSL}{Semi-Supervised Learning}
 \newacronym{self-sl}{Self-SL}{Self-Supervised Learning}
 \newacronym{iou}{IoU}{Intersection over Union}
@@ -23,6 +23,7 @@
 \newacronym{cas}{CAS}{Continuous Active Sonar}
 \newacronym{ar}{AR}{Augmented Reality}
 \newacronym[description={\gls{non_max_suppression}}]{nms}{NMS}{Non-Maximum Suppression}
+\newacronym{voc}{VOC}{Visual Object Classes}
 
 % === Termen ===
 \newglossaryentry{blindganger}
@@ -72,7 +73,7 @@
 {
     name={Learning rate},
     text={learning rate},
-    description={Hyperparameter die bepaalt hoe snel het model convergeert richting het minimum van de loss-functie. \autocite{Geron_2023}},
+    description={Hyperparameter die bepaalt hoe snel het model convergeert richting het minimum van de \gls{loss_functie}. \autocite{Geron_2023}},
 }
 
 \newglossaryentry{precision}
@@ -115,4 +116,19 @@
 {
     name={Non-Maximum Supression},
     description={Een techniek in computervisie die wordt gebruikt om overlappende detecties te filteren en alleen de meest waarschijnlijke objectlocaties te behouden. Het selecteert de detectie met de hoogste score en onderdrukt omliggende detecties met een hoge overlap (op basis van de \gls{iou}-score), waardoor dubbele detecties worden verminderd en de nauwkeurigheid van objectdetectie-algoritmes wordt verbeterd. \autocite{Geron_2023}}
+}
+
+\newglossaryentry{loss_functie}
+{
+    name={Loss-functie},
+    description={Wiskundige functie die de afwijking meet tussen de voorspellingen van een model en de werkelijke waarden. Het doel is om deze afwijking te minimaliseren tijdens het trainen van het model, zodat de nauwkeurigheid van de voorspellingen verbetert. Hoe lager de waarde van de loss-functie, hoe beter het model presteert. \autocite{Geron_2023}}
+}
+
+\newglossaryentry{thermocline}
+{
+    name={Thermocline},
+    text={thermocline},
+    description={De overgang tussen twee lagen water (of lucht) met verschillende temperatuur en dichtheid, in bijvoorbeeld meren of oceanen.},
+    plural={thermoclines},
+    descriptionplural={De overgangen tussen twee lagen water (of lucht) met verschillende temperatuur en dichtheid, in bijvoorbeeld meren of oceanen.}
 }
