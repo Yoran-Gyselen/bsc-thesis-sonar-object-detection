@@ -108,7 +108,7 @@ Deze klassieke technieken vormen de basis voor objectdetectie in sonarafbeelding
 
 \subsubsection{YOLO}
 
-\GLS{yolo} is een deep learning-gebaseerde architectuur voor objectdetectie dat bekend staat om zijn snelheid en efficiëntie. Het werd voor het eerst geïntroduceerd in een artikel van \textcite{Redmon_2016} en is sindsdien één van de populairste algoritmes in computervisie. In tegenstelling tot traditionele detectiemethoden, waar objecten in meerdere stappen geanalyseerd worden, verwerkt YOLO een afbeelding in één enkele \emph{pass} van het neurale netwerk. Dit zorgt ervoor dat real-time objectdetectie mogelijk is, waardoor het bijzonder geschikt is voor toepassingen zoals autonome voertuigen, videobewaking en \gls{ar}.
+\acrfull{yolo} is een deep learning-gebaseerde architectuur voor objectdetectie dat bekend staat om zijn snelheid en efficiëntie. Het werd voor het eerst geïntroduceerd in een artikel van \textcite{Redmon_2016} en is sindsdien één van de populairste algoritmes in computervisie. In tegenstelling tot traditionele detectiemethoden, waar objecten in meerdere stappen geanalyseerd worden, verwerkt YOLO een afbeelding in één enkele \emph{pass} van het neurale netwerk. Dit zorgt ervoor dat real-time objectdetectie mogelijk is, waardoor het bijzonder geschikt is voor toepassingen zoals autonome voertuigen, videobewaking en \gls{ar}.
 
 \begin{figure}[H]
     \centering
@@ -116,12 +116,34 @@ Deze klassieke technieken vormen de basis voor objectdetectie in sonarafbeelding
     \caption[Originele YOLO-architectuur.]{\label{fig:yolo_architecture}Schematische voorstelling van de originele YOLO-architectuur. \autocite{Redmon_2016}}
 \end{figure}
 
-\gls{yolo} gebruikt een \gls{cnn} om objecten direct te lokaliseren en classificeren, wat bijdraagt aan de hoge nauwkeurigheid en snelheid van het model. De eerste stap is het herschalen van de afbeelding naar 448 $\times$ 448 pixels. Daarna wordt één \gls{cnn} op de afbeelding toegepast en ten slotte wordt \gls{nms} toegepast. Met de nieuwste versies, zoals YOLOv4 en YOLOv5, zijn verdere verbeteringen in precisie en rekenkundige efficiëntie doorgevoerd, waardoor het een krachtig hulpmiddel blijft in de wereld van kunstmatige intelligentie.
+\gls{yolo} gebruikt een \gls{cnn} om objecten direct te lokaliseren en classificeren, wat bijdraagt aan de hoge nauwkeurigheid en snelheid van het model. De eerste versie van \gls{yolo} gebruikt ImageNet om de eerste 20 convolutionele lagen te pre-trainen. Het model wordt daarna omgezet om detectie uit te voeren, aangezien de combinatie van convolutionele lagen en fully-connected-lagen de performantie verhoogt. \autocite{Redmon_2016} De interne werking van \gls{yolo} kan opgesplitst worden in verschillende fasen. \\
 
-\autocite{Chen_2023}
-\autocite{Diwan_2022}
-\autocite{Jiang_2022}
-\autocite{Terven_2023}
+Eerst en vooral wordt de invoerafbeelding opgesplitst in een $S \times S$ raster (bv. $7 \times 7$). Elke cel van dat raster is daarna verantwoordelijk voor het detecteren van objecten waarvan het midden zich in dat vak bevindt. Voor elke cel voorspelt \gls{yolo} meerdere \glspl{bounding_box}. Zo'n voorspelling van een \gls{bounding_box} bevat telkens 5 parameters (cf. \ref{fig:bounding_box}): 
+
+\begin{itemize}
+    \item $x$ en $y$: de gecentreerde coördinaten van het object binnen de cel in het raster.
+    \item $w$ en $h$: de breedte en hoogte van het object, genormaliseerd ten opzichte van de afbeelding.
+    \item De \gls{confidence_score}: de waarschijnlijkheid dat er daadwerkelijk een object in de box zit.
+\end{itemize}
+
+Naast het voorspellen van de \glspl{bounding_box} voorspelt het model ook de klasse van het object (bv. auto, hond, persoon, \dots) en de \gls{confidence_score} van deze classificatie. Echter zijn er vaak meerdere \glspl{bounding_box} die hetzelfde object detecteren. Daarom gebruikt \gls{yolo} \gls{nms} om overbodige detecties te verwijderen. Ten slotte genereert \gls{yolo} een lijst met gedetecteerde objecten, hun locaties en de waarschijnlijkheid van hun klassen. \autocite{Diwan_2022} \\
+
+\gls{yolo} is sneller dan traditionele methoden zoals Faster R-CNN omdat het objectdetectie beschouwt als een enkel regressieprobleem. Dit betekent dat het model direct van ruwe pixels naar detecties gaat, zonder een apart proces voor regio-voorstel en classificatie. \\
+
+Sinds de introductie van \gls{yolo} in de paper van \textcite{Redmon_2016} heeft het model aanzienlijke verbeteringen en evoluties doorgemaakt. De oorspronkelijke versie, \gls{yolo}v1, legde de basis met een enkelvoudige doorvoer voor objectdetectie, maar had beperkingen in nauwkeurigheid, vooral bij kleine objecten. \gls{yolo}v2 (ook wel \gls{yolo}9000) werd kort na de introductie van het originele \gls{yolo}-model geïntroduceerd in een paper van \textcite{Redmon_2016_YOLOv2}. De nieuwe versie werd ontwikkeld om sneller en accurater te zijn dan het originele model. Ook kon deze versie meer verschillende klassen onderscheiden. Daarnaast werd er gebruik gemaakt van een andere \emph{backbone}, namelijk Darknet-19 (wat zelf een variant is van VGGNet). Dit zijn de belangrijkste veranderingen:
+
+\begin{itemize}
+    \item Gebruik van een nieuwe \gls{loss_functie} die beter geschikt is voor objectdetectie.
+    \item Gebruik van \gls{batch_normalisatie} om accuraatheid en stabiliteit te verhogen.
+    \item Trainen op zelfde afbeeldingen met een verschillende schaal, hierdoor wordt het model beter in het herkennen van kleine objecten.
+    \item Gebruik van zogenaamde \emph{anchor boxes}: dit zijn vooraf gedefinieerde \glspl{bounding_box} die helpen bij het detecteren van objecten in een afbeelding. Tijdens het trainen leert het model welke van deze \emph{anchor boxes} het beste passen bij de werkelijke objecten in de afbeelding.
+\end{itemize}
+
+\gls{yolo}v3 werd geïntroduceerd in een paper van \textcite{Redmon_2018}. Het doel van deze iteratie was opnieuw het verbeteren van de accuraatheid en de snelheid. Dit deden de onderzoekers door opnieuw een andere architectuur te gebruiken als \emph{backbone}. Dit keer gebruikten ze Darknet-53 (een variant van ResNet). Daarnaast werden de \emph{anchor boxes} aangepast zodat ze verschillende vormen en maten hadden (in tegenstelling tot allemaal dezelfde vorm en maat in \gls{yolo}v2). Ook werden nog andere technieken toegepast om kleine objecten efficiënter en beter te kunnen detecteren. \\
+
+De ontwikkeling van \gls{yolo} werd overgenomen door andere mensen, aangezien Joseph Redmond (de originele ontwikkelaar) na \gls{yolo}v3 de AI-community verliet. In een paper van \textcite{Bochkovskiy_2020} werd \gls{yolo}v4 geïntroduceerd. Hierin werd de efficiëntie verder verhoogd door verbeterde activatiefuncties en optimalisatietechnieken. \gls{yolo}v5, geïntroduceerd door Ultralytics, richtte zich op gebruiksvriendelijkheid en efficiëntere implementatie. \autocite{Jiang_2022} Nieuwere versies, zoals \gls{yolo}v7 en \gls{yolo}v8, blijven innoveren met hogere detectienauwkeurigheid, verbeterde verwerkingstijden en geavanceerdere architecturen, waardoor \gls{yolo} één van de meest gebruikte objectdetectiemodellen blijft in real-time toepassingen. \autocite{Terven_2023} \\
+
+Ook heeft de architectuur veel potentie voor onderwaterobjectdetectie, zoals bij het opsporen van wrakken, onderzeese mijnen en mariene organismen. Dankzij de snelheid en efficiëntie van \gls{yolo} kunnen real-time detecties worden uitgevoerd, wat waardevol is voor \glspl{auv} en robots die in onbekende of gevaarlijke omgevingen opereren. Bovendien kunnen verbeterde versies van \gls{yolo}, zoals \gls{yolo}v5 en \gls{yolo}v8, met aangepaste architecturen en pre-processingtechnieken betere resultaten behalen op sonarbeelden. Door de voortdurende ontwikkeling van deep learning en sonarverwerking wordt \gls{yolo} steeds vaker ingezet voor geavanceerde onderwaterdetectie en navigatie. \autocite{Chen_2023}
 
 \subsubsection{Faster R-CNN}
 
