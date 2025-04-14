@@ -40,6 +40,53 @@ Een consistente voorspelling betekent dat beide kansverdelingen ``dicht'' bij el
 
 Consistency regularization is enorm effectief (en wordt daarom ook veel gebruikt) omdat het ervoor zorgt dat het model gebruik maakt van de onderliggende structuur van ongelabelde data. Hierdoor verbetert de generalisatie, omdat het model minder gevoelig wordt voor kleine ruis en variaties. Daarnaast verhoogt de sample-efficiëntie, waardoor minder gelabelde data nodig is voor goede prestaties. \autocite{Fan_2022}
 
-\subsubsection{MixMatch en FixMatch}
+\subsubsection{FixMatch}
 
-\lipsum[1]
+Beide voorgaande technieken -- zowel pseudo-labeling als consistency regularization -- zijn slechts concepten binnen het domein van \gls{ssl}. Dit wil daarom niet zeggen dat ze niet gebruikt worden in productie, maar vaak zijn ze slechts steunpilaren voor een grotere, complexere en effectievere architecturen. Hieronder wordt FixMatch -- een eerste voorbeeld die relevant is voor dit onderoek -- besproken. \\
+
+FixMatch combineert pseudo-labeling met consistency regularization. Het werd geïntroduceerd door \textcite{Sohn_2020} en heeft bewezen indrukwekkende prestaties te leveren op benchmarks zoals CIFAR-10, waarbij met slechts 250 gelabelde voorbeelden een nauwkeurigheid van 94,93\% werd bereikt. De kernideeën achter FixMatch zijn gebaseerd op het principe dat een model consistente voorspellingen zou moeten maken, zelfs wanneer invoerdata wordt gewijzigd met verschillende vormen van data-augmentatie. FixMatch combineert twee belangrijke technieken binnen \gls{ssl}: pseudo-labeling en sterke versus zwakke augmentatie. \\
+
+Voor een gegeven ongelabeld voorbeeld $x_u$ wordt eerst een zwak geaugmenteerde versie $x_u^w$ gegenereerd met eenvoudige transformaties zoals willekeurige spiegelingen en verschuivingen. Het model maakt een voorspelling $p\left(y|x_u^w\right)$, wat een kansverdeling over de mogelijke klassen oplevert. Als de hoogste voorspelde waarschijnlijkheid boven een drempel $\tau$ ligt wordt dit label als pseudo-label gebruikt. 
+
+$$
+\hat{y}_u = \arg \max p\left(y|x_u^w\right) \ \text{indien} \ \max p\left(y|x_u^w\right) > \tau
+$$
+
+Dit voorkomt dat onzekere voorspellingen als pseudo-labels worden gebruikt, waardoor ruis in de trainingsdata wordt verminderd. \\
+
+Vervolgens wordt een sterk geaugmenteerde versie $x_u^s$ van dezelfde input $x_u$ gemaakt met agressieve augmentaties, zoals kleurvervormingen en Cutout (willekeurige afdekking van delen van de afbeelding). \autocite{DeVries_2017} Het model wordt getraind om dezelfde voorspelling $\hat{y}_u$ te maken op de sterk geaugmenteerde input $x_u^s$, waardoor het robuust wordt tegen verschillende variaties in de data. \\
+
+Om FixMatch te trainen is er echter een gespecialiseerde \gls{loss_functie} nodig, die een combinatie is voor zowel de gelabelde als de pseudo-gelabelde data:
+
+$$
+L = L_s + \lambda_u L_u
+$$
+
+waarbij $L_s$ de gewone \gls{loss_functie} is voor de gelabelde data, $L_u$ de \emph{consistency loss} is voor pseudo-gelabelde data, gedefinieerd als de gemiddelde cross-entropy tussen het pseudo-label en de voorspelling op $x_{u'}^s$ en $\lambda_u$ een hyperparameter is die de balans tussen gelabelde en ongelabelde data regelt. \\
+
+De hoge performantie van FixMatch heeft verschillende redenen: In tegenstelling tot traditionele pseudo-labeling, waarbij alle voorspellingen worden gebruikt, accepteert FixMatch alleen pseudo-labels als de modelvoorspelling een zekerheid boven een vooraf ingestelde drempel $\tau$ heeft. Dit voorkomt het versterken van foute pseudo-labels en verbetert de robuustheid van het model. Ook wordt het model gedwongen om dezelfde voorspelling te maken voor een input, ongeacht of deze zwak of sterk geaugmenteerd is. Dit helpt het model om stabiele, generaliseerbare representaties te leren. Daarnaast voorkomt het toepassen van een tweefasige-augmentatiestrategie dat het model te afhankelijk wordt van specifieke kenmerken in de data. Dit helpt overfitting te verminderen.
+
+\subsubsection{MixMatch}
+
+MixMatch integreert ook verschillende \gls{ssl}-technieken, waaronder data-augmentatie, pseudo-labeling en mixup. Het algoritme is een verbetering op de FixMatch-architectuur en werd geïntroduceerd door \textcite{Berthelot_2019}. In benchmarks heeft het hele goede prestaties geleverd op datasets zoals CIFAR-10 en STL-10. \\
+
+Voor elk ongelabeld voorbeeld wordt het model meerdere keren toegepast om voorspellingen te genereren. Het gemiddelde van de voorspellingen wordt gebruikt om ruis te verminderen en betrouwbaardere pseudo-labels te verkrijgen. Dit helpt het model om robuustere pseudo-labels te creëren dan traditionele pseudo-labeling, waar slechts één voorspelling per voorbeeld wordt gebruikt. \\
+
+Om ervoor te zorgen dat de pseudo-labels niet te onzeker zijn, wordt een \emph{softmax-temperature-scaling} toegepast om de kansverdeling scherper te maken. Dit betekent dat het model meer vertrouwen krijgt in de meest waarschijnlijke klassen, waardoor het pseudo-label effectiever wordt.
+
+$$
+q(y|x) = \frac{p(y|x)^{\frac{1}{T}}}{\sum_{y'} p(y'|x)^\frac{1}{T}}
+$$
+
+waarbij $T$ de temperatuurparameter is die de scherpte van de distributie regelt (kleinere waarden leiden tot scherpere distributies). \\
+
+MixMatch maakt ook gebruik van \emph{mixup}, een data-augmentatietechniek waarbij synthetische trainingssamples worden gemaakt van paren bestaande trainingssamples en hun labels ($(x_1, y_1)$ en $(x_2, y_2)$). Merk op dat zowel de gelabelde als de pseudo-gelabelde samples gebruikt worden. 
+
+\begin{align*}
+    \tilde{x} & = \lambda x_1 + (1 - \lambda) x_2 \\
+    \tilde{y} & = \lambda y_1 + (1 - \lambda) y_2
+\end{align*}
+
+Hierbij is $\lambda$ een gewichtsparameter, die willekeurig gekozen is uit een Beta-verdeling. Deze techniek zorgt voor soepelere beslissingsgrenzen en vermindert overfitting door het model te dwingen om robuuster te generaliseren. \autocite{Zhang_2017} \\
+
+Omdat dezelfde input meerdere keren wordt geaugmenteerd en verwerkt, wordt het model getraind om consistente voorspellingen te maken voor deze variaties. Dit dwingt het model om stabiele representaties te leren, zelfs wanneer kleine veranderingen worden aangebracht in de inputdata. Net zoals FixMatch minimaliseert MixMatch een gecombineerde \gls{loss_functie} die zowel de gelabelde als de pseudo-gelabelde voorbeelden gebruikt (cf. supra). \autocite{Berthelot_2019}

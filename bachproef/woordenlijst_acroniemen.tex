@@ -29,6 +29,9 @@
 \newacronym{nlp}{NLP}{Natural Language Processing}
 \newacronym{vae}{VAE}{Variational Autoencoder}
 \newacronym{gan}{GAN}{Generative Adversarial Networks}
+\newacronym{nt-xent}{NT-Xent}{Normalized Temperature-scaled Cross Entropy}
+\newacronym{moco}{MoCo}{Momentum Contrast}
+\newacronym{ema}{EMA}{Exponential Moving Average}
 
 % === Termen ===
 \newglossaryentry{blindganger}
@@ -153,4 +156,11 @@
     name={Batch normalisatie},
     text={batch normalisatie},
     description={Techniek in deep learning die de invoer van elke laag normaliseert (per batch) waardoor de training minder gevoelig wordt voor initiële waarden van de gewichten en \gls{learning_rate}. \autocite{Geron_2023}}
+}
+
+\newglossaryentry{backpropagation}
+{
+    name={Backpropagation},
+    text={backpropagation},
+    description={Algoritme om parameters in neurale netwerken te updaten en het model zo te trainen. Het werkt door de fout tussen de voorspelde en werkelijke output terug te propageren door het netwerk, waarbij de gradiënt van de fout ten opzichte van de gewichten wordt berekend. Deze informatie wordt vervolgens gebruikt om de gewichten an te passen, zodat het netwerk beter presteert bij toekomstige voorspellingen. \autocite{Geron_2023}}
 }

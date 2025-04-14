@@ -2,7 +2,11 @@
 
 \subsection{Definitie en verschil met SSL}
 
-\lipsum[1]
+Anders dan bij \gls{ssl} is er bij \gls{self-sl} helemaal geen nood aan labels. Deze creëert het algoritme namelijk zelf tijdens een pre-training fase. Semi-supervised learning behoort echter niet helemaal tot het domein van unsupervised learning, hoewel het gebruik maakt van verschillende groeperings- en clusteringmethoden. Het uiteindelijke model maakt namelijk gebruik van -- door de pre-training -- gelabelde data. Deze techniek zorgt ervoor dat er veel complexere modellen getraind kunnen worden zonder een gigantische hoeveelheid aan data. Enkele nadelen zijn wel dat de techniek een grote hoeveelheid computerkracht nodig heeft en een lagere accuratie heeft dan supervised learning. \autocite{Gui_2024} \\
+
+Het fundamentele verschil tussen self-supervised en semi-supervised learning ligt in de manier waarop ze omgaan met labels. In semi-supervised learning zijn er externe, door mensen geannoteerde labels aanwezig, zij het in beperkte mate. Self-supervised learning genereert daarentegen volledig zijn eigen labels zonder externe annotaties. Hierdoor wordt self-supervised learning soms beschouwd als een vorm van unsupervised learning, maar met expliciet gedefinieerde pretext-taken om de onderliggende structuren in data beter te benutten. \\
+
+Ondanks deze nadelen blijken verschillende populaire technieken succesvol binnen het domein van computer vision.
 
 \subsection{Werking}
 
@@ -14,12 +18,90 @@
 
 \subsubsection{SimCLR}
 
-\lipsum[1]
+Een bekende \gls{self-sl}-techniek is \acrshort{simclr}. Deze afkorting staat voor \acrlong{simclr}. Met andere woorden maakt deze techniek dus gebruik van \emph{contrastive learning} om visuele representaties te leren zonder de noodzaak van gelabelde data. Het werd ontwikkeld door onderzoekers van Google Brain en gepresenteerd in een paper van \textcite{Chen_2020}. Het doel van \gls{simclr} is om een neuraal netwerk zodanig te trainen dat het visuele representaties van afbeeldingen leert door contrastieve relaties te benutten.
 
-\subsection{MoCo}
+Om een model contrastieve representaties te laten leren, worden er van elke invoerafbeelding eerst twee willekeurige transformaties gemaakt. Deze transformaties kunnen bestaan uit verschillende dingen, waaronder:
 
-\lipsum[1]
+\begin{itemize}
+    \item Willekeurig bijsnijden en schalen
+    \item Kleurveranderingen zoals de helderheid en contrast aanpassen
+    \item Toepassen van blurring
+    \item Rotatie of horizontale spiegeling
+\end{itemize}
 
-\subsection{BYOL}
+Deze transformaties zorgen ervoor dat het model leert om dezelfde afbeelding te herkennen, ongeacht variaties in uiterlijk. Na de augmentaties worden de twee versies van de afbeelding door een encoder gestuurd, meestal een \gls{cnn} (zoals een ResNet). Dit netwerk zet de invoerafbeeldingen om in zogenaamde \emph{feature vectors} die de kernkenmerken van de afbeelding representeren. \\
 
-\lipsum[1]
+De gegenereerde feature vectors worden vervolgens door een \emph{projection head} gestuurd. Dit is een klein neuraal netwerk dat de feature vector transformeert naar een ruimte waarin de contrastieve vergelijking plaatsvindt (latente ruimte). Dit projection head bestaat meestal uit een paar  fully connected of dense-lagen en wordt na training weggegooid, omdat alleen de encoder nodig is voor downstream taken (zoals beeldclassificatie, objectdetectie en semantische segmentatie). \autocite{Gupta_2022} \\
+
+Het doel van SimCLR is om representaties van verschillende augmentaties van dezelfde afbeelding dichter bij elkaar te brengen en representaties van verschillende afbeeldingen verder uit elkaar te duwen. Dit gebeurt met behulp van de \gls{nt-xent} loss. De \gls{loss_functie} wordt berekend zodat positieve paren (twee augmentaties van dezelfde afbeelding) een hoge gelijkenis hebben en negatieve paren (verschillende afbeeldingen in de \gls{batch}) een lage gelijkenis. De cosinusgelijkheid wordt vaak gebruikt om de afstand tussen de verschillende vectoren te meten. Daarnaast beïnvloedt de temperatuurparameter $\tau$ in de \gls{nt-xent} loss  hoe streng de loss reageert op verschillen in gelijkenis tussen paren.
+
+\subsubsection{MoCo}
+
+Een andere veelgebruikte \gls{self-sl}-techniek is \gls{moco}. Deze methode maakt gebruik van contrastief leren om visuele representaties te leren zonder de noodzaak van gelabelde data. Het werd geïntroduceerd in een paper van \textcite{He_2019} en heeft sindsdien aanzienlijke aandacht gekregen binnen het domein van de computer vision. \gls{moco} introduceert verschillende innovatieve technieken zoals het \emph{momentum update}-mechanisme en een dynamisch woordenboek om contrastief leren te verbeteren. Ook wordt er een gespecialiseerde \gls{loss_functie} gebruikt die de basis vormt van het leerproces. Dankzij deze strategieën kan \gls{moco} superieure representaties leren zonder gelabelde data, wat het een krachtige \gls{self-sl}-techniek maakt. \\
+
+Het \gls{moco}-framework bestaat uit meerdere essentiële componenten die samenwerken om effectieve visuele representaties te leren. De \emph{query encoder} ($f_q$) is verantwoordelijk voor het omzetten van een \emph{query sample} (zoals een geaugmenteerde versie van een afbeelding) in een \emph{feature vector}. De parameters van deze encoder worden bijgewerkt via standaard backpropagation, waarbij de optimalisatie wordt gestuurd door een contrastieve \gls{loss_functie}. \autocite{Sowe_2025} \\
+
+Daarnaast bevat \gls{moco} een \emph{momentum key encoder} ($f_k$) die wordt gebruikt om \emph{keys} (bijvoorbeeld geaugmenteerde weergaven uit eerdere \glspl{mini_batch}) om te zetten in \emph{feature vectors}. Een cruciale innovatie van \gls{moco} is het \emph{momentum update}-mechanisme. In plaats van direct via backpropagation te worden bijgewerkt, worden de parameters van de \emph{key encoder} ($\theta_k$) aangepast als een voortschrijdend gemiddelde van de \emph{query encoder} ($\theta_q$). Dit gebeurt volgens de volgende formule:
+
+$$
+\theta_k \rightarrow m\theta_k + (1 - m)\theta_q
+$$
+
+Hierbij is $m$ de \emph{momentumcoëfficiënt}, die doorgaans dicht bij 1 ligt (bv. 0,999). Dit zorgt voor een geleidelijke en stabiele update van de key encoder, waardoor de representaties van de keys na verloop van tijd minder variëren. Een stabieler woordenboek van negatieve samples is cruciaal voor contrastief leren, omdat het helpt om robuuste en onderscheidende kenmerken te leren. \\
+
+Om een grote en gevarieerde set van negatieve samples te behouden, maakt \gls{moco} gebruik van een dynamisch woordenboek dat wordt beheerd via een FIFO (First-In, First-Out) wachtrij. Dit mechanisme zorgt ervoor dat de grootte van het woordenboek niet wordt beperkt door de mini-batchgrootte, zoals bij traditionele contrastieve leermethoden het geval is.
+
+\begin{itemize}
+    \item Wanneer een nieuwe mini-batch wordt verwerkt, worden de bijbehorende representaties aan het einde van de wachtrij toegevoegd (enqueue).
+    \item Tegelijkertijd worden de oudste representaties uit de wachtrij verwijderd (dequeue).
+\end{itemize}
+
+Dit ontkoppelt het aantal negatieve samples van de batchgrootte, waardoor \gls{moco} kan werken met veel grotere negatieve sets zonder dat dit een grote hoeveelheid GPU-geheugen vereist. Een groter en gevarieerder aantal negatieve samples helpt het model om betere representaties te leren, omdat de contrastieve taak uitdagender wordt. Dit dwingt het model om robuustere en meer onderscheidende kenmerken te ontwikkelen. \\
+
+\gls{moco} maakt gebruik van de InfoNCE loss, een contrastieve verliesfunctie die het model leert om:
+
+\begin{enumerate}
+    \item De gelijkenis tussen een query en zijn bijbehorende positieve key te maximaliseren (dit zijn verschillende augmentaties van dezelfde afbeelding).
+    \item De gelijkenis tussen de query en negatieve keys te minimaliseren (deze representeren andere afbeeldingen in de wachtrij).
+\end{enumerate}
+
+De wiskundige formulering van de InfoNCE loss is als volgt:
+
+$$
+L_q = - \log \frac{\exp{(q \cdot k^+ / {\tau})}}{\sum_{i=0}^{K}\exp{(q \cdot k_i / {\tau})}}
+$$
+
+Hierbij geldt:
+
+\begin{itemize}
+    \item $q =$ de gecodeerde query
+    \item $k^+ =$ de gecodeerde positieve key
+    \item $k_i =$ alle keys in het woordenboek (inclusief $k^+$ en $K$ negatieve keys)
+    \item $\tau =$ de temperatuurparameter, die de scherpte van de loss controleert  
+\end{itemize}
+
+De InfoNCE loss vormt de kern van het leerproces van \gls{moco} en stelt het model in staat om een embedding space te creëren waarin augmentaties van dezelfde afbeelding dicht bij elkaar liggen en representaties van verschillende afbeeldingen ver uit elkaar worden geplaatst. Dit proces, bekend als \emph{instance discrimination}, helpt het model om semantisch betekenisvolle kenmerken te leren zonder gelabelde data.
+
+\subsubsection{BYOL}
+
+Naast de contrastieve methoden die veelal gebruikt worden binnen het domein van \gls{self-sl} is er sinds enkele jaren ook een ander alternatief. \gls{byol} is ontwikkeld bij Google DeepMind en werd geïntroduceerd in een paper van \textcite{Grill_2020}. \gls{byol} is gebaseerd op het idee dat een model kan leren door zijn eigen representaties te gebruiken als leersignaal. Dit gebeurt door twee verschillende, geaugmenteerde versies van hetzelfde inputbeeld te genereren, en het model leert vervolgens om de representatie van de ene versie te voorspellen op basis van de andere. In tegenstelling tot contrastieve leermethoden -- die gebruikmaken van zowel positieve als negatieve paren -- werkt \gls{byol} volledig zonder negatieve voorbeelden. Terwijl contrastieve methoden proberen representaties van verschillende beelden uit elkaar te duwen, focust \gls{byol} zich enkel op het dichter bij elkaar brengen van representaties van dezelfde onderliggende input. Deze aanpak vermindert de kans op instabiliteit en maakt het model robuuster voor variaties in data-augmentatie. \\
+
+Het leerproces in \gls{byol} is gebouwd op twee samenwerkende netwerken: een \emph{online netwerk} en een \emph{target netwerk}. Het online netwerk probeert de representatie te voorspellen die door het target netwerk is gegenereerd. Het target netwerk zelf wordt niet direct getraind via \gls{backpropagation}, maar geüpdatet via een \gls{ema} van de parameters van het online netwerk. Deze samenwerking tussen de twee netwerken zorgt voor een geleidelijke en stabiele leeromgeving. \\
+
+Zoals hierboven vermeld, bestaat de \gls{byol}-architectuur dus twee identieke netwerken qua structuur: het online netwerk en het target netwerk. Het online netwerk bevat drie componenten:
+
+\begin{enumerate}
+    \item \textbf{Encoder ($f_\theta$):} extraheert een representatie uit een geaugmenteerd inputbeeld.
+    \item \textbf{Projector ($g_\theta$):} projecteert deze representatie naar een lagere-dimensionale vectorruimte.
+    \item \textbf{Predictor ($q_\theta$):} probeert de representatie van het target netwerk te voorspellen.
+\end{enumerate}
+
+Het target netwerk bevat alleen de encoder en projector, zonder predictor. Het wordt bijgehouden als een langzame, voortschrijdende kopie van het online netwerk, waardoor het stabielere leerdoelen biedt. Tijdens training worden twee verschillende augmentaties van eenzelfde afbeelding verwerkt: één door het online netwerk en de andere door het target netwerk. Het doel is dat de output van de predictor van het online netwerk overeenkomt met de projectie van het target netwerk. \\
+
+De \gls{loss_functie} voor \gls{byol} is gebaseerd op de \gls{mse} tussen L2-genormaliseerde vectoren: de voorspelling van het online netwerk en de projectie van het target netwerk. Voor een enkel augmentatiepaar $(v, v')$ wordt de loss als volgt berekend:
+
+$$
+L_{\theta, \xi} = \left\Vert \text{normalize}\left(q_\theta\left(z_\theta\right)\right) - \text{normalize}\left(z'_\xi\right) \right\Vert^2_2 = 2 - 2 \cdot \left\langle \text{normalize}\left(q_\theta\left(z_\theta\right)\right), \text{normalize}\left(z'_\xi\right) \right\rangle
+$$
+
+Data-augmentatie speelt een centrale rol in \gls{byol}. Door willekeurige transformaties toe te passen (zoals crops, kleurvervormingen, flips, \dots), ontstaan twee verschillende maar inhoudelijk gelijke views van hetzelfde beeld. Deze variatie dwingt het model om representaties te leren die geen rekening houden met oppervlakkige veranderingen en gericht zijn op de semantische kern van het beeld. Interessant is dat \gls{byol} minder gevoelig is voor de specifieke keuze van augmentaties dan contrastieve methoden zoals \gls{simclr}. Het model blijft effectief presteren, zelfs wanneer bepaalde augmentaties worden weggelaten, wat wijst op een grotere robuustheid.
