@@ -1,7 +1,5 @@
 # Detecteren van Objecten in Sonardata met behulp van Semi- of Self-supervised Learning
 
-##### Efficiënte analyse door geavanceerde leertechnieken
-
 Dit is de repository voor mijn bachelorproef over het categoriseren van sonardata met behulp van semi- of self-supervised learning. Het doel van dit onderzoek is om efficiënte classificatie van sonardata te realiseren door geavanceerde leertechnieken toe te passen.
 
 ## Samenvatting
