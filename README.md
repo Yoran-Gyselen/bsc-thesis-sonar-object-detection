@@ -1,26 +1,12 @@
-# Categoriseren van Sonardata met Semi- of Self-supervised Learning
+# Detecteren van Objecten in Sonardata met behulp van Semi- of Self-supervised Learning
+
+##### Efficiënte analyse door geavanceerde leertechnieken
 
 Dit is de repository voor mijn bachelorproef over het categoriseren van sonardata met behulp van semi- of self-supervised learning. Het doel van dit onderzoek is om efficiënte classificatie van sonardata te realiseren door geavanceerde leertechnieken toe te passen.
 
 ## Samenvatting
 
-Sinds de opkomst en popularisatie van AI-modellen is data steeds een cruciale re-
-source geweest. Voor simpele modellen is de benodigde data vaak ook simpel van
-vorm en is er (relatief) weinig van nodig om een performant en goed werkend mo-
-del te creëren. Echter stijgen de data-requirements voor grotere en complexere
-modellen exponentieel. De benodigde data om een objectdetectiemodel voor so-
-nardata te trainen zorgt voor moeilijkheden: dit soort datasets zijn online niet off-
-the-shelf beschikbaar en zijn dus zeer tijdrovend en kostbaar om te maken. De
-hoofdvraag van dit onderzoek is daarom: Op welke manieren kan het gebruik van
-semi- of self-supervised learning het labelproces versnellen zonder een significant
-verlies in nauwkeurigheid? Door verschillende technieken toe te passen, zal een
-pretraining-strategie ontwikkeld worden die gebruikmaakt van ongelabelde data
-om representaties aan te leren. Vervolgens zal onderzocht worden hoeveel gela-
-belde data nodig is om een goed presterend detectiemodel te trainen. Het doel is
-een methodologie te ontwikkelen die de afhankelijkheid van handmatig gelabelde
-data minimaliseert, terwijl de prestaties van het detectiemodel behouden blijven.
-De resultaten kunnen bijdragen aan efficiëntere workflows voor data-analyse in so-
-narbeeldvorming en andere domeinspecifieke contexten.
+Sinds de opkomst en popularisatie van AI-modellen is data steeds een cruciale resource geweest. Voor simpele modellen is de benodigde data vaak ook simpel van vorm en is er (relatief) weinig van nodig om een performant en goed werkend model te creëren. Echter stijgen de data-requirements voor grotere en complexere modellen exponentieel. De benodigde data om een objectdetectiemodel voor sonardata te trainen zorgt voor moeilijkheden: dit soort datasets zijn online niet off-the-shelf beschikbaar en zijn dus zeer tijdrovend en kostbaar om te maken. De hoofdvraag van dit onderzoek is daarom: Op welke manieren kan het gebruik van semi- of self supervised learning het labelproces versnellen zonder significante verlies in nauwkeurigheid? Door verschillende technieken toe te passen, zal een pretraining-strategie ontwikkeld worden die gebruikmaakt van ongelabelde data om representaties aan te leren. Vervolgens zal onderzocht worden hoeveel gelabelde data nodig is om een goed presterend detectiemodel te trainen. Het doel is een methodologie te ontwikkelen die de afhankelijkheid van handmatig gelabelde data minimaliseert, terwijl de prestaties van het detectiemodel behouden blijven. De resultaten kunnen bijdragen aan efficiëntere workflows voor data-analyse in sonarbeeldvorming en andere domeinspecifieke contexten.
 
 ## Inhoud van de repository
 
@@ -95,6 +81,7 @@ Download en installeer de `.deb`-file van [jabref.org](https://jabref.org/). De 
 ├── 📂 bachproef         # Alle LaTeX-bestanden & bibliografie van de bachelorproef zelf
 ├── 📂 fonts             # Vereiste lettertypes voor de template
 ├── 📂 graphics          # Afbeeldingen en diagrammen
+├── 📂 poc               # De implementatie van de PoC (verschillende modellen, ...)
 ├── 📂 poster            # LaTeX-bestanden voor de poster
 ├── 📂 voorstel          # LaTeX-bestanden voor het voorstel
 ├── 📄 README.md         # Dit bestand
