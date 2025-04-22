@@ -1,3 +1,5 @@
+--find-links https://download.pytorch.org/whl/torch_stable.html
+
 filelock==3.13.1
 fsspec==2024.6.1
 Jinja2==3.1.4
