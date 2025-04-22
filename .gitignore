@@ -142,3 +142,6 @@ bronnen/
 # UATD dataset
 *.zip
 poc/UATD_Dataset
+
+# Python
+env/
