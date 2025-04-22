@@ -4,9 +4,10 @@ import torch
 from torch.utils.data import DataLoader
 from torchvision.transforms import functional as F
 from torchvision.models.detection import FasterRCNN
+from torchvision.models import ResNet18_Weights
 from torchvision.models.detection.backbone_utils import resnet_fpn_backbone
 from torchvision.ops import box_iou
-# from torchmetrics.detection.mean_ap import MeanAveragePrecision
+from torchmetrics.detection.mean_ap import MeanAveragePrecision
 import xml.etree.ElementTree as ET
 from PIL import Image
 from tqdm import tqdm
@@ -142,7 +143,7 @@ test_loader = DataLoader(
 )
 
 # ====== Model ======
-backbone = resnet_fpn_backbone("resnet18", pretrained=True)
+backbone = resnet_fpn_backbone(backbone_name="resnet18", weights=ResNet18_Weights.DEFAULT)
 model = FasterRCNN(backbone, num_classes=NUM_CLASSES)
 model.to(DEVICE)
 
@@ -172,27 +173,44 @@ for epoch in range(EPOCHS):
 
 print(f"Training Duration: {datetime.now() - start_time}")
 
-# ====== Evaluate mAP-like metric ======
-def evaluate(model, data_loader):
-    model.eval()
-    with torch.no_grad():
-        for images, targets in data_loader:
-            images = [img.to(DEVICE) for img in images]
-            outputs = model(images)
-            for output, target in zip(outputs, targets):
-                # Example: simple IoU print
-                pred_boxes = output["boxes"].cpu()
-                true_boxes = target["boxes"]
-                iou = box_iou(pred_boxes, true_boxes)
-                print(f"IoU matrix:\n{iou}")
-
-evaluate(model, test_loader)
-
 # ====== Export Model ======
 model_name = "fasterrcnn_uatd_full.pth"
 model_path = os.path.join(OUTPUT_PATH, model_name)
 
 torch.save(model.state_dict(), model_path)
 print(f"Model saved at '{model_path}'")
+
+# ====== Evaluate mAP-like metric ======
+def evaluate_map(model, data_loader):
+    model.eval()
+    metric = MeanAveragePrecision(iou_type="bbox", iou_thresholds=[0.5])
+
+    with torch.no_grad():
+        for images, targets in tqdm(data_loader, desc="Evaluating"):
+            images = [img.to(DEVICE) for img in images]
+            outputs = model(images)
+
+            # Convert predictions & targets for torchmetrics
+            preds = []
+            tgts = []
+
+            for output, target in zip(outputs, targets):
+                preds.append({
+                    "boxes": output["boxes"].cpu(),
+                    "scores": output["scores"].cpu(),
+                    "labels": output["labels"].cpu()
+                })
+                tgts.append({
+                    "boxes": target["boxes"].cpu(),
+                    "labels": target["labels"].cpu()
+                })
+
+            metric.update(preds, tgts)
+
+    final_result = metric.compute()
+    print(f"mAP@0.5: {final_result["map_50"]:.4f}")
+    return final_result
+
+evaluate_map(model=model, data_loader=test_loader)
 
 print(f"Final Duration: {datetime.now() - start_time}")
