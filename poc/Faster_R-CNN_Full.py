@@ -25,8 +25,8 @@ start_time = datetime.now()
 # ====== Configuration ======
 DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 NUM_CLASSES = 11  # 10 classes + background
-BATCH_SIZE = 16
-EPOCHS = 12
+BATCH_SIZE = int(input("Please enter the batch size: "))
+EPOCHS = int(input("Please enter the amount of epochs: "))
 
 # ====== UATDDataset class ======
 class UATDDataset(torch.utils.data.Dataset):
