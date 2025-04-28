@@ -54,6 +54,10 @@ class UATDDataset(torch.utils.data.Dataset):
             "image_id": torch.tensor([idx])
         }
 
+        if target["boxes"].shape[0] == 0:
+            target["boxes"] = torch.zeros((0, 4), dtype=torch.float32)
+            target["labels"] = torch.zeros((0,), dtype=torch.int64)
+
         img = F.to_tensor(img)
 
         return img, target
@@ -98,14 +102,17 @@ def resize_with_aspect(image, bboxes, new_height=512):
     for bbox in bboxes:
         x_min, y_min, x_max, y_max = bbox
 
-        x_min = round((x_min * new_width) / old_width)
-        y_min = round((y_min * new_height) / old_height)
-        x_max = round((x_max * new_width) / old_width)
-        y_max = round((y_max * new_height) / old_height)
+        x_min = (x_min * new_width) / old_width
+        y_min = (y_min * new_height) / old_height
+        x_max = (x_max * new_width) / old_width
+        y_max = (y_max * new_height) / old_height
 
-        adjusted_bboxes.append([x_min, y_min, x_max, y_max])
+        if x_max <= x_min or y_max <= y_min:
+            tqdm.write(f"[DEBUG] Removing invalid bounding box | Original: {bbox}, Adjusted: {x_min, y_min, x_max, y_max}")
+        else:
+            adjusted_bboxes.append([x_min, y_min, x_max, y_max])
 
-    return image, adjusted_bboxes
+    return resized_image, adjusted_bboxes
 
 # ====== Datasets ======
 # Datasets
@@ -208,7 +215,7 @@ def evaluate_map(model, data_loader):
             metric.update(preds, tgts)
 
     final_result = metric.compute()
-    print(f"mAP@0.5: {final_result["map_50"]:.4f}")
+    print(f"mAP@0.5: {final_result['map_50']:.4f}")
     return final_result
 
 evaluate_map(model=model, data_loader=test_loader)
