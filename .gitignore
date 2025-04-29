@@ -143,5 +143,8 @@ bronnen/
 *.zip
 poc/UATD_Dataset
 
+# Trained models
+poc/models
+
 # Python
 env/
