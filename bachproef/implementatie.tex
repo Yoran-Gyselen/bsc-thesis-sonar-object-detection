@@ -3,19 +3,100 @@
 
 De implementatie van de verschillende objectdetectiemodellen vormt de belangrijkste voorbereidende stap in het ontwikkelen van de ``proof of concept'' voor dit onderzoek. In deze fase wordt de theorie over de verschillende modelarchitecturen (zie \ref{ch:stand-van-zaken}) vertaald naar praktische, werkende systemen. Dit omvat het selecteren van een geschikte detectiemethode per categorie -- zowel supervised, semi-supervised en self-supervised -- en het configureren en connecteren van de verschillende componenten. Daarnaast wordt er aandacht besteed aan de optimalisatie-instellingen -- zoals learning rate schedules -- die van grote invloed (kunnen) zijn op de prestaties. Ook zal het gekozen deep learning-framework worden besproken en toegelicht. In dit hoofdstuk wordt beschreven hoe de gekozen modellen zijn geïmplementeerd, welke architecturale keuzes zijn gemaakt, en hoe deze implementatie is afgestemd op de specifieke kenmerken van de dataset en de uiteindelijke toepassing. Zo wordt de basis gelegd voor het daaropvolgende trainingsproces.
 
-\section{Keuze van deep learning framework}
+\section{Keuze van een deep learning framework}
 
 Vandaag de dag bestaan er verschillende deep learning frameworks die de ontwikkeling en implementatie van neurale netwerken sterk vergemakkelijken. Enkele van de meest gebruikte zijn TensorFlow, PyTorch, JAX en Keras. TensorFlow en PyTorch zijn de twee dominante deep learning frameworks in het veld van artificiële intelligentie. Keras is een speciale uitzondering: het is namelijk een bibliotheek die compatibiliteit biedt tussen deze verschillende frameworks.
 
 \subsection{TensorFlow}
 
-TensorFlow (geïntroduceerd door Google in 2015) werd ontworpen met het oog op grootschalige productieomgevingen. Het framework biedt uitgebreide ondersteuning voor het deployen van modellen op verschillende platformen, zoals mobiele apparaten en webapplicaties, en beschikt over geavanceerde tools zoals TensorBoard voor visualisatie en TensorFlow Serving voor schaalbare modelinzet. TensorFlow’s aanpak met statische computationele grafen (in vroege versies) maakte het echter aanvankelijk minder intuïtief voor onderzoek en experimentatie, hoewel TensorFlow 2.x dit deels heeft verbeterd door de introductie van \emph{eager execution}. TensorFlow biedt ook veruit de beste integratie met \glspl{tpu} (cf. \ref{subsec:tpu}).
+TensorFlow (geïntroduceerd door Google in 2015) werd ontworpen met het oog op grootschalige productieomgevingen. Het framework biedt uitgebreide ondersteuning voor het deployen van modellen op verschillende platformen, zoals mobiele apparaten en webapplicaties, en beschikt over geavanceerde tools zoals TensorBoard voor visualisatie en TensorFlow Serving voor schaalbare modelinzet. TensorFlow’s aanpak met statische computationele grafen (in vroege versies) maakte het echter aanvankelijk minder intuïtief voor onderzoek en experimentatie, hoewel TensorFlow 2.x dit deels heeft verbeterd door de introductie van \emph{eager execution}. TensorFlow biedt ook veruit de beste integratie met \glspl{tpu} (cf. \ref{subsec:tpu}). \autocite{Pang_2019}
 
 \subsection{PyTorch}
 
-PyTorch (ontwikkeld door \gls{fair} en uitgebracht in 2016) heeft daarentegen vanaf het begin sterk ingezet op gebruiksvriendelijkheid en flexibiliteit. PyTorch maakt gebruik van dynamische computationele grafen, wat betekent dat het netwerk direct kan worden aangepast tijdens de uitvoering. Dit maakt het debuggen eenvoudiger en laat onderzoekers sneller experimenteren met nieuwe architecturen en technieken. Bovendien sluit de programmeerstijl van PyTorch dichter aan bij standaard Python, wat de leercurve verlaagt en de ontwikkelsnelheid verhoogt. In de onderzoekswereld heeft PyTorch hierdoor snel populariteit gewonnen, en veel state-of-the-art modellen en papers publiceren tegenwoordig hun codebase standaard in PyTorch.
+PyTorch (ontwikkeld door \gls{fair} en uitgebracht in 2016) heeft daarentegen vanaf het begin sterk ingezet op gebruiksvriendelijkheid en flexibiliteit. PyTorch maakt gebruik van dynamische computationele grafen, wat betekent dat het netwerk direct kan worden aangepast tijdens de uitvoering. Dit maakt het debuggen eenvoudiger en laat onderzoekers sneller experimenteren met nieuwe architecturen en technieken. Bovendien sluit de programmeerstijl van PyTorch dichter aan bij standaard Python, wat de leercurve verlaagt en de ontwikkelsnelheid verhoogt. In de onderzoekswereld heeft PyTorch hierdoor snel populariteit gewonnen, en veel state-of-the-art modellen en papers publiceren tegenwoordig hun codebase standaard in PyTorch. \autocite{Imambi_2021} \\
 
 Voor dit project is uiteindelijk gekozen voor PyTorch vanwege de flexibiliteit en transparantie die het biedt tijdens het ontwikkelen en experimenteren met objectdetectiemodellen. PyTorch biedt namelijk uitstekende integraties met moderne detectiebibliotheken zoals TorchVision, wat de implementatie en evaluatie van complexe modellen versnelt. Daarnaast is het makkelijk om gepretrainde detectiemodellen te importeren, waardoor in dit onderzoek gefocust kan worden op de nieuwe ontwikkelingen zonder de focus te moeten verschuiven naar complexe backbones. Ook de installatie, configuratie en setup van PyTorch zijn veel eenvoudiger dan bij TensorFlow. Deze eigenschappen maken PyTorch tot de meest geschikte keuze om de doelstellingen van dit onderzoek efficiënt en effectief te realiseren.
 
+\section{Maatregel tegen overfitting: early stopping}
+
+In deze fase is het ook de bedoeling om de modellen zo veel mogelijk te optimaliseren om zo de performance te verhogen. Een belangrijk onderdeel hiervan is het tegengaan van \gls{overfitting}. Een mogelijke oorzaak is dat er te lang (voor te veel epochs) getraind wordt voor de beschikbare hoeveelheid data. Het is dus belangrijk dat het model traint voor de juiste hoeveelheid epochs. Te weinig epochs zorgt ervoor dat het model niet zijn maximale performance bereikt, te veel epochs zorgt voor \gls{overfitting}. Gelukkig bestaat er een oplossing om dit grotendeels te automatiseren: \emph{early stopping}. \autocite{Ying_2019} \\
+
+Early stopping is een regularisatietechniek die kan gebruikt worden bij elke iteratieve trainingstechniek (zoals \gls{gradient_descent}). Het zorgt ervoor dat de training automatisch gestopt wordt als de performantie van het model op een validatieset verslechterd. Daarnaast worden ook geen kostbare resources of tijd verspild. \autocite{Prechelt_1998} In tegenstelling tot Keras en TensorFlow, bevat het PyTorch-framework geen geïntegreerde callback voor early stopping. Gelukkig is dit een relatief eenvoudige klasse om zelf te implementeren. Een simpele \texttt{EarlyStopping}-klasse moet slechts drie methodes bevatten: de \texttt{\_\_init\_\_} methode, de \texttt{\_\_call\_\_} methode en de \texttt{load\_best\_model} methode. 
+
+\begin{listing}[H]
+    \begin{minted}{python}
+        def __init__(self, patience=5, delta=0.0):
+            self.patience = patience
+            self.delta = delta
+            self.counter = 0
+            self.best_score = None
+            self.early_stop = False
+            self.best_model_state = None
+    \end{minted}
+    \caption[\texttt{\_\_init\_\_}-methode van de EarlyStopping-klasse]{De \texttt{\_\_init\_\_}-methode van de EarlyStopping-klasse, waar de klasse geïnitialiseerd wordt en de nodige variabelen worden gedeclareerd.}
+\end{listing}
+
+De \texttt{\_\_init\_\_} methode initialiseert deze klasse. Ze neemt twee argumenten aan die ingesteld kunnen worden, namelijk \texttt{patience} en \texttt{delta}. \texttt{patience} houdt bij hoeveel opeenvolgende epochs zonder (significante) verbetering toegelaten worden voor de training gestopt wordt. Standaard is dit ingesteld op 5. \texttt{delta} definieert de minimale verbetering van de validatieloss om als ``verbetering'' te tellen. Standaard is dit 0, wat wil zeggen dat elke verbetering, hoe klein ook, als verbetering gezien wordt. Daarnaast declareert de methode nog enkele andere variabelen: \texttt{counter} telt hoeveel epochs er al zijn geweest zonder verbetering, \texttt{best\_score} onthoudt de beste (laagste) validatieloss, \texttt{early\_stop} wordt \texttt{True} als het model gestopt moet worden en \texttt{best\_model\_state} slaat het beste model op (modelparameters) op het moment van de laagste validatieloss. \\
+
+De \texttt{\_\_call\_\_} methode is een methode die automatisch wordt aangeroepen op het moment dat de klasse aangeroepen wordt. Op dat moment gedraagt de klasse zich dus als een functie. Ze neemt twee argumenten: \texttt{val\_loss}, de validatieloss en \texttt{model}, het model zelf. De validatieloss wordt omgezet naar een ``score''. Deze is negatief, want een lagere loss is beter. Als er nog geen \texttt{best\_score} is, slaat hij deze score op en bewaart het model. Als de score niet genoeg verbeterd is ten opzichte van de \texttt{best\_score + delta}, verhoogt hij de \texttt{counter}. Als de \texttt{counter} $\leq$ de \texttt{patience}, wordt \texttt{early\_stop} op \texttt{True} gezet. Als er echter wel een (significante) verbetering is dan wordt de \texttt{best\_score} geüpdatet, het model opgeslagen en de \texttt{counter} gereset naar 0.
+
+\begin{listing}[H]
+    \begin{minted}{python}
+        def __call__(self, val_loss, model):
+            score = -val_loss
+            if self.best_score is None:
+                self.best_score = score
+                self.best_model_state = model.state_dict()
+            elif score < self.best_score + self.delta:
+                self.counter += 1
+                if self.counter >= self.patience:
+                    self.early_stop = True
+            else:
+                self.best_score = score
+                self.best_model_state = model.state_dict()
+                self.counter = 0
+    \end{minted}
+    \caption[\texttt{\_\_call\_\_}-methode van de EarlyStopping-klasse]{De \texttt{\_\_call\_\_}-methode van de EarlyStopping-klasse, waar de effectieve logica zit.}
+\end{listing}
+
+De \texttt{load\_best\_model}-methode herlaadt tenslotte de beste versie van het model dat tijdens de training bewaard werd. Dit zorgt ervoor dat er verdergegaan wordt met het best presterende model. 
+
+\begin{listing}[H]
+    \begin{minted}{python}
+        def load_best_model(self, model):
+            model.load_state_dict(self.best_model_state)
+    \end{minted}
+    \caption[\texttt{load\_best\_model}-methode van de EarlyStopping-klasse]{De \texttt{load\_best\_model}-methode laadt de parameters van het best presterende model.}
+\end{listing}
+
 \section{Implementatie van een gesuperviseerd model (Faster R-CNN)}
 
+Allereerst is er een baseline-model nodig om de performance van de andere modellen mee te kunnen vergelijken. Dit model zal op de klassieke manier -- namelijk gesuperviseerd -- getraind worden. Dit houdt in dat het model tijdens het trainingsproces voor elke input een output heeft. Het model kan dus voor elke sample het verband leren tussen de features en de labels. De gesuperviseerde baseline zal daarnaast ook gebruikt worden als backbone voor de andere modellen (cf. infra). \\
+
+In dit onderzoek werden al verschillende populaire supervised objectdetectiemodellen besproken. Hoewel deze allemaal geschikt zijn om als baseline te dienen, zal maar één van deze modellen geïmplementeerd worden. Dit om de simpele reden dat dit slechts een proof of concept is en dat de scope anders te ver zou worden uitgebreid. Het model dat geïmplementeerd zal worden is Faster \gls{rcnn}. De argumenten hiervoor zijn terug te vinden in %TODO ref
+de literatuurstudie. \\
+
+Er zullen uiteindelijk twee varianten van hetzelfde model gebruikt worden in dit onderzoek. De eerste variant is een Faster \gls{rcnn} model dat getraind is op de volledige trainingsset (7600 samples). Deze variant zal gebruikt worden als baseline om de performantie van de andere modellen (\gls{ssl} en \gls{self-sl}) mee te vergelijken. De tweede variant is qua architectuur volledig gelijk aan de eerste. Het verschil is dat deze getraind zal worden op een (relatief kleine) subset van de trainingsset. Dit model zal gebruikt worden als backbone voor de \gls{ssl}- en \gls{self-sl}-modellen. Dit wordt in meer detail uitgelegd in hoofdstuk \ref{ch:training}. Dit onderzoek zal voor het gesuperviseerde model het experiment in het onderzoek van \textcite{Xie_2022} zo goed mogelijk proberen nabootsen. Aangezien dezelfde dataset gebruikt wordt in dit onderzoek, zullen de resultaten grotendeels hetzelfde zijn.
+
+\begin{listing}[H]
+    \begin{minted}{python}
+        from torchvision.models.detection.backbone_utils import resnet_fpn_backbone
+        from torchvision.models import ResNet18_Weights
+        from torchvision.models.detection import FasterRCNN
+        
+        DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+        NUM_CLASSES = 11  # 10 classes + background
+                
+        # ====== Model ======
+        backbone = resnet_fpn_backbone(backbone_name="resnet18", weights=ResNet18_Weights.DEFAULT)
+        model = FasterRCNN(backbone, num_classes=NUM_CLASSES)
+        model.to(DEVICE)
+        
+        # ====== Optimizer & Scheduler ======
+        optimizer = torch.optim.Adam(model.parameters(), lr=5e-4)
+        scheduler = torch.optim.lr_scheduler.MultiStepLR(optimizer, milestones=[8, 11], gamma=0.1)
+    \end{minted}
+    \caption{Implementatie van Faster R-CNN met ResNet-18 backbone.}
+\end{listing}
+
+Specifiek zal een Faster \gls{rcnn}-model met een gepretrainde ResNet-18 backbone gebruikt worden. Dit model wordt in het onderzoek van \textcite{Xie_2022} ook gebruikt en heeft een goede performance op de dataset. Zowel het model als de op ImageNet gepretrainde backbone zijn beschikbaar in de TorchVision bibliotheek. Om ze te gebruiken moeten ze enkel geïmporteerd worden, wat onnodig werk en tijd uitspaart ten opzichte van ze zelf te implementeren en volledig opnieuw te trainen. Er wordt gebruikgemaakt van een Adam-optimizer met een \gls{learning_rate} van $5 \times 10^{-4}}$. Daarnaast wordt een extra optimalisatie toegepast die ook in de paper voorkomt. Op epoch 8 en epoch 11 wordt de \gls{learning_rate} verminderd met 0.1. In totaal zal er 12 epochs gefinetuned worden. Hierbij wordt geen gebruik gemaakt van de \texttt{EarlyStopping}-callback, om de resultaten van de paper zo goed mogelijk na te bootsen.
