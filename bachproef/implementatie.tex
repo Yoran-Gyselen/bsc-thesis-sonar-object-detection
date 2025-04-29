@@ -1,4 +1,21 @@
-\chapter{Implementatie van de verschillende modellen}
+\chapter{Implementatie \& Optimalisatie}
 \label{ch:implementatie}
 
-\lipsum[1-3]
+De implementatie van de verschillende objectdetectiemodellen vormt de belangrijkste voorbereidende stap in het ontwikkelen van de ``proof of concept'' voor dit onderzoek. In deze fase wordt de theorie over de verschillende modelarchitecturen (zie \ref{ch:stand-van-zaken}) vertaald naar praktische, werkende systemen. Dit omvat het selecteren van een geschikte detectiemethode per categorie -- zowel supervised, semi-supervised en self-supervised -- en het configureren en connecteren van de verschillende componenten. Daarnaast wordt er aandacht besteed aan de optimalisatie-instellingen -- zoals learning rate schedules -- die van grote invloed (kunnen) zijn op de prestaties. Ook zal het gekozen deep learning-framework worden besproken en toegelicht. In dit hoofdstuk wordt beschreven hoe de gekozen modellen zijn geïmplementeerd, welke architecturale keuzes zijn gemaakt, en hoe deze implementatie is afgestemd op de specifieke kenmerken van de dataset en de uiteindelijke toepassing. Zo wordt de basis gelegd voor het daaropvolgende trainingsproces.
+
+\section{Keuze van deep learning framework}
+
+Vandaag de dag bestaan er verschillende deep learning frameworks die de ontwikkeling en implementatie van neurale netwerken sterk vergemakkelijken. Enkele van de meest gebruikte zijn TensorFlow, PyTorch, JAX en Keras. TensorFlow en PyTorch zijn de twee dominante deep learning frameworks in het veld van artificiële intelligentie. Keras is een speciale uitzondering: het is namelijk een bibliotheek die compatibiliteit biedt tussen deze verschillende frameworks.
+
+\subsection{TensorFlow}
+
+TensorFlow (geïntroduceerd door Google in 2015) werd ontworpen met het oog op grootschalige productieomgevingen. Het framework biedt uitgebreide ondersteuning voor het deployen van modellen op verschillende platformen, zoals mobiele apparaten en webapplicaties, en beschikt over geavanceerde tools zoals TensorBoard voor visualisatie en TensorFlow Serving voor schaalbare modelinzet. TensorFlow’s aanpak met statische computationele grafen (in vroege versies) maakte het echter aanvankelijk minder intuïtief voor onderzoek en experimentatie, hoewel TensorFlow 2.x dit deels heeft verbeterd door de introductie van \emph{eager execution}. TensorFlow biedt ook veruit de beste integratie met \glspl{tpu} (cf. \ref{subsec:tpu}).
+
+\subsection{PyTorch}
+
+PyTorch (ontwikkeld door \gls{fair} en uitgebracht in 2016) heeft daarentegen vanaf het begin sterk ingezet op gebruiksvriendelijkheid en flexibiliteit. PyTorch maakt gebruik van dynamische computationele grafen, wat betekent dat het netwerk direct kan worden aangepast tijdens de uitvoering. Dit maakt het debuggen eenvoudiger en laat onderzoekers sneller experimenteren met nieuwe architecturen en technieken. Bovendien sluit de programmeerstijl van PyTorch dichter aan bij standaard Python, wat de leercurve verlaagt en de ontwikkelsnelheid verhoogt. In de onderzoekswereld heeft PyTorch hierdoor snel populariteit gewonnen, en veel state-of-the-art modellen en papers publiceren tegenwoordig hun codebase standaard in PyTorch.
+
+Voor dit project is uiteindelijk gekozen voor PyTorch vanwege de flexibiliteit en transparantie die het biedt tijdens het ontwikkelen en experimenteren met objectdetectiemodellen. PyTorch biedt namelijk uitstekende integraties met moderne detectiebibliotheken zoals TorchVision, wat de implementatie en evaluatie van complexe modellen versnelt. Daarnaast is het makkelijk om gepretrainde detectiemodellen te importeren, waardoor in dit onderzoek gefocust kan worden op de nieuwe ontwikkelingen zonder de focus te moeten verschuiven naar complexe backbones. Ook de installatie, configuratie en setup van PyTorch zijn veel eenvoudiger dan bij TensorFlow. Deze eigenschappen maken PyTorch tot de meest geschikte keuze om de doelstellingen van dit onderzoek efficiënt en effectief te realiseren.
+
+\section{Implementatie van een gesuperviseerd model (Faster R-CNN)}
+
