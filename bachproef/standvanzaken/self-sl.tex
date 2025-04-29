@@ -10,6 +10,8 @@ Ondanks deze nadelen blijken verschillende populaire technieken succesvol binnen
 
 \subsection{Werking}
 
+\autocite{Oord_2018}
+
 \lipsum[1]
 
 \subsection{Veelgebruikte Self-SL methoden}
@@ -84,6 +86,8 @@ De InfoNCE loss vormt de kern van het leerproces van \gls{moco} en stelt het mod
 
 \subsubsection{BYOL}
 
+\autocite{Adaloglou_2022}
+
 Naast de contrastieve methoden die veelal gebruikt worden binnen het domein van \gls{self-sl} is er sinds enkele jaren ook een ander alternatief. \gls{byol} is ontwikkeld bij Google DeepMind en werd geïntroduceerd in een paper van \textcite{Grill_2020}. \gls{byol} is gebaseerd op het idee dat een model kan leren door zijn eigen representaties te gebruiken als leersignaal. Dit gebeurt door twee verschillende, geaugmenteerde versies van hetzelfde inputbeeld te genereren, en het model leert vervolgens om de representatie van de ene versie te voorspellen op basis van de andere. In tegenstelling tot contrastieve leermethoden -- die gebruikmaken van zowel positieve als negatieve paren -- werkt \gls{byol} volledig zonder negatieve voorbeelden. Terwijl contrastieve methoden proberen representaties van verschillende beelden uit elkaar te duwen, focust \gls{byol} zich enkel op het dichter bij elkaar brengen van representaties van dezelfde onderliggende input. Deze aanpak vermindert de kans op instabiliteit en maakt het model robuuster voor variaties in data-augmentatie. \\
 
 Het leerproces in \gls{byol} is gebouwd op twee samenwerkende netwerken: een \emph{online netwerk} en een \emph{target netwerk}. Het online netwerk probeert de representatie te voorspellen die door het target netwerk is gegenereerd. Het target netwerk zelf wordt niet direct getraind via \gls{backpropagation}, maar geüpdatet via een \gls{ema} van de parameters van het online netwerk. Deze samenwerking tussen de twee netwerken zorgt voor een geleidelijke en stabiele leeromgeving. \\
@@ -98,7 +102,7 @@ Zoals hierboven vermeld, bestaat de \gls{byol}-architectuur dus twee identieke n
 
 Het target netwerk bevat alleen de encoder en projector, zonder predictor. Het wordt bijgehouden als een langzame, voortschrijdende kopie van het online netwerk, waardoor het stabielere leerdoelen biedt. Tijdens training worden twee verschillende augmentaties van eenzelfde afbeelding verwerkt: één door het online netwerk en de andere door het target netwerk. Het doel is dat de output van de predictor van het online netwerk overeenkomt met de projectie van het target netwerk. \\
 
-De \gls{loss_functie} voor \gls{byol} is gebaseerd op de \gls{mse} tussen L2-genormaliseerde vectoren: de voorspelling van het online netwerk en de projectie van het target netwerk. Voor een enkel augmentatiepaar $(v, v')$ wordt de loss als volgt berekend:
+De \gls{loss_functie} voor \gls{byol} is gebaseerd op de \gls{mse} tussen L2-genormaliseerde vectoren: de voorspelling van het online netwerk en de projectie van het target netwerk. \autocite{Laarhoven_2017} Voor een enkel augmentatiepaar $(v, v')$ wordt de loss als volgt berekend:
 
 $$
 L_{\theta, \xi} = \left\Vert \text{normalize}\left(q_\theta\left(z_\theta\right)\right) - \text{normalize}\left(z'_\xi\right) \right\Vert^2_2 = 2 - 2 \cdot \left\langle \text{normalize}\left(q_\theta\left(z_\theta\right)\right), \text{normalize}\left(z'_\xi\right) \right\rangle
