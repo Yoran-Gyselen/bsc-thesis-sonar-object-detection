@@ -16,7 +16,7 @@ Ondanks deze nadelen blijken verschillende populaire technieken succesvol binnen
 
 \subsection{Veelgebruikte Self-SL methoden}
 
-\lipsum[1]
+In de context van vooruitgang in \gls{ssl} zijn er verschillende praktische modellen ontwikkeld die de eerder besproken theoretische principes -- zoals contrastive learning en representatieleren zonder gelabelde data -- succesvol toepassen op grootschalige visuele data. Deze modellen onderscheiden zich niet alleen door hun architecturale keuzes, maar ook door hoe ze omgaan met negatieve samples, augmentatiestrategieën en het gebruik van momentum-updates. In deze sectie worden enkele invloedrijke en veelgebruikte \gls{ssl}-methoden besproken in realistische settings, met een focus op \acrfull{simclr}, \acrfull{moco} en \acrfull{byol}. Elk van deze modellen illustreert op unieke wijze hoe self-supervised representaties kunnen worden geleerd met minimale supervisie, en vormt daarmee een belangrijke bouwsteen in moderne computer vision toepassingen.
 
 \subsubsection{SimCLR}
 
@@ -86,7 +86,7 @@ De InfoNCE loss vormt de kern van het leerproces van \gls{moco} en stelt het mod
 
 \subsubsection{BYOL}
 
-\autocite{Adaloglou_2022}
+%\autocite{Adaloglou_2022}
 
 Naast de contrastieve methoden die veelal gebruikt worden binnen het domein van \gls{self-sl} is er sinds enkele jaren ook een ander alternatief. \gls{byol} is ontwikkeld bij Google DeepMind en werd geïntroduceerd in een paper van \textcite{Grill_2020}. \gls{byol} is gebaseerd op het idee dat een model kan leren door zijn eigen representaties te gebruiken als leersignaal. Dit gebeurt door twee verschillende, geaugmenteerde versies van hetzelfde inputbeeld te genereren, en het model leert vervolgens om de representatie van de ene versie te voorspellen op basis van de andere. In tegenstelling tot contrastieve leermethoden -- die gebruikmaken van zowel positieve als negatieve paren -- werkt \gls{byol} volledig zonder negatieve voorbeelden. Terwijl contrastieve methoden proberen representaties van verschillende beelden uit elkaar te duwen, focust \gls{byol} zich enkel op het dichter bij elkaar brengen van representaties van dezelfde onderliggende input. Deze aanpak vermindert de kans op instabiliteit en maakt het model robuuster voor variaties in data-augmentatie. \\
 
