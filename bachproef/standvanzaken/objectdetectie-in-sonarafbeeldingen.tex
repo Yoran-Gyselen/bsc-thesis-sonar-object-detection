@@ -148,17 +148,56 @@ Ook heeft de architectuur veel potentie voor onderwaterobjectdetectie, zoals bij
 
 \subsubsection{Faster R-CNN}
 
-\lipsum[1]
+Een significante ontwikkeling in het domein van objectdetectie was de introductie van Faster \gls{rcnn} in een artikel van \textcite{Ren_2015}. Deze architectuur is een state-of-the-art model dat de snelheid en nauwkeurigheid van objectdetectie aanzienlijk heeft verbeterd. Het woord ``Faster'' in Faster \gls{rcnn} impliceert een duidelijke verbetering in snelheid ten opzichte van zijn voorgangers binnen de \gls{rcnn}-familie. Het feit dat Faster \gls{rcnn} zelfs meer dan tien jaar na zijn introductie nog steeds als referentiepunt wordt gebruikt in veel nieuwe objectdetectiepapers, benadrukt zijn blijvende relevantie en hoge mate van nauwkeurigheid.
 
-\autocite{Ren_2015}
-\autocite{Wang_2023}
-\autocite{Zeng_2021}
-\autocite{Yulin_2020}
-\autocite{Chen_2017}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.5\textwidth]{faster_rcnn_architecture.png}
+    \caption[Faster R-CNN-architectuur.]{\label{fig:faster_rcnn_architecture}Schematische voorstelling van de Faster \gls{rcnn}-architectuur. \autocite{Ren_2015}}
+\end{figure}
+
+Faster \gls{rcnn} is een zogenaamd two-stage detectiemodel, wat inhoudt dat het eerst regio’s in een afbeelding identificeert die mogelijk objecten bevatten, en deze vervolgens classificeert en verfijnt. Hoewel dit proces doorgaans minder snel is dan bij single-stage modellen, biedt het een grotere nauwkeurigheid in zowel lokalisatie als classificatie, wat verklaart waarom het model goed presteert in veel benchmarks. \\
+
+De architectuur bestaat uit vier hoofdcomponenten:
+
+\begin{enumerate}
+    \item Een convolutionele backbone
+    \item Het \gls{rpn}
+    \item De \gls{roi} Pooling (of Align) laag
+    \item De classificatie- en regressieheads
+\end{enumerate}
+
+De convolutionele backbone -- vaak een gepretraind netwerk zoals VGG-16 of ResNet -- is verantwoordelijk voor het extraheren van visuele kenmerken uit de invoerafbeelding. De keuze van backbone beïnvloedt zowel nauwkeurigheid als computationele resources: diepere netwerken zoals ResNet kunnen complexere patronen leren, maar vereisen ook meer resources. \\
+
+Het \gls{rpn} vormt het hart van Faster \gls{rcnn}. Dit volledig convolutionele netwerk genereert potentiële objectlocaties direct vanuit de feature map. Het doet dit door op elke locatie meerdere zogenaamde \emph{ankers} te plaatsen: vooraf gedefinieerde \glspl{bounding_box} met diverse schalen en beeldverhoudingen. Voor elk anker voorspelt het \gls{rpn} een objectness score en voert het \gls{bounding_box} regressie uit. Hierdoor functioneert het \gls{rpn} als een soort attention-mechanisme dat de zoekruimte voor objectdetectie beperkt. De integratie van regio-voorstellen binnen het netwerk is de grootste innovatie van Faster \gls{rcnn} en maakt het model aanzienlijk sneller dan zijn voorgangers. \\
+
+\gls{roi} Pooling (of \gls{roi} Align in nieuwere implementaties) zorgt ervoor dat regio’s van verschillende dimensies worden omgezet naar een vaste grootte, zodat ze verwerkt kunnen worden door de daaropvolgende fully connected lagen. Deze stap is essentieel voor de standaardisatie van input naar de classificatie- en regressieheads. \\
+
+Tot slot bevat het model twee heads die parallel werken: het classificatiehead bepaalt de objectklasse binnen een regio en het regressiehead verfijnt de coördinaten van de \gls{bounding_box}. Deze dubbele aanpak zorgt voor nauwkeurige detectie en positionering van objecten. Ook wordt er gebruik gemaakt van \gls{nms}, die voorkomt dat meerdere \glspl{bounding_box} rond hetzelfde object worden behouden. \\
+
+De originele \gls{rcnn} had aanzienlijke beperkingen, waaronder de trage verwerking van duizenden regio’s en een gefragmenteerd trainingsproces. Ook de afhankelijkheid van het traag werkende Selective Search-algoritme was een belangrijke bottleneck. Fast \gls{rcnn} verbeterde de snelheid door slechts één \gls{cnn}-pass over de volledige afbeelding te doen en daarna \gls{roi} pooling toe te passen. Toch bleef het afhankelijk van externe regio-voorstellen, wat de algehele efficiëntie beperkte. Faster \gls{rcnn} loste deze beperking definitief op. Door het gebruik van een geïntegreerd \gls{rpn} kon het model regio-voorstellen genereren als onderdeel van het netwerk zelf. Bovendien werd computationele efficiëntie verbeterd door convolutionele lagen te delen tussen het \gls{rpn} en de detectiecomponent (Fast \gls{rcnn}). Dankzij deze integratie is het model end-to-end trainbaar, met aanzienlijke winst in zowel snelheid als nauwkeurigheid.
 
 \subsubsection{SSD}
 
-\lipsum[1]
+Een ander state-of-the-art model dat populair is binnen academische onderzoeken, is \gls{ssd}. Deze architectuur werd voorgesteld in een artikel van \textcite{Liu_2016}. \gls{ssd} is een zogenaamde single-stage detector die een goede balans biedt tussen nauwkeurigheid en snelheid. \gls{ssd} detecteert objecten in één enkele pass door het netwerk, waarbij het gebruikmaakt van zogenaamde \emph{multiboxes} -- vooraf gedefinieerde rechthoeken die mogelijke objectlocaties voorstellen. Dit soort single-stage-architecturen zijn het gevolg van de vraag naar real-time beeldverwerking, zoals vereist in autonome voertuigen of slimme camera's. De geïntegreerde aanpak maakt \gls{ssd} aanzienlijk sneller. Hoewel two-stage modellen over het algemeen preciezer zijn, vooral bij kleine objecten, biedt \gls{ssd} een aantrekkelijk alternatief wanneer snelheid en eenvoud cruciaal zijn. \\
+
+Het \gls{ssd}-algoritme werkt met één enkel neuraal netwerk dat tegelijk de objectcategorieën en de bijbehorende \glspl{bounding_box} voorspelt. Het netwerk verdeelt het beeld in meerdere \emph{default boxes} met verschillende schalen en beeldverhoudingen. Voor elke box voorspelt het de aanwezigheid van een object en past het de vorm van de box aan indien nodig. Belangrijk is dat \gls{ssd} gebruikmaakt van meerdere lagen (feature maps) uit het netwerk: lagen met een hoge resolutie detecteren kleine objecten, terwijl diepere lagen grotere objecten beter kunnen herkennen. Deze multi-scale aanpak is de sleutel tot de flexibiliteit van \gls{ssd} in het omgaan met objecten van verschillende groottes. \\
+
+Een bijkomend voordeel van \gls{ssd} is dat het geen aparte stap nodig heeft voor het genereren van objectvoorstellen, wat tijd bespaart. Tegelijkertijd voert het netwerk voor elke \gls{bounding_box} twee voorspellingen uit: één voor de objectklasse en één voor de precieze locatie. Deze voorspellingen worden gedaan via kleine convolutionele filters. \\
+
+De \gls{ssd}-architectuur bestaat uit een basisnetwerk voor feature extractie (zoals VGG16, ResNet of MobileNet), gevolgd door extra lagen die meerdere resoluties van het beeld analyseren. De oorspronkelijke implementatie gebruikte VGG16, maar varianten met lichtere of diepere netwerken zijn later ontwikkeld, afhankelijk van de toepassing. De keuze van het basisnetwerk bepaalt voor een groot deel de balans tussen nauwkeurigheid en gebruik van resources. \\
+
+Omdat \gls{ssd} veel overlappende voorspellingen kan genereren, is een extra stap nodig om dubbele detecties te vermijden. Dit gebeurt via \gls{nms}, een techniek die alleen de meest waarschijnlijke voorspelling voor elk object behoudt en overlappende alternatieven verwijdert. \gls{nms} is hierbij essentieel voor het produceren van duidelijke en bruikbare detectieresultaten. \\
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{ssd_architecture.png}
+    \caption[Vergelijking YOLO- en SSD-architectuur.]{\label{fig:ssd_architecture}Vergelijking tussen de \gls{yolo}-architectuur en de \gls{ssd}-architectuur. \autocite{Liu_2016}}
+\end{figure}
+
+\gls{ssd} heeft een aantal belangrijke voordelen. Het is snel, eenvoudig en efficiënt in geheugengebruik en computationele resources. Dankzij het gebruik van meerdere feature maps kan het objecten van uiteenlopende groottes detecteren, en voor grote objecten is de nauwkeurigheid vaak uitstekend. Bovendien is de trainingsprocedure doorgaans sneller dan die van two-stage modellen. \\
+
+Tegelijkertijd kent \gls{ssd} ook beperkingen. De nauwkeurigheid bij het detecteren van kleine objecten blijft een uitdaging. Verder kunnen er tijdens training veel 'achtergrondboxen' aanwezig zijn, wat het moeilijker maakt voor het model om onderscheid te maken tussen achtergrond en relevante objecten. Ondanks het gebruik van verschillende schalen, kan het model moeite hebben met objecten die aanzienlijk kleiner of groter zijn dan wat het tijdens training heeft gezien. Ook kunnen de voorspelde locaties minder precies zijn dan bij sommige andere methoden.
 
 \autocite{Ma_2020}
 \autocite{Kumar_2020}
