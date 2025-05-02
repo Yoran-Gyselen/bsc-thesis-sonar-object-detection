@@ -1,6 +1,6 @@
-# Detecteren van Objecten in Sonardata met behulp van Semi- of Self-supervised Learning
+# Objectdetectie in sonardata met behulp van semi- en self-supervised learning
 
-Dit is de repository voor mijn bachelorproef over het categoriseren van sonardata met behulp van semi- of self-supervised learning. Het doel van dit onderzoek is om efficiënte classificatie van sonardata te realiseren door geavanceerde leertechnieken toe te passen.
+Dit is de repository voor mijn bachelorproef over objectdetectie in sonardata met behulp van semi- of self-supervised learning. Het doel van dit onderzoek is om een verkennend onderzoek naar het toepassen van moderne leertechnieken op onderwaterbeeldvorming uit te voeren.
 
 ## Samenvatting
 
