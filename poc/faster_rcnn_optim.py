@@ -27,7 +27,7 @@ def main():
     NUM_CLASSES = 11  # 10 classes + background
     
     TIMESTAMP = datetime.now().strftime('%Y%m%d_%H%M%S')
-    WORKING_DIR = os.path.join("models", PROJECT_NAME, TIMESTAMP)
+    WORKING_DIR = os.path.join("models", PROJECT_NAME)
     Path(WORKING_DIR).mkdir(parents=True, exist_ok=True)
     LOG_PATH = os.path.join(WORKING_DIR, f"{PROJECT_NAME}_{TIMESTAMP}.txt")
     MODEL_PATH = LOG_PATH.replace(".txt", ".pth")
