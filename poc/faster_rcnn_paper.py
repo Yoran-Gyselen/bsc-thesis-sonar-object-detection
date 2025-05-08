@@ -1,21 +1,72 @@
 #!/usr/bin/env python
 
-# ====== Imports ======
-import os
-import torch
+# Imports
 from data.labeled_dataset import LabeledDataset
 from datetime import datetime
-from utils.resize_with_aspect import resize_with_aspect
-from utils.evaluate_map import evaluate_map
 from torch.utils.data import DataLoader
 from torchvision.models import ResNet18_Weights
 from torchvision.models.detection import FasterRCNN
 from torchvision.models.detection.backbone_utils import resnet_fpn_backbone
 from tqdm import tqdm
-from pathlib import Path
+from utils.create_model_dir import create_model_dir
+from utils.evaluate_map import evaluate_map
+from utils.linear_warmup import linear_warmup
+from utils.logger import Logger
+from utils.resize_with_aspect import resize_with_aspect
+import os
+import torch
 
-def main():
-    # ====== Configuration ======
+def get_model(num_classes, device):
+    backbone = resnet_fpn_backbone(backbone_name="resnet18", weights=ResNet18_Weights.IMAGENET1K_V1)
+    model = FasterRCNN(backbone, num_classes=num_classes)
+    return model.to(device)
+
+def train_faster_rcnn(model, train_loader, device, epochs, logger):
+    model.to(device)
+    model.train()
+
+    base_lr = 5e-4
+    warmup_iters = 500
+    warmup_start_lr = 1e-4
+
+    optimizer = torch.optim.Adam(model.parameters(), lr=base_lr)
+    scheduler = torch.optim.lr_scheduler.MultiStepLR(optimizer, milestones=[7, 10], gamma=0.1)
+
+    global_iter = 0
+
+    # Training Loop
+    for epoch in range(epochs):
+        total_loss = 0
+
+        for images, targets in tqdm(train_loader, desc=f"Epoch {epoch+1}/{epochs}"):
+            images = [img.to(device) for img in images]
+            targets = [{k: v.to(device) for k, v in t.items()} for t in targets]
+
+            # Warm-up logic
+            if global_iter < warmup_iters:
+                lr = linear_warmup(global_iter, warmup_iters, base_lr, init_lr=warmup_start_lr)
+                for param_group in optimizer.param_groups:
+                    param_group["lr"] = lr
+
+            loss_dict = model(images, targets)
+            losses = sum(loss for loss in loss_dict.values())
+
+            optimizer.zero_grad()
+            losses.backward()
+            optimizer.step()
+
+            total_loss += losses.item()
+            global_iter += 1
+        
+        if global_iter >= warmup_iters:
+            scheduler.step()
+
+        current_lr = optimizer.param_groups[0]["lr"]
+        logger.log(f"Epoch {epoch+1}/{epochs} | Training loss: {total_loss/len(train_loader):.4f}, LR: {current_lr:.6f}")
+
+# ====== Safe Entry Point ======
+if __name__ == "__main__":
+    # Configuration
     PROJECT_NAME = input("Please enter a project name: ")
     UATD_PATH = input("Please enter the path to the FULL UATD-dataset: ")
     DATASET_FRACTION = float(input("Please enter the fraction of the dataset to be used: ") or 1.0)
@@ -25,16 +76,19 @@ def main():
     DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     NUM_CLASSES = 11  # 10 classes + background
     
-    TIMESTAMP = datetime.now().strftime('%Y%m%d_%H%M%S')
-    WORKING_DIR = os.path.join("models", PROJECT_NAME)
-    Path(WORKING_DIR).mkdir(parents=True, exist_ok=True)
-    LOG_PATH = os.path.join(WORKING_DIR, f"{PROJECT_NAME}_{TIMESTAMP}.txt")
-    MODEL_PATH = LOG_PATH.replace(".txt", ".pth")
+    log_path, model_path = create_model_dir(project_name=PROJECT_NAME)
     
-    # Timing
+    # Logging & timing
+    logger = Logger(log_file=log_path)
+
+    logger.log(f"Dataset fraction: {DATASET_FRACTION}", to_console=False)
+    logger.log(f"Seed: {SEED}", to_console=False)
+    logger.log(f"Batch size: {BATCH_SIZE}", to_console=False)
+    logger.log(f"Epochs: {EPOCHS}", to_console=False)
+
     start_time = datetime.now()
 
-    # ====== Dataset & DataLoader ======
+    # Datasets
     train_dataset = LabeledDataset(
         os.path.join(UATD_PATH, "UATD_Training", "images"),
         os.path.join(UATD_PATH, "UATD_Training", "annotations"),
@@ -51,72 +105,21 @@ def main():
         seed=SEED
     )
 
-    train_loader = DataLoader(
-        train_dataset,
-        batch_size=BATCH_SIZE,
-        shuffle=True,
-        num_workers=8,
-        pin_memory=True,
-        persistent_workers=True,
-        collate_fn=lambda x: tuple(zip(*x))
-    )
+    # DataLoaders
+    train_loader = DataLoader(train_dataset, batch_size=BATCH_SIZE, shuffle=True, collate_fn=lambda x: tuple(zip(*x)))
+    test_loader = DataLoader(test_dataset, batch_size=BATCH_SIZE, shuffle=False, collate_fn=lambda x: tuple(zip(*x)))
 
-    test_loader = DataLoader(
-        test_dataset,
-        batch_size=BATCH_SIZE,
-        shuffle=False,
-        num_workers=8,
-        pin_memory=True,
-        persistent_workers=True,
-        collate_fn=lambda x: tuple(zip(*x))
-    )
+    model = get_model(num_classes=NUM_CLASSES, device=DEVICE)
+    train_faster_rcnn(model=model, train_loader=train_loader, device=DEVICE, epochs=EPOCHS, logger=logger)
+    
+    # Export Model
+    torch.save(model.state_dict(), model_path)
+    logger.log(f"Model saved at '{model_path}'")
 
-    # ====== Model Setup ======
-    backbone = resnet_fpn_backbone(backbone_name="resnet18", weights=ResNet18_Weights.DEFAULT)
-    model = FasterRCNN(backbone, num_classes=NUM_CLASSES)
-    model.to(DEVICE)
+    # Evaluate mAP
+    eval_result = evaluate_map(model=model, data_loader=test_loader, device=DEVICE)
+    logger.log(eval_result)
 
-    optimizer = torch.optim.Adam(model.parameters(), lr=5e-4)
-    scheduler = torch.optim.lr_scheduler.MultiStepLR(optimizer, milestones=[8, 11], gamma=0.1)
-
-    with open(LOG_PATH, "w") as logfile:
-        # ====== Training Loop ======
-        for epoch in range(EPOCHS):
-            model.train()
-            total_loss = 0
-
-            for images, targets in tqdm(train_loader, desc=f"Epoch {epoch+1}/{EPOCHS}"):
-                images = [img.to(DEVICE) for img in images]
-                targets = [{k: v.to(DEVICE) for k, v in t.items()} for t in targets]
-
-                loss_dict = model(images, targets)
-                losses = sum(loss for loss in loss_dict.values())
-
-                optimizer.zero_grad()
-                losses.backward()
-                optimizer.step()
-
-                total_loss += losses.item()
-            
-            print(f"Training loss: {total_loss/len(train_loader):.4f}")
-            logfile.write(f"Epoch {epoch+1}/{EPOCHS} | Training loss: {total_loss/len(train_loader):.4f}\n")
-
-            scheduler.step()
-        
-        # ====== Export Model ======
-        torch.save(model.state_dict(), MODEL_PATH)
-        print(f"Model saved at '{MODEL_PATH}'")
-
-        # ====== Evaluate mAP ======
-        eval_result = evaluate_map(model=model, data_loader=test_loader, device=DEVICE)
-        print(f"mAP@0.5: {eval_result['map_50']:.4f}")
-        logfile.write(f"{eval_result}\n")
-
-        # ====== Final timing ======
-        total_time = datetime.now() - start_time
-        print(f"Total Duration: {total_time}")
-        logfile.write(f"Total Duration: {total_time}\n")
-
-# ====== Safe Entry Point ======
-if __name__ == "__main__":
-    main()
+    # Final timing
+    total_time = datetime.now() - start_time
+    logger.log(f"Total Duration: {total_time}")

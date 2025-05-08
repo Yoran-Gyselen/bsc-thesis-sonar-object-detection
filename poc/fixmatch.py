@@ -7,6 +7,7 @@ from torch.utils.data import DataLoader
 from torchvision.models import ResNet50_Weights
 from torchvision.models.detection import FasterRCNN
 from torchvision.models.detection.backbone_utils import resnet_fpn_backbone
+import torchvision.transforms.v2 as T
 from tqdm import tqdm
 from utils.create_model_dir import create_model_dir
 from utils.early_stopping import EarlyStopping
@@ -17,67 +18,91 @@ from utils.resize_with_aspect import resize_with_aspect
 import os
 import torch
 
-def get_model(num_classes, device):
+def get_weak_transform():
+    return T.Compose([
+        T.ToDtype(torch.float32, scale=True),
+        T.RandomHorizontalFlip(p=0.5),
+    ])
+
+def get_strong_transform():
+    return T.Compose([
+        T.ToDtype(torch.float32, scale=True),
+        T.RandomHorizontalFlip(p=0.5),
+        T.RandAugment(),  # Strong augmentations
+    ])
+
+def load_pretrained_model(num_classes, model_path, device):
+    # Create a fresh model instance with correct output classes
     backbone = resnet_fpn_backbone(backbone_name="resnet50", weights=ResNet50_Weights.IMAGENET1K_V2)
     model = FasterRCNN(backbone, num_classes=num_classes)
-    model.to(device)
 
-def train_faster_rcnn(model, train_loader, val_loader, device, epochs, logger, warmup_pct=0.05):
+    # Load your 10%-trained weights
+    model.load_state_dict(torch.load(model_path))
+
+    return model.to(device)
+
+def train_fixmatch(model, data_loader, device, logger, threshold=0.95, lambda_u=1.0, epochs=10, unfreeze_epoch=3):
     model.to(device)
     model.train()
+    optimizer = torch.optim.SGD(
+        filter(lambda p: p.requires_grad, model.parameters()),  # important!
+        lr=0.005, momentum=0.9, weight_decay=0.0005
+    )
 
-    base_lr = 5e-4
-    init_lr = 1e-5
-    total_steps = len(train_loader) * epochs
-    warmup_iters = int(total_steps * warmup_pct)
-    warmup_iters = max(10, min(warmup_iters, 500))  # safety bounds
-
-    optimizer = torch.optim.AdamW(model.parameters(), lr=init_lr, weight_decay=1e-4)
-    scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max=epochs)
-    early_stopping = EarlyStopping(patience=10, delta=0.001, mode="max")
-
-    global_step = 0
+    # Freeze backbone before training
+    for param in model.backbone.parameters():
+        param.requires_grad = False
 
     for epoch in range(epochs):
-        total_loss = 0
+        if epoch == unfreeze_epoch:
+            logger.log(f"Unfreezing backbone at epoch {epoch}")
+            for param in model.backbone.parameters():
+                param.requires_grad = True
+            # Recreate optimizer with all parameters
+            optimizer = torch.optim.SGD(model.parameters(), lr=0.005, momentum=0.9, weight_decay=0.0005)
+        
+        for (x_l, y_l), x_u in data_loader:
+            x_l = [img.to(device) for img in x_l]
+            y_l = [{k: v.to(device) for k, v in t.items()} for t in y_l]
 
-        for images, targets in tqdm(train_loader, desc=f"Epoch {epoch+1}/{epochs}"):
-            images = [img.to(device) for img in images]
-            targets = [{k: v.to(device) for k, v in t.items()} for t in targets]
+            loss_dict = model(x_l, y_l)
+            loss_l = sum(loss for loss in loss_dict.values())
 
-            # Warm-up: linearly increase LR for warmup_iters steps
-            if global_step < warmup_iters:
-                lr = linear_warmup(global_step, warmup_iters, base_lr, init_lr)
-                for param_group in optimizer.param_groups:
-                    param_group["lr"] = lr
+            x_u_weak = [get_weak_transform()(img)[0].to(device) for img in x_u]
+            x_u_strong = [get_strong_transform()(img)[0].to(device) for img in x_u]
 
-            loss_dict = model(images, targets)
-            losses = sum(loss for loss in loss_dict.values())
+            pseudo_targets = []
+            with torch.no_grad():
+                preds = model(x_u_weak)
+                for pred in preds:
+                    mask = pred['scores'] > threshold
+                    if mask.sum() == 0:
+                        pseudo_targets.append(None)
+                        continue
+                    pseudo_targets.append({
+                        'boxes': pred['boxes'][mask].detach(),
+                        'labels': pred['labels'][mask].detach()
+                    })
 
+            x_u_filtered = []
+            pseudo_filtered = []
+            for img, tgt in zip(x_u_strong, pseudo_targets):
+                if tgt is not None:
+                    x_u_filtered.append(img)
+                    pseudo_filtered.append(tgt)
+
+            if x_u_filtered:
+                loss_dict_u = model(x_u_filtered, pseudo_filtered)
+                loss_u = sum(loss for loss in loss_dict_u.values())
+            else:
+                loss_u = torch.tensor(0.0, device=device)
+
+            loss = loss_l + lambda_u * loss_u
             optimizer.zero_grad()
-            losses.backward()
+            loss.backward()
             optimizer.step()
 
-            total_loss += losses.item()
-            global_step += 1
-
-        # Validation
-        val_map = evaluate_map(model, val_loader, device)["map_50"]
-
-        # Step cosine scheduler after warm-up
-        if global_step >= warmup_iters:
-            scheduler.step()
-
-        # Early stopping
-        early_stopping(val_map, model)
-        if early_stopping.early_stop:
-            logger.log(f"Early stopping at epoch {epoch+1}")
-            break
-
-        current_lr = optimizer.param_groups[0]["lr"]
-        logger.log(f"Epoch {epoch+1}/{epochs} | Train Loss: {total_loss/len(train_loader):.4f}, LR: {current_lr:.6f}, mAP@0.5: {val_map:.4f}")
-
-    early_stopping.load_best_model(model)
+        logger.log(f"Epoch {epoch+1}/{epochs} | Total loss: {loss.item():.4f}, Labeled loss: {loss_l.item():.4f}, Unlabeled loss: {loss_u.item():.4f}")
 
 # ====== Safe Entry Point ======
 if __name__ == "__main__":
