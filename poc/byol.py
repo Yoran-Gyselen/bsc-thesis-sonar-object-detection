@@ -59,9 +59,6 @@ train_loader = DataLoader(
     train_dataset,
     batch_size=BATCH_SIZE,
     shuffle=False,
-    num_workers=8,
-    pin_memory=True,
-    persistent_workers=True,
     collate_fn=lambda x: tuple(zip(*x))
 )
 

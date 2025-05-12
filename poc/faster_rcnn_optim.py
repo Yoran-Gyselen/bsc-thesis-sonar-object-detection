@@ -4,7 +4,7 @@
 from data.labeled_dataset import LabeledDataset
 from datetime import datetime
 from torch.utils.data import DataLoader
-from torchvision.models import ResNet50_Weights
+from torchvision.models import ResNet18_Weights
 from torchvision.models.detection import FasterRCNN
 from torchvision.models.detection.backbone_utils import resnet_fpn_backbone
 from tqdm import tqdm
@@ -18,9 +18,9 @@ import os
 import torch
 
 def get_model(num_classes, device):
-    backbone = resnet_fpn_backbone(backbone_name="resnet50", weights=ResNet50_Weights.IMAGENET1K_V2)
+    backbone = resnet_fpn_backbone(backbone_name="resnet18", weights=ResNet18_Weights.IMAGENET1K_V1)
     model = FasterRCNN(backbone, num_classes=num_classes)
-    model.to(device)
+    return model.to(device)
 
 def train_faster_rcnn(model, train_loader, val_loader, device, epochs, logger, warmup_pct=0.05):
     model.to(device)
@@ -28,26 +28,29 @@ def train_faster_rcnn(model, train_loader, val_loader, device, epochs, logger, w
 
     base_lr = 5e-4
     init_lr = 1e-5
+    weight_decay = 1e-4
+
     total_steps = len(train_loader) * epochs
     warmup_iters = int(total_steps * warmup_pct)
-    warmup_iters = max(10, min(warmup_iters, 500))  # safety bounds
+    warmup_iters = max(10, min(warmup_iters, 500))
 
-    optimizer = torch.optim.AdamW(model.parameters(), lr=init_lr, weight_decay=1e-4)
+    optimizer = torch.optim.AdamW(model.parameters(), lr=init_lr, weight_decay=weight_decay)
     scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max=epochs)
+    
     early_stopping = EarlyStopping(patience=10, delta=0.001, mode="max")
-
-    global_step = 0
+    global_iter = 0
 
     for epoch in range(epochs):
         total_loss = 0
+        model.train()
 
         for images, targets in tqdm(train_loader, desc=f"Epoch {epoch+1}/{epochs}"):
             images = [img.to(device) for img in images]
             targets = [{k: v.to(device) for k, v in t.items()} for t in targets]
 
             # Warm-up: linearly increase LR for warmup_iters steps
-            if global_step < warmup_iters:
-                lr = linear_warmup(global_step, warmup_iters, base_lr, init_lr)
+            if global_iter < warmup_iters:
+                lr = linear_warmup(global_iter, warmup_iters, base_lr, init_lr)
                 for param_group in optimizer.param_groups:
                     param_group["lr"] = lr
 
@@ -59,23 +62,20 @@ def train_faster_rcnn(model, train_loader, val_loader, device, epochs, logger, w
             optimizer.step()
 
             total_loss += losses.item()
-            global_step += 1
+            global_iter += 1
+        
+        scheduler.step()
 
         # Validation
         val_map = evaluate_map(model, val_loader, device)["map_50"]
 
-        # Step cosine scheduler after warm-up
-        if global_step >= warmup_iters:
-            scheduler.step()
+        logger.log(f"Epoch {epoch+1}/{epochs} | Train Loss: {total_loss/len(train_loader):.4f}, LR: {optimizer.param_groups[0]['lr']:.6f}, mAP@0.5: {val_map:.4f}")
 
         # Early stopping
         early_stopping(val_map, model)
         if early_stopping.early_stop:
             logger.log(f"Early stopping at epoch {epoch+1}")
             break
-
-        current_lr = optimizer.param_groups[0]["lr"]
-        logger.log(f"Epoch {epoch+1}/{epochs} | Train Loss: {total_loss/len(train_loader):.4f}, LR: {current_lr:.6f}, mAP@0.5: {val_map:.4f}")
 
     early_stopping.load_best_model(model)
 
@@ -101,6 +101,7 @@ if __name__ == "__main__":
     logger.log(f"Seed: {SEED}", to_console=False)
     logger.log(f"Batch size: {BATCH_SIZE}", to_console=False)
     logger.log(f"Epochs: {EPOCHS}", to_console=False)
+    logger.log(f"Warm-up percentage: {WARMUP_PCT}", to_console=False)
 
     start_time = datetime.now()
 

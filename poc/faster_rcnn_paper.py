@@ -58,11 +58,9 @@ def train_faster_rcnn(model, train_loader, device, epochs, logger):
             total_loss += losses.item()
             global_iter += 1
         
-        if global_iter >= warmup_iters:
-            scheduler.step()
+        scheduler.step()
 
-        current_lr = optimizer.param_groups[0]["lr"]
-        logger.log(f"Epoch {epoch+1}/{epochs} | Training loss: {total_loss/len(train_loader):.4f}, LR: {current_lr:.6f}")
+        logger.log(f"Epoch {epoch+1}/{epochs} | Training loss: {total_loss/len(train_loader):.4f}, LR: {optimizer.param_groups[0]['lr']:.6f}")
 
 # ====== Safe Entry Point ======
 if __name__ == "__main__":

@@ -2,6 +2,7 @@
 
 # Imports
 from data.labeled_dataset import LabeledDataset
+from data.fixmatch_dataset import FixMatchDataset
 from datetime import datetime
 from torch.utils.data import DataLoader
 from torchvision.models import ResNet50_Weights
@@ -109,7 +110,8 @@ if __name__ == "__main__":
     # Configuration
     PROJECT_NAME = input("Please enter a project name: ")
     UATD_PATH = input("Please enter the path to the FULL UATD-dataset: ")
-    DATASET_FRACTION = float(input("Please enter the fraction of the dataset to be used: ") or 1.0)
+    BACKBONE_PATH = input("Please enter the path to the pre-trained model to use as a backbone: ")
+    LABELED_FRACTION = float(input("Please enter the fraction of the dataset to be used for supervised training: ") or 0.1)
     SEED = int(input("Please enter the seed: ") or 42)
     BATCH_SIZE = int(input("Please enter the batch size: "))
     EPOCHS = int(input("Please enter the amount of epochs: "))
@@ -130,11 +132,10 @@ if __name__ == "__main__":
     start_time = datetime.now()
 
     # Datasets
-    train_dataset = LabeledDataset(
+    train_dataset = FixMatchDataset(
         os.path.join(UATD_PATH, "UATD_Training", "images"),
         os.path.join(UATD_PATH, "UATD_Training", "annotations"),
-        transforms=resize_with_aspect,
-        dataset_fraction=DATASET_FRACTION,
+        labeled_fraction=LABELED_FRACTION,
         seed=SEED
     )
 
@@ -159,8 +160,8 @@ if __name__ == "__main__":
     val_loader = DataLoader(val_dataset, batch_size=BATCH_SIZE, shuffle=False, collate_fn=lambda x: tuple(zip(*x)))
     test_loader = DataLoader(test_dataset, batch_size=BATCH_SIZE, shuffle=False, collate_fn=lambda x: tuple(zip(*x)))
 
-    model = get_model(num_classes=NUM_CLASSES, device=DEVICE)
-    train_faster_rcnn(model=model, train_loader=train_loader, val_loader=val_loader, device=DEVICE, epochs=EPOCHS, logger=logger, warmup_pct=WARMUP_PCT)
+    model = load_pretrained_model(num_classes=NUM_CLASSES, model_path=BACKBONE_PATH, device=DEVICE)
+    # train_fixmatch(model=model, data_loader=train_loader, device=DEVICE, logger=logger)
 
     # Export Model
     torch.save(model.state_dict(), model_path)
