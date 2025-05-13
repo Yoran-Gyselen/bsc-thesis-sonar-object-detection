@@ -1,0 +1,19 @@
+2025-05-13 12:04:27,147 - Dataset fraction: 0.01
+2025-05-13 12:04:27,147 - Seed: 42
+2025-05-13 12:04:27,147 - Batch size: 1
+2025-05-13 12:04:27,147 - Epochs: 12
+2025-05-13 12:04:31,803 - Epoch 1/12 | Training loss: 0.4662, LR: 0.000160
+2025-05-13 12:04:35,450 - Epoch 2/12 | Training loss: 0.4430, LR: 0.000221
+2025-05-13 12:04:39,118 - Epoch 3/12 | Training loss: 0.3573, LR: 0.000282
+2025-05-13 12:04:42,821 - Epoch 4/12 | Training loss: 0.3537, LR: 0.000342
+2025-05-13 12:04:46,524 - Epoch 5/12 | Training loss: 0.3445, LR: 0.000403
+2025-05-13 12:04:50,247 - Epoch 6/12 | Training loss: 0.3667, LR: 0.000464
+2025-05-13 12:04:53,982 - Epoch 7/12 | Training loss: 0.3576, LR: 0.000050
+2025-05-13 12:04:57,704 - Epoch 8/12 | Training loss: 0.3046, LR: 0.000050
+2025-05-13 12:05:01,419 - Epoch 9/12 | Training loss: 0.2653, LR: 0.000050
+2025-05-13 12:05:05,145 - Epoch 10/12 | Training loss: 0.2494, LR: 0.000005
+2025-05-13 12:05:08,878 - Epoch 11/12 | Training loss: 0.2311, LR: 0.000005
+2025-05-13 12:05:12,609 - Epoch 12/12 | Training loss: 0.2225, LR: 0.000005
+2025-05-13 12:05:12,691 - Model saved at 'models/faster_rcnn_1bs2_paper/faster_rcnn_1bs2_paper_20250513_120427.pth'
+2025-05-13 12:05:33,031 - {'map': tensor(0.2799), 'map_50': tensor(0.2799), 'map_75': tensor(-1.), 'map_small': tensor(0.2930), 'map_medium': tensor(0.3008), 'map_large': tensor(-1.), 'mar_1': tensor(0.6402), 'mar_10': tensor(0.8457), 'mar_100': tensor(0.8457), 'mar_small': tensor(0.8389), 'mar_medium': tensor(0.8478), 'mar_large': tensor(-1.), 'map_per_class': tensor(-1.), 'mar_100_per_class': tensor(-1.), 'classes': tensor([ 1,  2,  3,  4,  5,  6,  7,  8,  9, 10], dtype=torch.int32)}
+2025-05-13 12:05:33,035 - Total Duration: 0:01:05.887947
