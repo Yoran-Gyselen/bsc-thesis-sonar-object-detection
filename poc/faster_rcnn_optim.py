@@ -77,7 +77,7 @@ def train_faster_rcnn(model, train_loader, val_loader, device, epochs, logger, w
             logger.log(f"Early stopping at epoch {epoch+1}")
             break
 
-    early_stopping.load_best_model(model)
+    return early_stopping.load_best_model(model)
 
 # ====== Safe Entry Point ======
 if __name__ == "__main__":
@@ -117,17 +117,13 @@ if __name__ == "__main__":
     test_dataset = LabeledDataset(
         os.path.join(UATD_PATH, "UATD_Test_1", "images"),
         os.path.join(UATD_PATH, "UATD_Test_1", "annotations"),
-        transforms=resize_with_aspect,
-        dataset_fraction=DATASET_FRACTION,
-        seed=SEED
+        transforms=resize_with_aspect
     )
 
     val_dataset = LabeledDataset(
         os.path.join(UATD_PATH, "UATD_Test_2", "images"),
         os.path.join(UATD_PATH, "UATD_Test_2", "annotations"),
-        transforms=resize_with_aspect,
-        dataset_fraction=DATASET_FRACTION,
-        seed=SEED
+        transforms=resize_with_aspect
     )
 
     # DataLoaders
@@ -136,7 +132,7 @@ if __name__ == "__main__":
     test_loader = DataLoader(test_dataset, batch_size=BATCH_SIZE, shuffle=False, collate_fn=lambda x: tuple(zip(*x)))
 
     model = get_model(num_classes=NUM_CLASSES, device=DEVICE)
-    train_faster_rcnn(model=model, train_loader=train_loader, val_loader=val_loader, device=DEVICE, epochs=EPOCHS, logger=logger, warmup_pct=WARMUP_PCT)
+    model = train_faster_rcnn(model=model, train_loader=train_loader, val_loader=val_loader, device=DEVICE, epochs=EPOCHS, logger=logger, warmup_pct=WARMUP_PCT)
 
     # Export Model
     torch.save(model.state_dict(), model_path)

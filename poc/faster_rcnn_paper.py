@@ -61,6 +61,8 @@ def train_faster_rcnn(model, train_loader, device, epochs, logger):
         scheduler.step()
 
         logger.log(f"Epoch {epoch+1}/{epochs} | Training loss: {total_loss/len(train_loader):.4f}, LR: {optimizer.param_groups[0]['lr']:.6f}")
+    
+    return model
 
 # ====== Safe Entry Point ======
 if __name__ == "__main__":
@@ -98,9 +100,7 @@ if __name__ == "__main__":
     test_dataset = LabeledDataset(
         os.path.join(UATD_PATH, "UATD_Test_1", "images"),
         os.path.join(UATD_PATH, "UATD_Test_1", "annotations"),
-        transforms=resize_with_aspect,
-        dataset_fraction=DATASET_FRACTION,
-        seed=SEED
+        transforms=resize_with_aspect
     )
 
     # DataLoaders
@@ -108,7 +108,7 @@ if __name__ == "__main__":
     test_loader = DataLoader(test_dataset, batch_size=BATCH_SIZE, shuffle=False, collate_fn=lambda x: tuple(zip(*x)))
 
     model = get_model(num_classes=NUM_CLASSES, device=DEVICE)
-    train_faster_rcnn(model=model, train_loader=train_loader, device=DEVICE, epochs=EPOCHS, logger=logger)
+    model = train_faster_rcnn(model=model, train_loader=train_loader, device=DEVICE, epochs=EPOCHS, logger=logger)
     
     # Export Model
     torch.save(model.state_dict(), model_path)
