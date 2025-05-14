@@ -47,13 +47,28 @@ def train_fixmatch(
     model.to(device)
     model.train()
     
-    def get_trainable_params(model):
-        return filter(lambda p: p.requires_grad, model.parameters())
+    def get_param_groups(model):
+        backbone_params = []
+        head_params = []
+        for name, param in model.named_parameters():
+            if not param.requires_grad:
+                continue
+            if 'backbone' in name:
+                backbone_params.append(param)
+            else:
+                head_params.append(param)
+        return [
+            {"params": backbone_params, "lr": 0.0005},  # smaller LR for pretrained backbone
+            {"params": head_params, "lr": 0.005},
+        ]
+
 
     optimizer = torch.optim.SGD(
-        get_trainable_params(model),
-        lr=0.005, momentum=0.9, weight_decay=0.0005
+        get_param_groups(model),
+        momentum=0.9,
+        weight_decay=0.0005
     )
+    scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max=epochs)
 
     early_stopping = EarlyStopping(patience=8, delta=0.002, mode="max")
 
@@ -62,14 +77,11 @@ def train_fixmatch(
         param.requires_grad = False
 
     for epoch in range(epochs):
+
         if epoch == unfreeze_epoch:
             logger.log(f"Unfreezing backbone at epoch {epoch}")
             for param in model.backbone.parameters():
                 param.requires_grad = True
-            optimizer = torch.optim.SGD(
-                get_trainable_params(model),
-                lr=0.005, momentum=0.9, weight_decay=0.0005
-            )
 
         model.train()
         for batch in tqdm(train_loader, desc=f"Epoch {epoch+1}/{epochs}"):
@@ -121,6 +133,8 @@ def train_fixmatch(
             optimizer.zero_grad()
             loss.backward()
             optimizer.step()
+        
+        scheduler.step()
 
         # Validation
         model.eval()

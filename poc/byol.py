@@ -42,7 +42,7 @@ class BYOL(nn.Module):
         z = self.projector(x)
         p = self.predictor(z)
         return p, z.detach()
-
+    
 class ResNetEncoder(nn.Module):
     def __init__(self):
         super().__init__()
@@ -87,7 +87,7 @@ def get_models(device):
 
     return online_net, target_net
 
-def train_byol_backbone(train_loader, online_net, target_net, device, epochs=100):
+def train_byol_backbone(train_loader, online_net, target_net, logger, device, epochs=100):
     optimizer = torch.optim.Adam(online_net.parameters(), lr=3e-4)
     early_stopping = EarlyStopping(patience=10, delta=0.001, mode="min")
 
@@ -120,12 +120,12 @@ def train_byol_backbone(train_loader, online_net, target_net, device, epochs=100
         logger.log(f"Epoch {epoch+1}/{epochs} | Average loss: {avg_loss:.4f}")
 
         # Early stopping
-        early_stopping(avg_loss, online_net)
+        early_stopping(avg_loss, online_net.encoder)
         if early_stopping.early_stop:
             logger.log(f"Early stopping at epoch {epoch+1}")
             break
 
-    return early_stopping.load_best_model(online_net)
+    return early_stopping.load_best_model(online_net.encoder)
 
 
 # ====== Safe Entry Point ======
@@ -149,19 +149,17 @@ if __name__ == "__main__":
     start_time = datetime.now()
 
     # Datasets
-    train_dataset = BYOLDataset(image_dir=os.path.join(UATD_PATH, "UATD_Training", "images"), transforms=train_transform)
-    val_dataset = BYOLDataset(image_dir=os.path.join(UATD_PATH, "UATD_Test_2", "images"), transforms=train_transform)
+    train_dataset = BYOLDataset(image_dir=os.path.join(UATD_PATH, "UATD_Training", "images"), transform1=train_transform, transform2=train_transform)
 
     # DataLoaders
     train_loader = DataLoader(train_dataset, batch_size=BATCH_SIZE, shuffle=True)
-    val_loader = DataLoader(val_dataset, batch_size=BATCH_SIZE, shuffle=False)
 
     # Models
     online_net, target_net = get_models(DEVICE)
-    train_byol_backbone(train_loader=train_loader, online_net=online_net, target_net=target_net, device=DEVICE, epochs=EPOCHS)
+    online_net_encoder = train_byol_backbone(train_loader=train_loader, online_net=online_net, target_net=target_net, logger=logger, device=DEVICE, epochs=EPOCHS)
 
     # Export Model
-    torch.save(online_net.encoder.state_dict(), model_path)
+    torch.save(online_net_encoder.state_dict(), model_path)
     logger.log(f"Model saved at '{model_path}'")
 
     # Final timing
