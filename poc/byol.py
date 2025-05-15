@@ -127,7 +127,6 @@ def train_byol_backbone(train_loader, online_net, target_net, logger, device, ep
 
     return early_stopping.load_best_model(online_net.encoder)
 
-
 # ====== Safe Entry Point ======
 if __name__ == "__main__":
     # Configuration

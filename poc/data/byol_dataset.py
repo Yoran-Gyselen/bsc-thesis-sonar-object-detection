@@ -16,8 +16,8 @@ class BYOLDataset(torch.utils.data.Dataset):
 
         img = Image.open(img_path).convert("RGB")
 
-        view1 = F.to_tensor(self.transform1(img))
-        view2 = F.to_tensor(self.transform2(img))
+        view1 = self.transform1(img)
+        view2 = self.transform2(img)
 
         return view1, view2
 
