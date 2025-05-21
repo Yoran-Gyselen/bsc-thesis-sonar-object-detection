@@ -1,0 +1,35 @@
+2025-05-20 16:46:25,097 - Labeled fraction: 0.05
+2025-05-20 16:46:25,097 - Seed: 42
+2025-05-20 16:46:25,097 - Minimum threshold: 0.5
+2025-05-20 16:46:25,097 - Maximum threshold: 0.95
+2025-05-20 16:46:25,097 - Batch size: 16
+2025-05-20 16:46:25,097 - Epochs: 100
+2025-05-20 16:53:54,091 - Epoch 1 | Total loss: 0.4193, Labeled loss: 0.3452, Unlabeled loss: 0.1481, mAP@0.5: 0.1849, Best mAP: 0.1849, Threshold: 0.500, lambda_u: 0.500, Pseudo-images: 2, Pseudo-boxes: 2
+2025-05-20 17:01:42,673 - Epoch 2 | Total loss: 0.4289, Labeled loss: 0.2735, Unlabeled loss: 0.3108, mAP@0.5: 0.2874, Best mAP: 0.2874, Threshold: 0.694, lambda_u: 0.500, Pseudo-images: 2, Pseudo-boxes: 3
+2025-05-20 17:09:39,518 - Epoch 3 | Total loss: 0.3833, Labeled loss: 0.2289, Unlabeled loss: 0.3088, mAP@0.5: 0.3342, Best mAP: 0.3342, Threshold: 0.741, lambda_u: 0.500, Pseudo-images: 2, Pseudo-boxes: 4
+2025-05-20 17:09:39,524 - Unfreezing backbone at epoch 3
+2025-05-20 17:20:44,735 - Epoch 4 | Total loss: 0.3369, Labeled loss: 0.2004, Unlabeled loss: 0.2729, mAP@0.5: 0.4540, Best mAP: 0.4540, Threshold: 0.760, lambda_u: 0.500, Pseudo-images: 2, Pseudo-boxes: 3
+2025-05-20 17:31:47,614 - Epoch 5 | Total loss: 0.2846, Labeled loss: 0.1640, Unlabeled loss: 0.1608, mAP@0.5: 0.4787, Best mAP: 0.4787, Threshold: 0.803, lambda_u: 0.750, Pseudo-images: 3, Pseudo-boxes: 4
+2025-05-20 17:42:53,788 - Epoch 6 | Total loss: 0.2290, Labeled loss: 0.1395, Unlabeled loss: 0.1789, mAP@0.5: 0.4865, Best mAP: 0.4865, Threshold: 0.811, lambda_u: 0.500, Pseudo-images: 2, Pseudo-boxes: 2
+2025-05-20 17:54:03,271 - Epoch 7 | Total loss: 0.2858, Labeled loss: 0.1187, Unlabeled loss: 0.3343, mAP@0.5: 0.5723, Best mAP: 0.5723, Threshold: 0.814, lambda_u: 0.500, Pseudo-images: 2, Pseudo-boxes: 2
+2025-05-20 18:05:06,627 - Epoch 8 | Total loss: 0.1089, Labeled loss: 0.1089, Unlabeled loss: 0.0000, mAP@0.5: 0.5387, Best mAP: 0.5723, Threshold: 0.840, lambda_u: 0.100, Pseudo-images: 0, Pseudo-boxes: 0
+2025-05-20 18:16:14,983 - Epoch 9 | Total loss: 0.1919, Labeled loss: 0.1088, Unlabeled loss: 0.1662, mAP@0.5: 0.6021, Best mAP: 0.6021, Threshold: 0.840, lambda_u: 0.500, Pseudo-images: 2, Pseudo-boxes: 2
+2025-05-20 18:27:21,594 - Epoch 10 | Total loss: 0.1714, Labeled loss: 0.0919, Unlabeled loss: 0.1591, mAP@0.5: 0.5748, Best mAP: 0.6021, Threshold: 0.849, lambda_u: 0.500, Pseudo-images: 2, Pseudo-boxes: 2
+2025-05-20 18:38:29,495 - Epoch 11 | Total loss: 0.1460, Labeled loss: 0.0862, Unlabeled loss: 0.1197, mAP@0.5: 0.5678, Best mAP: 0.6021, Threshold: 0.849, lambda_u: 0.500, Pseudo-images: 2, Pseudo-boxes: 2
+2025-05-20 18:49:35,606 - Epoch 12 | Total loss: 0.2112, Labeled loss: 0.0831, Unlabeled loss: 0.2560, mAP@0.5: 0.5949, Best mAP: 0.6021, Threshold: 0.849, lambda_u: 0.500, Pseudo-images: 2, Pseudo-boxes: 4
+2025-05-20 19:00:39,427 - Epoch 13 | Total loss: 0.2725, Labeled loss: 0.0676, Unlabeled loss: 0.2732, mAP@0.5: 0.5489, Best mAP: 0.6021, Threshold: 0.849, lambda_u: 0.750, Pseudo-images: 3, Pseudo-boxes: 3
+2025-05-20 19:11:45,450 - Epoch 14 | Total loss: 0.1541, Labeled loss: 0.1013, Unlabeled loss: 0.1056, mAP@0.5: 0.5879, Best mAP: 0.6021, Threshold: 0.849, lambda_u: 0.500, Pseudo-images: 2, Pseudo-boxes: 3
+2025-05-20 19:22:50,344 - Epoch 15 | Total loss: 0.1673, Labeled loss: 0.0667, Unlabeled loss: 0.2011, mAP@0.5: 0.6389, Best mAP: 0.6389, Threshold: 0.849, lambda_u: 0.500, Pseudo-images: 2, Pseudo-boxes: 2
+2025-05-20 19:33:55,627 - Epoch 16 | Total loss: 0.2377, Labeled loss: 0.0819, Unlabeled loss: 0.3116, mAP@0.5: 0.6427, Best mAP: 0.6427, Threshold: 0.860, lambda_u: 0.500, Pseudo-images: 2, Pseudo-boxes: 3
+2025-05-20 19:44:58,206 - Epoch 17 | Total loss: 0.3064, Labeled loss: 0.0874, Unlabeled loss: 0.2920, mAP@0.5: 0.6171, Best mAP: 0.6427, Threshold: 0.861, lambda_u: 0.750, Pseudo-images: 3, Pseudo-boxes: 3
+2025-05-20 19:56:01,028 - Epoch 18 | Total loss: 0.1873, Labeled loss: 0.0751, Unlabeled loss: 0.1496, mAP@0.5: 0.5652, Best mAP: 0.6427, Threshold: 0.861, lambda_u: 0.750, Pseudo-images: 3, Pseudo-boxes: 3
+2025-05-20 20:06:59,402 - Epoch 19 | Total loss: 0.2550, Labeled loss: 0.0668, Unlabeled loss: 0.2509, mAP@0.5: 0.5649, Best mAP: 0.6427, Threshold: 0.861, lambda_u: 0.750, Pseudo-images: 3, Pseudo-boxes: 3
+2025-05-20 20:17:57,472 - Epoch 20 | Total loss: 0.0952, Labeled loss: 0.0732, Unlabeled loss: 0.0882, mAP@0.5: 0.6130, Best mAP: 0.6427, Threshold: 0.861, lambda_u: 0.250, Pseudo-images: 1, Pseudo-boxes: 1
+2025-05-20 20:28:51,866 - Epoch 21 | Total loss: 0.1296, Labeled loss: 0.0736, Unlabeled loss: 0.2242, mAP@0.5: 0.5936, Best mAP: 0.6427, Threshold: 0.861, lambda_u: 0.250, Pseudo-images: 1, Pseudo-boxes: 1
+2025-05-20 20:39:51,485 - Epoch 22 | Total loss: 0.2665, Labeled loss: 0.0652, Unlabeled loss: 0.2684, mAP@0.5: 0.5990, Best mAP: 0.6427, Threshold: 0.861, lambda_u: 0.750, Pseudo-images: 3, Pseudo-boxes: 5
+2025-05-20 20:50:46,561 - Epoch 23 | Total loss: 0.2338, Labeled loss: 0.0774, Unlabeled loss: 0.2084, mAP@0.5: 0.5513, Best mAP: 0.6427, Threshold: 0.861, lambda_u: 0.750, Pseudo-images: 3, Pseudo-boxes: 3
+2025-05-20 21:01:46,303 - Epoch 24 | Total loss: 0.1002, Labeled loss: 0.0619, Unlabeled loss: 0.1530, mAP@0.5: 0.6028, Best mAP: 0.6427, Threshold: 0.861, lambda_u: 0.250, Pseudo-images: 1, Pseudo-boxes: 1
+2025-05-20 21:01:46,304 - Early stopping at epoch 24
+2025-05-20 21:01:46,390 - Model saved at 'models/fixmatch_5/fixmatch_5_20250520_164625.pth'
+2025-05-20 21:02:07,746 - {'map': tensor(0.6649), 'map_50': tensor(0.6649), 'map_75': tensor(-1.), 'map_small': tensor(0.6396), 'map_medium': tensor(0.7011), 'map_large': tensor(-1.), 'mar_1': tensor(0.7795), 'mar_10': tensor(0.8105), 'mar_100': tensor(0.8105), 'mar_small': tensor(0.7770), 'mar_medium': tensor(0.7825), 'mar_large': tensor(-1.), 'map_per_class': tensor(-1.), 'mar_100_per_class': tensor(-1.), 'classes': tensor([ 1,  2,  3,  4,  5,  6,  7,  8,  9, 10], dtype=torch.int32)}
+2025-05-20 21:02:07,751 - Total Duration: 4:15:42.653880

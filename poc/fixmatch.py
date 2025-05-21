@@ -17,6 +17,7 @@ from utils.logger import Logger
 from utils.resize_with_aspect import resize_with_aspect
 import os
 import torch
+from torch.amp import autocast, GradScaler
 
 def get_weak_transform():
     return T.Compose([
@@ -70,6 +71,7 @@ def train_fixmatch(
     )
     scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max=epochs)
 
+    scaler = GradScaler()
     early_stopping = EarlyStopping(patience=8, delta=0.002, mode="max")
     best_val_map = 0.0  # Track best validation mAP for threshold scheduling
 
@@ -97,8 +99,9 @@ def train_fixmatch(
             y_l = [{k: v.to(device) for k, v in t.items()} for t in y_l]
 
             # Supervised loss
-            loss_dict = model(x_l, y_l)
-            loss_l = sum(loss for loss in loss_dict.values())
+            with autocast(device_type=str(device)):
+                loss_dict = model(x_l, y_l)
+                loss_l = sum(loss for loss in loss_dict.values())
 
             # Apply weak and strong augmentations
             x_u_weak = [get_weak_transform()(img).to(device) for img in x_u]
@@ -143,8 +146,9 @@ def train_fixmatch(
 
             # Unsupervised loss
             if x_u_filtered:
-                loss_dict_u = model(x_u_filtered, pseudo_filtered)
-                loss_u = sum(loss for loss in loss_dict_u.values())
+                with autocast(device_type=str(device)):
+                    loss_dict_u = model(x_u_filtered, pseudo_filtered)
+                    loss_u = sum(loss for loss in loss_dict_u.values())
             else:
                 loss_u = torch.zeros(1, device=device, requires_grad=True)
 
@@ -153,11 +157,13 @@ def train_fixmatch(
             lambda_u = min(1.0, max(0.1, pseudo_ratio))
 
             # Total loss
-            loss = loss_l + lambda_u * loss_u
+            with autocast(device_type=str(device)):
+                loss = loss_l + lambda_u * loss_u
 
             optimizer.zero_grad()
-            loss.backward()
-            optimizer.step()
+            scaler.scale(loss).backward()
+            scaler.step(optimizer)
+            scaler.update()
 
         scheduler.step()
 
@@ -169,11 +175,11 @@ def train_fixmatch(
         # Logging
         logger.log(
             f"Epoch {epoch+1} | "
-            f"Total loss: {loss:.4f}, "
-            f"Labeled loss: {loss_l:.4f}, "
-            f"Unlabeled loss: {loss_u:.4f}, "
-            f"mAP@0.5: {val_map:.4f}, "
-            f"Best mAP: {best_val_map:.4f}, "
+            f"Total loss: {loss.item():.4f}, "
+            f"Labeled loss: {loss_l.item():.4f}, "
+            f"Unlabeled loss: {loss_u.item():.4f}, "
+            f"mAP@0.5: {val_map.item():.4f}, "
+            f"Best mAP: {best_val_map.item():.4f}, "
             f"Threshold: {current_threshold:.3f}, "
             f"lambda_u: {lambda_u:.3f}, "
             f"Pseudo-images: {num_pseudo_images}, "
