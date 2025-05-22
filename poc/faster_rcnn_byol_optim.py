@@ -9,13 +9,12 @@ from torchvision.models.detection.backbone_utils import resnet_fpn_backbone
 from tqdm import tqdm
 from utils.create_model_dir import create_model_dir
 from utils.evaluate_map import evaluate_map
-from utils.linear_warmup import linear_warmup
 from utils.logger import Logger
 from utils.resize_with_aspect import resize_with_aspect
 from utils.early_stopping import EarlyStopping
 import os
 import torch
-import torch.nn as nn
+from torch.amp import GradScaler, autocast
 
 def get_model(trained_model_path, num_classes, device):
     backbone = resnet_fpn_backbone(backbone_name="resnet18", weights=None)
@@ -28,95 +27,117 @@ def get_model(trained_model_path, num_classes, device):
     model = FasterRCNN(backbone, num_classes=num_classes)
     return model.to(device)
 
-def finetune_faster_rcnn(model, train_loader, val_loader, device, epochs, logger, warmup_pct=0.05, unfreeze_epoch=3):
-    model.to(device)
-    model.train()
+def set_bn_train(module):
+    if isinstance(module, torch.nn.BatchNorm2d):
+        module.train()
 
-    # === Freeze early backbone layers and BatchNorm layers ===
+def get_optimizer(model, base_lr, weight_decay):
+    decay, no_decay = [], []
+    for name, param in model.named_parameters():
+        if not param.requires_grad:
+            continue
+        if "bias" in name or "bn" in name or "BatchNorm" in name:
+            no_decay.append(param)
+        else:
+            decay.append(param)
+    return torch.optim.SGD([
+        {"params": decay, "weight_decay": weight_decay},
+        {"params": no_decay, "weight_decay": 0.0}
+    ], lr=base_lr, momentum=0.9)
+
+def finetune_faster_rcnn(
+    model, train_loader, val_loader, device, epochs, logger,
+    warmup_pct=0.05, unfreeze_epoch=3, validate_before_unfreeze=False
+):
+    model.to(device)
+
+    # === Freeze early backbone layers ===
+    frozen_layers = []
     if hasattr(model.backbone, 'body'):
-        frozen = []
         for name, param in model.backbone.body.named_parameters():
             if "layer1" in name or "layer2" in name:
                 param.requires_grad = False
-                frozen.append(name)
-
-        logger.log(f"Initially frozen backbone layers: {frozen}")
+                frozen_layers.append(name)
+        logger.log(f"Initially frozen backbone layers: {frozen_layers}")
 
     base_lr = 0.001
     init_lr = 1e-5
     weight_decay = 1e-4
 
-    total_steps = len(train_loader) * epochs
-    warmup_iters = max(10, min(int(total_steps * warmup_pct), 500))
+    optimizer = get_optimizer(model, init_lr, weight_decay)
+    scheduler = torch.optim.lr_scheduler.OneCycleLR(
+        optimizer, max_lr=base_lr,
+        steps_per_epoch=len(train_loader),
+        epochs=epochs,
+        pct_start=warmup_pct,
+        anneal_strategy='cos',
+        final_div_factor=10
+    )
 
-    def get_optimizer():
-        params = [p for p in model.parameters() if p.requires_grad]
-        return torch.optim.SGD(params, lr=init_lr, momentum=0.9, weight_decay=weight_decay)
-
-    optimizer = get_optimizer()
-    scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max=epochs)
+    scaler = GradScaler()
     early_stopping = EarlyStopping(patience=10, delta=0.001, mode="max")
 
     global_iter = 0
-    train_loss_history = []
-    unfrozen_state = False
+    unfrozen = False
 
     for epoch in range(epochs):
         model.train()
         total_loss = 0.0
 
-        # Unfreeze at specified epoch
         if epoch == unfreeze_epoch:
-            unfrozen_state = True
+            unfrozen = True
             unfrozen_layers = []
             for name, param in model.backbone.body.named_parameters():
                 if "layer1" in name or "layer2" in name:
                     param.requires_grad = True
                     unfrozen_layers.append(name)
-            optimizer = get_optimizer()  # Rebuild optimizer
-            logger.log(f"Unfroze backbone layers at epoch {epoch}: {unfrozen_layers}")
 
+            # Reset optimizer and scheduler to include new params
+            optimizer = get_optimizer(model, base_lr, weight_decay)
+            scheduler = torch.optim.lr_scheduler.OneCycleLR(
+                optimizer, max_lr=base_lr,
+                steps_per_epoch=len(train_loader),
+                epochs=epochs - epoch,
+                pct_start=0.1,
+                anneal_strategy='cos',
+                final_div_factor=10
+            )
+            model.backbone.body.apply(set_bn_train)
+            logger.log(f"Unfroze layers at epoch {epoch}: {unfrozen_layers}")
 
         for images, targets in tqdm(train_loader, desc=f"Epoch {epoch+1}/{epochs}"):
             images = [img.to(device) for img in images]
             targets = [{k: v.to(device) for k, v in t.items()} for t in targets]
 
-            # Warm-up
-            if global_iter < warmup_iters:
-                lr = linear_warmup(global_iter, warmup_iters, base_lr, init_lr)
-                for param_group in optimizer.param_groups:
-                    param_group["lr"] = lr
-
-            loss_dict = model(images, targets)
-            losses = sum(loss for loss in loss_dict.values())
-
             optimizer.zero_grad()
-            losses.backward()
-            optimizer.step()
+            with autocast(device_type=str(device)):
+                loss_dict = model(images, targets)
+                losses = sum(loss for loss in loss_dict.values())
+
+            scaler.scale(losses).backward()
+            scaler.step(optimizer)
+            scaler.update()
+            scheduler.step()
 
             total_loss += losses.item()
             global_iter += 1
 
-        avg_train_loss = total_loss / len(train_loader)
-        train_loss_history.append(avg_train_loss)
-        scheduler.step()
+        avg_loss = total_loss / len(train_loader)
 
-        # Validation & Early stopping
-        if unfrozen_state:
+        # Validation
+        run_val = unfrozen or validate_before_unfreeze
+        if run_val:
             val_map = evaluate_map(model, val_loader, device)["map_50"]
-            logger.log(f"Epoch {epoch+1}/{epochs} | Train Loss: {avg_train_loss:.4f}, "
-                    f"LR: {optimizer.param_groups[0]['lr']:.6f}, mAP@0.5: {val_map:.4f}")
+            logger.log(f"Epoch {epoch+1} | Train Loss: {avg_loss:.4f}, "
+                       f"LR: {optimizer.param_groups[0]['lr']:.6f}, mAP@0.5: {val_map:.4f}")
 
             early_stopping(val_map, model)
             if early_stopping.early_stop:
                 logger.log(f"Early stopping at epoch {epoch+1}")
                 break
         else:
-            logger.log(
-                f"Epoch {epoch+1}/{epochs} | Train Loss: {avg_train_loss:.4f}, "
-                f"LR: {optimizer.param_groups[0]['lr']:.6f}, mAP@0.5: (skipped — frozen)"
-            )
- 
+            logger.log(f"Epoch {epoch+1} | Train Loss: {avg_loss:.4f}, "
+                       f"LR: {optimizer.param_groups[0]['lr']:.6f}, mAP@0.5: (skipped — frozen)")
 
     return early_stopping.load_best_model(model)
 

@@ -1,0 +1,27 @@
+2025-05-21 11:23:55,809 - Batch size: 128
+2025-05-21 11:23:55,809 - Epochs: 100
+2025-05-21 11:28:15,790 - Epoch 1/100 | Average loss: 1.2785
+2025-05-21 11:32:31,437 - Epoch 2/100 | Average loss: 0.3571
+2025-05-21 11:36:47,759 - Epoch 3/100 | Average loss: 0.1541
+2025-05-21 11:41:02,225 - Epoch 4/100 | Average loss: 0.1030
+2025-05-21 11:45:16,168 - Epoch 5/100 | Average loss: 0.0747
+2025-05-21 11:49:29,937 - Epoch 6/100 | Average loss: 0.0591
+2025-05-21 11:53:43,515 - Epoch 7/100 | Average loss: 0.0516
+2025-05-21 11:57:56,872 - Epoch 8/100 | Average loss: 0.0489
+2025-05-21 12:02:10,115 - Epoch 9/100 | Average loss: 0.0477
+2025-05-21 12:06:23,539 - Epoch 10/100 | Average loss: 0.0438
+2025-05-21 12:10:36,886 - Epoch 11/100 | Average loss: 0.0425
+2025-05-21 12:14:50,586 - Epoch 12/100 | Average loss: 0.0407
+2025-05-21 12:19:04,301 - Epoch 13/100 | Average loss: 0.0407
+2025-05-21 12:23:18,042 - Epoch 14/100 | Average loss: 0.0426
+2025-05-21 12:27:31,451 - Epoch 15/100 | Average loss: 0.0411
+2025-05-21 12:31:44,826 - Epoch 16/100 | Average loss: 0.0419
+2025-05-21 12:35:57,950 - Epoch 17/100 | Average loss: 0.0423
+2025-05-21 12:40:11,401 - Epoch 18/100 | Average loss: 0.0430
+2025-05-21 12:44:24,490 - Epoch 19/100 | Average loss: 0.0432
+2025-05-21 12:48:37,719 - Epoch 20/100 | Average loss: 0.0448
+2025-05-21 12:52:50,919 - Epoch 21/100 | Average loss: 0.0443
+2025-05-21 12:57:04,474 - Epoch 22/100 | Average loss: 0.0462
+2025-05-21 12:57:04,474 - Early stopping at epoch 22
+2025-05-21 12:57:04,508 - Model saved at 'models/byol_backbone/byol_backbone_20250521_112355.pth'
+2025-05-21 12:57:04,508 - Total Duration: 1:33:08.698934
