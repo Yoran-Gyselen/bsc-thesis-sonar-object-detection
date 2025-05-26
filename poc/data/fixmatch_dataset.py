@@ -1,11 +1,11 @@
-import os
-import torch
-import random
-from utils.parse_xml import parse_xml
-from utils.resize_with_aspect import resize_with_aspect, resize_img_with_aspect
-from torchvision.transforms import functional as F
 from PIL import Image
 from itertools import cycle
+from torchvision.transforms import functional as F
+from utils.parse_xml import parse_xml
+from utils.resize_with_aspect import resize_with_aspect, resize_img_with_aspect
+import os
+import random
+import torch
 
 class FixMatchDataset(torch.utils.data.Dataset):
     

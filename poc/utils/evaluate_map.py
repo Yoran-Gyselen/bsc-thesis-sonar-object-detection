@@ -1,6 +1,6 @@
-import torch
 from torchmetrics.detection.mean_ap import MeanAveragePrecision
 from tqdm import tqdm
+import torch
 
 def evaluate_map(model, data_loader, device):
     model.eval()

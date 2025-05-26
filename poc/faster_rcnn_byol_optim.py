@@ -3,18 +3,18 @@
 # Imports
 from data.labeled_dataset import LabeledDataset
 from datetime import datetime
+from torch.amp import GradScaler, autocast
 from torch.utils.data import DataLoader
 from torchvision.models.detection import FasterRCNN
 from torchvision.models.detection.backbone_utils import resnet_fpn_backbone
 from tqdm import tqdm
 from utils.create_model_dir import create_model_dir
+from utils.early_stopping import EarlyStopping
 from utils.evaluate_map import evaluate_map
 from utils.logger import Logger
 from utils.resize_with_aspect import resize_with_aspect
-from utils.early_stopping import EarlyStopping
 import os
 import torch
-from torch.amp import GradScaler, autocast
 
 def get_model(trained_model_path, num_classes, device):
     backbone = resnet_fpn_backbone(backbone_name="resnet18", weights=None)

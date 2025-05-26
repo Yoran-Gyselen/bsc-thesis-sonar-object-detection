@@ -1,22 +1,22 @@
 #!/usr/bin/env python
 
 # Imports
-import torch
-import torch.nn as nn
-import torch.nn.functional as F
-import torchvision.models as models
-from torchvision import transforms
 from data.byol_dataset import BYOLDataset
-from torch.utils.data import DataLoader
-from torch.amp import autocast, GradScaler
 from datetime import datetime
+from torch.amp import autocast, GradScaler
 from torch.utils.data import DataLoader
+from torch.utils.data import DataLoader
+from torchvision import transforms
+from torchvision.models import ResNet18_Weights
 from tqdm import tqdm
 from utils.create_model_dir import create_model_dir
 from utils.early_stopping import EarlyStopping
 from utils.logger import Logger
-from torchvision.models import ResNet18_Weights
 import os
+import torch
+import torch.nn as nn
+import torch.nn.functional as F
+import torchvision.models as models
 
 class MLPHead(nn.Module):
     def __init__(self, in_dim=512, hidden_dim=1024, out_dim=256):

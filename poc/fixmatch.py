@@ -1,14 +1,14 @@
 #!/usr/bin/env python
 
 # Imports
-from data.labeled_dataset import LabeledDataset
 from data.fixmatch_dataset import FixMatchDataset
+from data.labeled_dataset import LabeledDataset
 from datetime import datetime
+from torch.amp import autocast, GradScaler
 from torch.utils.data import DataLoader
 from torchvision.models import ResNet18_Weights
 from torchvision.models.detection import FasterRCNN
 from torchvision.models.detection.backbone_utils import resnet_fpn_backbone
-import torchvision.transforms.v2 as T
 from tqdm import tqdm
 from utils.create_model_dir import create_model_dir
 from utils.early_stopping import EarlyStopping
@@ -17,7 +17,7 @@ from utils.logger import Logger
 from utils.resize_with_aspect import resize_with_aspect
 import os
 import torch
-from torch.amp import autocast, GradScaler
+import torchvision.transforms.v2 as T
 
 def get_weak_transform():
     return T.Compose([

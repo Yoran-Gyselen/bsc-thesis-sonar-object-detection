@@ -1,7 +1,6 @@
+from PIL import Image
 import os
 import torch
-from torchvision.transforms import functional as F
-from PIL import Image
 
 class BYOLDataset(torch.utils.data.Dataset):
     

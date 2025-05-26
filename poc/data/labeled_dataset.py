@@ -1,9 +1,9 @@
-import os
-import torch
-import random
-from utils.parse_xml import parse_xml
-from torchvision.transforms import functional as F
 from PIL import Image
+from torchvision.transforms import functional as F
+from utils.parse_xml import parse_xml
+import os
+import random
+import torch
 
 class LabeledDataset(torch.utils.data.Dataset):
     
