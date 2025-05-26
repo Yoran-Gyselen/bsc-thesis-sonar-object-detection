@@ -5,48 +5,70 @@
 \chapter{Methodologie}%
 \label{ch:methodologie}
 
-Dit onderzoek volgt een gestructureerde aanpak om semi- en self-supervised learning technieken te evalueren voor objectdetectie in sonardata. De methodologie is onderverdeeld in zes fasen: literatuurstudie, data pre-processing, modelontwikkeling, training en evaluatie.
+Dit onderzoek volgt een gestructureerde aanpak om semi- en self-supervised learning technieken voor objectdetectie in sonardata te implementeren en te evalueren. In deze methodologie wordt een onderverdeling gemaakt van de verschillende fasen in dit onderzoek. Hierbij wordt de basis gelegd voor de experimenten die zullen worden uitgevoerd in de proof of concept.
 
-\section{Literatuurstudie}
+\section{Data-acquisitie}
 
-De eerste fase richt zich op het verzamelen van gedetailleerde informatie over het domein en de huidige stand van zaken hierbinnen. Hierbij gaat het om het verzamelen, bestuderen en analyseren van wetenschappelijke artikelen. Op basis hiervan zal het onderzoek verder uitgewerkt worden. Dit begint met een algemene inleiding in sonarbeeldvorming, waarbij de fysische principes en toepassingen van sonar worden besproken, evenals de uitdagingen die gepaard gaan met de interpretatie van sonarbeelden, zoals ruis, resolutiebeperkingen en variërende omgevingsfactoren. Voorts zal worden ingegaan op de werking en toepassingen van objectdetectie en de integratie hiervan met sonarbeelden. Eerst zullen enkele klassieke technieken zoals filtertechnieken en thresholding besproken worden. Daarna worden enkele traditionele supervised learning-technieken -- zoals Faster \gls{rcnn}, \gls{yolo} en \gls{ssd} -- vergeleken. Hierbij wordt er ook een analyse gemaakt van hun beperkingen, zoals de noodzaak van grote hoeveelheden gelabelde data, wat in sonarbeeldvorming vaak een uitdaging vormt. \\
+Allereerst moet er een keuze gemaakt worden voor het gebruik van een dataset in het verdere verloop van dit onderzoek. Alle drie de datasets die in \ref{subsec:mogelijke-oplossingen} besproken werden, maken het mogelijk om een objectdetectiemodel mee te trainen. Ze bieden namelijk allemaal annotaties van \glspl{bounding_box} op de bijhorende afbeeldingen aan. Daarnaast zijn deze datasets makkelijk te verwerken, aangezien alle beelden in conventionele afbeeldingsformaten zijn opgeslagen (zoals PNG, JPG, BMP, PGM, \dots). Toch is er -- specifiek voor dit onderzoek -- één dataset die geschikter is dan de anderen. De UATD-dataset is -- misschien ietwat subjectief -- uitgekozen om te gebruiken in de rest van dit onderzoek. Dit komt omdat ze bepaalde aspecten aanbiedt die de andere datasets niet hebben. \\
 
-Dit leidt tot het verkennen van verschillende machine learning-methoden die (mogelijks) enkele veelvoorkomende problemen bij sonarobjectdetectie kunnen oplossen. In dit onderzoek wordt gefocust op twee veelbelovende technieken, namelijk semi-supervised learning en self-supervised learning. Relevante onderzoeksartikelen en technische rapporten worden geanalyseerd, met een focus op de architecturen, trainingsstrategieën en prestaties van deze methoden bij vergelijkbare beeldverwerkingsproblemen. Voor beide technieken wordt besproken wat ze zijn, hoe ze werken en waarom ze nuttig (kunnen) zijn. Hierbij wordt specifiek ingegaan op de schaarste van gelabelde data. Ook worden telkens enkele methoden en implementaties van beide technieken besproken. Ten slotte wordt bekeken hoe deze technieken vertaald zouden kunnen worden om toegepast te worden in objectdetectie op sonarbeelden. \\
+\gls{sss} for Mine Detection lijkt op het eerste zicht de perfecte dataset voor dit onderzoek. Het probleem is echter dat ze relatief klein is: ze bevat ``slechts'' 1170 afbeeldingen. Op het eerste zicht lijkt dit voldoende. Echter moet deze dataset nog opgesplitst worden in -- ten minste -- een trainingsset en een testset.\footnote{In een optimale situatie zou de data opgesplitst worden in drie sets: een trainingsset, een testset en een validatieset. Dit komt omdat de validatiedataset -- hoewel ze niet gebruikt wordt om het model te trainen -- gebruikt wordt om de paramaters van het model te tunen. Dit kan leiden tot \gls{overfitting}. Het is beter om als testset data te gebruiken dat het model nog niet gezien heeft. \autocite{Goodfellow_2016}} Ook komen er slechts 668 objecten voor in de dataset. Tot overmaat van ramp zijn deze ook zeer slecht verdeeld. 
 
-Vervolgens wordt er een gedetailleerde vergelijking van de belangrijkste technieken die mogelijk relevant zijn voor dit onderzoek gegeven. Anders dan in de vorige secties (over semi- en self-supervised learning), waar deze technieken -- en de werking ervan -- beschreven werden, is het de bedoeling om daar in deze sectie een vergelijking van te maken. Hierbij wordt ingegaan op de voor- en nadelen van elke methode in de context van sonarobjectdetectie. Ook wordt besproken waarom sommige methoden beter om kunnen gaan met sonarbeelden dan andere. \\
+\begin{table}[H]
+    \centering
+    \begin{tabular}{ll}
+        \toprule
+        \textbf{\# objecten / beeld} & \textbf{\# beelden} \\
+        \midrule
+        13 & 1 \\
+        9  & 2 \\
+        8  & 4 \\
+        7  & 8 \\
+        6  & 8 \\
+        5  & 13 \\
+        4  & 9 \\
+        3  & 41 \\
+        2  & 59 \\
+        1  & 159 \\
+        0  & 866 \\
+        \bottomrule
+    \end{tabular}
+    \caption[Aantal objecten per afbeelding in SSS for Mine Data]{\label{tab:objects_per_image_sss} Tabel met verdeling van objecten per afbeelding in de \gls{sss} for Mine Detection-dataset.}
+\end{table}
 
-Ten slotte omvat de literatuurstudie een onderzoek naar bestaande openbare datasets en evaluatiemethoden die in eerder werk zijn gebruikt. Dit draagt bij aan het positioneren van het onderzoek binnen de bredere wetenschappelijke context en biedt inzichten in de structurering van experimenten. De verschillende datasets worden grondig besproken en met elkaar vergeleken. Ook wordt er een antwoord geboden op de vraag op welke verschillende manieren sonarafbeeldingen normaal gesproken gelabeld worden. Daarbij worden handmatige annotatie door experts en automatische labeling met elkaar vergeleken. Daarnaast worden verschillende uitdagingen bij het annotatieproces aangehaald, zoals ambiguïteit in de vorm van objecten, ruis, artefacten en het groot aantal ongelabelde beelden in \emph{real-world} datasets. Ten slotte wordt besproken hoe semi- en self-supervised learning hierbij de afhankelijkheid van annotaties kunnen verminderen.
+Er is één afbeelding met wel 13 objecten en 866 zonder ook maar één object. Door deze slechte verdeling en de beperkte hoeveelheid data in de dataset is ze dus weinig bruikbaar voor dit onderzoek. \\
 
-\section{Data}
+Dit is een probleem waar de UXO-dataset absoluut niet mee kampt. Deze heeft dan echter weer andere problemen. De dataset is namelijk volledig samengesteld in een gecontroleerde testopstelling. Ze bevat dus geen \emph{real-world}-data. Dit betekent echter ook dat bepaalde artefacten en afwijkingen typisch aan meren en zeeën niet in deze dataset voorkomen. De beelden zijn zodanig zuiver dat het hoogstwaarschijnlijk mogelijk zou zijn om de \glspl{blindganger} te herkennen door te zoeken naar de groep helderste pixels of met een edge-detection algoritme. \autocite{Torre_1986} \\
 
-\subsection{Zoeken naar \& verzamelen van data}
+Ook de grootte van de dataset is misschien iets te mooi om waar te zijn. De beelden in de dataset zijn namelijk geen onafhankelijke afbeeldingen, maar frames van een continue opname. Dit zorgt ervoor dat er (nagenoeg) geen verschil is tussen afbeelding $n$ en afbeelding $n+1$. Als alle afbeeldingen na elkaar worden afgespeeld, ziet men een opname van een transformatie (rotatie, verschuiving, \dots) van één van de \glspl{blindganger}. Ten slotte staat er telkens maar één object op een afbeelding, wat multiple objectdetectie (meerdere objecten op één afbeelding herkennen) onmogelijk maakt.
 
-De tweede fase richt zich op het verzamelen, pre-processen en verdelen van de benodigde data voor dit onderzoek. Er wordt gebruik gemaakt van sonarafbeeldingen in gestapeld GeoTIFF-formaat. Deze data bevat verschillende lagen, zoals intensiteit en diepte-informatie, die dienen als input voor het model.
+\section{Dataverdeling}
 
-\subsection{Pre-processen van de data}
+In dit onderzoek zullen verschillende modellen getraind worden met verschillende leertechnieken. Daarom is het belangrijk om een duidelijk zicht te krijgen op hoe de gekozen dataset verdeeld moet worden zodat dit efficiënt en effectief kan gebeuren. Zoals vermeld zal er gebruik gemaakt worden van de UATD-dataset. Aangezien deze al opgesplitst is in drie subsets, zal de data als volgt verdeeld worden:
 
-Daarna zal pre-processing op de data toegepast worden. Er zal gebruik gemaakt worden van normalisatie, waarbij ruis en artefacten worden verminderd door technieken zoals median filtering.
+\begin{itemize}
+    \item \texttt{UATD\_Training}: trainingsset (7600 samples)
+    \item \texttt{UATD\_Test\_1}: testset (800 samples)
+    \item \texttt{UATD\_Test\_2}: validatieset (waar nodig/mogelijk) (800 samples)
+\end{itemize}
 
-\subsection{Data-augmentatie}
+De trainingsset bevat 7600 gelabelde samples. Om de hypotheses in dit onderzoek echter te kunnen testen, zal deze set om bepaalde modellen te trainen verder opgesplitst worden in een gelabelde en een ongelabelde set. Om de resultaten van \gls{ssl} en \gls{self-sl} beter te kunnen evalueren, zal en volledig gesuperviseerd model getraind worden op subsets van de gelabelde data. Meer specifiek gaat dit om: 100\% (7600 samples), 50\% (3800 samples), 10\% (760 samples), 5\% (380 samples) en 1\% (76 samples). In deze fase worden de overige ongelabelde samples gewoonweg niet gebruikt. \\
 
-Daarnaast zullen augmentaties zoals rotatie, ruisinjectie en schaling worden toegepast om variatie in de dataset te vergroten en robuustheid van het model te verbeteren.
+Omwille van de resource-intensiviteit om deze modellen te trainen en het feit dat dit ``slechts'' een proof of concept is, zullen de \gls{ssl}- en \gls{self-sl}-modellen dit trainingsschema niet volgen. Ze worden getraind op de twee subsets die het interessantst zijn voor dit onderzoek. Een subset van 10\% (760 samples) zal gebruikt worden om de praktische werking in een realistisch scenario aan te tonen. Daarnaast zal een subset van 5\% (380 samples) gebruikt worden om een mogelijk scenario waar data zeer schaars is na te bootsen. De overige samples zullen telkens gebruikt worden als ongelabelde trainingsdata. De modellen worden in se dus telkens op de volledige trainingsset getraind, echter is de leertechniek -- en dus de verhouding gelabeld/ongelabeld -- voor elk model verschillend.
 
-\subsection{Data opsplitsen \& verdelen}
+\section{Modelselectie}
 
-Uiteindelijk wordt de data opgedeeld in een gelabelde en een grotere ongesuperviseerde subset. Dit maakt het mogelijk om zowel semi- als self-supervised technieken te testen.
+\subsection{Supervised: Faster R-CNN}
 
-\section{Implementatie van de verschillende modellen}
 
-De derde fase richt zich op de ontwikkeling van de modellen zelf. Een baseline-model zoals een convolutioneel neuraal netwerk (Faster \gls{rcnn}, \gls{yolo} of \gls{ssd}) wordt gebruikt als referentiepunt voor volledig gesuperviseerde prestaties. Daarna worden self-supervised- of semi-supervised-modellen getraind worden ter vergelijking met het baseline-model. Binnen semi-supervised learning zal er geëxperimenteerd worden met pseudo-labeling: ongesuperviseerde voorbeelden worden automatisch gelabeld door het model en toegevoegd aan de trainingsset. Ook technieken zoals FixMatch om consistente voorspellingen te leren zullen bekeken en besproken worden. Binnen self-supervised learning zullen methoden zoals SimCLR of BYOL toegepast worden om representaties te leren zonder labels. Ook zullen aanpassingen aan pretext-taken, zoals het voorspellen van ontbrekende delen van sonarafbeeldingen of contrastieve augmentaties die rekening houden met spatiële afhankelijkheden besproken worden.
 
-\section{Training \& optimalisatie van de modellen}
+\subsection{Semi-supervised: FixMatch}
 
-De vierde fase richt zich op het trainen en optimaliseren van de ontwikkelde modellen. Dit omvat de pre-training, waarbij het model getraind wordt met ongesuperviseerde data om algemene representaties te leren. Daarnaast zal het model fine-tuning ondergaan: na pretraining wordt het model verder getraind met een kleine gelabelde dataset om objectdetectie te verfijnen. Ook hyperparameter-tuning behoort tot deze fase. Hierbij worden parameters zoals leersnelheid, batchgrootte en augmentatie-instellingen geoptimaliseerd om de prestaties te verbeteren.
+\subsection{Self-supervised: BYOL pre-training}
 
-\section{Evaluatie van de modellen}
+\section{Resultaten en evaluatie}
 
-De vijfde fase richt zich op de evaluatie van de verschillende modellen. Er worden verschillende metrieken gebruikt om de modellen te evalueren. Onder andere \acrfull{map} voor objectdetectieprestaties, \acrfull{iou} voor lokalisatienauwkeurigheid en label-efficiëntie (Hoe goed presteert het model met een beperkte hoeveelheid gelabelde data?) zullen gebruikt worden. Er zal ook een vergelijking gemaakt worden met het baseline-model. Dit zal uitsluitsel geven over de effectiviteit van semi-supervised en self-supervised learning tegenover supervised learning. Uiteindelijk zullen enkele robuustheidstests uitgevoerd worden. Het model wordt hierbij getest op ongeziene data met variërende omstandigheden, zoals ruisniveaus en objecttypes.
+Uiteindelijk zullen de verschillende uitgevoerde experimenten worden geëvalueerd en met elkaar vergeleken. Dit zal op verschillende manieren gedaan worden. Specifiek gaat dit om kwantitatieve en kwalitatieve methoden. Kwantitatief zal vooral \acrfull{map} gebruikt worden om objectdetectieprestaties te beoordelen. Echter is dit niet de enige kwantitatieve metriek die er toe doet. Naast de effectieve performantie van het model is het ook belangrijk om rekening te houden met de resources die nodig zijn om een bepaald model te trainen. Ook wordt een vergelijking gemaakt tussen dezelfde modellen die getraind zijn met een verschillende verdeling van gelabelde en ongelabelde data. Dit om de label-efficiëntie (Hoe goed presteert het model met een beperkte hoeveelheid gelabelde data?) te meten. Dit zal cijfermatig uitsluitsel geven over de effectiviteit van semi-supervised en self-supervised learning tegenover supervised learning. \\
 
-\section{Evaluatie van de resultaten}
+Naast de kwantitatieve analyse wordt er ook een kwalitatieve analyse uitgevoerd. De focus ligt hierbij niet zozeer op de cijfers, maar eerder op de effectieve voorspellingen van de modellen. Hierbij zal sterk worden gebruik gemaakt van beeldmateriaal en de voorspellingen gemaakt door de modellen. Hoewel een score heel objectief uitsluitsel kan geven over de performantie van een model, zijn real-world voorbeelden nog steeds waardevol voor de uiteindelijke evaluatie. Een score houdt namelijk niet altijd (genoeg) rekening met dingen die voor de eindgebruiker belangrijk zijn en omgekeerd. \\
 
-De zesde fase richt zich op de praktische toepassing van het model. Ook zullen enkele experts in sonaranalyse de bruikbaarheid van de resultaten beoordelen en aanbevelingen geven voor verdere verbeteringen. Ten slotte zullen de methodologie, resultaten en code worden gedocumenteerd om reproduceerbaarheid te waarborgen.
+Uiteindelijk zullen enkele experts in sonaranalyse de bruikbaarheid van de resultaten beoordelen en aanbevelingen geven voor verdere verbeteringen. Ten slotte zullen de methodologie, resultaten en code worden gedocumenteerd om reproduceerbaarheid te waarborgen.

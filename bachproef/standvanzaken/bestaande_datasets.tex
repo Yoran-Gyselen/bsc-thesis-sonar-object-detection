@@ -15,6 +15,7 @@ Sonardata leidt aan alle drie deze problemen. Sonardata van de zeebodem moet nam
 Ook worden ze gebruikt om te patrouilleren: ze kunnen hierbij kritieke infrastructuur zoals haveningangen en zeekabels bewaken en zorgen dat deze veilig en onbeschadigd blijven. Dit brengt natuurlijk onmiddellijk het derde probleem met zich mee. Alle data die door Defensie of Marine is verzameld, is automatisch confidentieel en mag onder geen enkele voorwaarde gebruikt -- laat staan gepubliceerd -- worden voor andere doeleinden. Data van de zeebodem -- en van mijnen of kritieke infrastructuur -- is namelijk van onschatbare waarde voor een potentiële vijand. \autocite{Aubard_2024_Datasets}
 
 \subsection{Mogelijke oplossingen}
+\label{subsec:mogelijke-oplossingen}
 
 Deels omwille van de niche, deels door de hoge kosten van de apparatuur en deels door de hoge graad van gegevensbescherming is er dus nagenoeg geen -- kwalitatieve -- sonardata vrij beschikbaar. Dit is echter ook nadelig voor verdere ontwikkeling binnen het domein. Daarom zijn er -- nog maar heel recent -- enkele initiatieven opgekomen om dit alsmaar groter wordend probleem te proberen oplossen. \\
 
@@ -360,39 +361,3 @@ De dataset is alles samen zo'n 94,7 GB groot. Ze is de meest uitgebreide die in 
 \end{figure}
 
 \clearpage
-
-\subsubsection{Conclusie}
-
-Alle drie de datasets die hierboven besproken werden, maken het mogelijk om een objectdetectiemodel mee te trainen. Ze bieden namelijk allemaal annotaties van \glspl{bounding_box} op de bijhorende afbeeldingen aan. Daarnaast zijn deze datasets makkelijk te verwerken, aangezien alle beelden in conventionele afbeeldingsformaten zijn opgeslagen (zoals PNG, JPG, BMP, PGM, \dots). Toch is er -- specifiek voor dit onderzoek -- één dataset die geschikter is dan de anderen. De UATD-dataset is -- misschien ietwat subjectief -- uitgekozen om te gebruiken in de rest van dit onderzoek. Dit komt omdat ze bepaalde aspecten aanbiedt die de andere datasets niet hebben. \\
-
-\gls{sss} for Mine Detection lijkt op het eerste zicht de perfecte dataset voor dit onderzoek. Het probleem is echter dat ze relatief klein is: ze bevat ``slechts'' 1170 afbeeldingen. Op het eerste zicht lijkt dit voldoende. Echter moet deze dataset nog opgesplitst worden in -- ten minste -- een trainingsset en een testset.\footnote{In een optimale situatie zou de data opgesplitst worden in drie sets: een trainingsset, een testset en een validatieset. Dit komt omdat de validatiedataset -- hoewel ze niet gebruikt wordt om het model te trainen -- gebruikt wordt om de paramaters van het model te tunen. Dit kan leiden tot \gls{overfitting}. Het is beter om als testset data te gebruiken dat het model nog niet gezien heeft. \autocite{Goodfellow_2016}} Ook komen er slechts 668 objecten voor in de dataset. Tot overmaat van ramp zijn deze ook zeer slecht verdeeld. 
-
-\begin{table}[H]
-    \centering
-    \begin{tabular}{ll}
-        \toprule
-        \textbf{\# objecten / beeld} & \textbf{\# beelden} \\
-        \midrule
-        13 & 1 \\
-        9  & 2 \\
-        8  & 4 \\
-        7  & 8 \\
-        6  & 8 \\
-        5  & 13 \\
-        4  & 9 \\
-        3  & 41 \\
-        2  & 59 \\
-        1  & 159 \\
-        0  & 866 \\
-        \bottomrule
-    \end{tabular}
-    \caption[Aantal objecten per afbeelding in SSS for Mine Data]{\label{tab:objects_per_image_sss} Tabel met verdeling van objecten per afbeelding in de \gls{sss} for Mine Detection-dataset.}
-\end{table}
-
-\clearpage
-
-Er is één afbeelding met wel 13 objecten en 866 zonder ook maar één object. Door deze slechte verdeling en de beperkte hoeveelheid data in de dataset is ze dus weinig bruikbaar voor dit onderzoek. \\
-
-Dit is een probleem waar de UXO-dataset absoluut niet mee kampt. Deze heeft dan echter weer andere problemen. De dataset is namelijk volledig samengesteld in een gecontroleerde testopstelling. Ze bevat dus geen \emph{real-world}-data. Dit betekent echter ook dat bepaalde artefacten en afwijkingen typisch aan meren en zeeën niet in deze dataset voorkomen. De beelden zijn zodanig zuiver dat het hoogstwaarschijnlijk mogelijk zou zijn om de \glspl{blindganger} te herkennen door te zoeken naar de groep helderste pixels of met een edge-detection algoritme. \autocite{Torre_1986} \\
-
-Ook de grootte van de dataset is misschien iets te mooi om waar te zijn. De beelden in de dataset zijn namelijk geen onafhankelijke afbeeldingen, maar frames van een continue opname. Dit zorgt ervoor dat er (nagenoeg) geen verschil is tussen afbeelding $n$ en afbeelding $n+1$. Als alle afbeeldingen na elkaar worden afgespeeld, ziet men een opname van een transformatie (rotatie, verschuiving, \dots) van één van de \glspl{blindganger}. Ten slotte staat er telkens maar één object op een afbeelding, wat multiple objectdetectie (meerdere objecten op één afbeelding herkennen) onmogelijk maakt.

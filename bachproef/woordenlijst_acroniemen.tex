@@ -40,6 +40,7 @@
 \newacronym{fair}{FAIR}{Facebook AI Research}
 \newacronym{rpn}{RPN}{Region Proposal Network}
 \newacronym{roi}{RoI}{Region of Interest}
+\newacronym{amp}{AMP}{Automatic Mixed Precision}
 
 % === Termen ===
 \newglossaryentry{blindganger}
@@ -178,4 +179,11 @@
     name={Gradient descent},
     text={gradient descent},
     description={Wiskundig optimalisatie-algoritme dat stap voor stap het minimum van een functie zoekt door telkens in de richting van de grootste daling (de negatieve gradiënt) te bewegen. Dit algoritme gebruikt de gradiënten van de \gls{loss_functie} die door het \gls{backpropagation}-algoritme berekend zijn om de daadwerkelijke parameters aan te passen, zodat de fout afneemt. \autocite{Geron_2023}}
+}
+
+\newglossaryentry{buffer_underflow}
+{
+    name={Buffer underflow},
+    text={buffer underflow},
+    description={Numerieke fout die ontstaat wanneer een getal (bv. een gradiënt) zo klein is dat het niet nauwkeurig kan worden opgeslagen in \texttt{float16}-formaat en dus afgerond wordt naar nul. Dit heeft als gevolg een verlies van precisie en een slecht of instabiel leerproces. \autocite{Micikevicius_2017}}
 }

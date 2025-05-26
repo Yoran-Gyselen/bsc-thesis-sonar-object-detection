@@ -1,0 +1,16 @@
+\chapter{Experimenten}
+\label{ch:experimenten}
+
+De implementatie van de verschillende objectdetectiemodellen vormt de belangrijkste voorbereidende stap in het ontwikkelen van de ``proof of concept'' voor dit onderzoek. In deze fase wordt de theorie over de verschillende modelarchitecturen (zie \ref{ch:stand-van-zaken}) vertaald naar praktische, werkende systemen. Dit omvat het selecteren van een geschikte detectiemethode per categorie -- zowel supervised, semi-supervised en self-supervised -- en het configureren en connecteren van de verschillende componenten. Daarnaast wordt er aandacht besteed aan de optimalisatie-instellingen -- zoals learning rate schedules -- die van grote invloed (kunnen) zijn op de prestaties. Ook zal het gekozen deep learning-framework worden besproken en toegelicht. In dit hoofdstuk wordt beschreven hoe de gekozen modellen zijn geïmplementeerd, welke architecturale keuzes zijn gemaakt, en hoe deze implementatie is afgestemd op de specifieke kenmerken van de dataset en de uiteindelijke toepassing. Zo wordt de basis gelegd voor het daaropvolgende trainingsproces.
+
+% Experimentele setup
+\input{experimenten/experimentele_setup}
+
+% Baseline: supervised Faster R-CNN
+\input{experimenten/supervised}
+
+% Semi-supervised model (FixMatch)
+\input{experimenten/ssl}
+
+% Self-supervised model (BYOL)
+\input{experimenten/self_sl}
