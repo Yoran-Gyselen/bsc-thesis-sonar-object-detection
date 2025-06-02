@@ -1,1 +1,29 @@
 \section{Self-supervised model (BYOL)}
+
+Uiteindelijk wordt het \gls{self-sl}-model geïmplementeerd aan de hand van het \gls{byol}-framework. Details over de keuze voor dit model en de gebruikte architectuur zijn te vinden in sectie \ref{sec:modelselectie} van de methodologie. De implementatie verloopt in twee afzonderlijke fases: een pre-trainingsfase en een downstream-trainingsfase. De implementatie is grotendeels gebaseerd op die van \textcite{Adaloglou_2022}.
+
+\subsection{Pre-trainingsfase}
+
+De eerste fase focust op het trainen van een \gls{byol}-model op ongesuperviseerde data. In deze fase is het doel om een encoder te trainen die sterke representaties leert extraheren uit ruwe beelden, zonder gebruik te maken van gelabelde data. Voor deze encoder wordt een ResNet-18 gebruikt als backbone, die vooraf werd geïnitialiseerd met ImageNet-gewichten. Het \gls{byol}-mechanisme werkt met een online en een target netwerk, waarbij beide deze backbone gebruiken. De output van deze fase is een goed getraind representatiemodel dat gebruikt zal worden in de volgende stap. \\
+
+Tijdens de training wordt een Adam-optimizer met een \gls{learning_rate} van $3 \times 10^{-4}$ gebruikt. Daarnaast wordt tijdens deze fase gebruik gemaakt van mixed precision training met PyTorch \gls{amp}. Ook wordt \texttt{EarlyStopping} gebruikt om \gls{overfitting} te voorkomen. Aangezien dit een pre-trainingsfase is, gebeurt de check op de \gls{loss_functie}. De encoder werd 22 epochs getraind voor het \texttt{EarlyStopping}-mechanisme de training stopte. Dit duurde in totaal 1:33:08 uur. Uiteindelijk werd enkel de encoder van het online netwerk opgeslagen. Dit is dus de originele -- en nu deels gefinetunede -- ResNet-18-architectuur.
+
+\subsection{Downstream objectdetectietaak}
+
+In de tweede fase wordt het getrainde \gls{byol}-model geïntegreerd als backbone in een Faster \gls{rcnn} model voor objectdetectie. In deze fase wordt het model getraind op gelabelde data, met als doel de representaties van de BYOL-backbone optimaal te benutten voor een supervisietaak.
+
+\clearpage
+
+Bij het trainen van dit downstream-model worden de volgende trainingsstrategieën toegepast om de performantie en stabiliteit te verbeteren:
+
+\begin{itemize}
+    \item Bevriezing van lagen: De eerste twee lagen van de backbone (\texttt{layer1} en \texttt{layer2}) worden gedurende de eerste drie epochs bevroren om de eerder geleerde representaties te behouden en verstoring tijdens het finetunen te voorkomen.
+    \item Warm-up strategie: De leersnelheid wordt gradueel verhoogd van een initiële waarde van $1 \times 10^{-5}$ naar een basiswaarde van 0.001.
+    \item Optimizer: Er wordt gebruik gemaakt van \gls{sgd} met een momentum van 0.9 en een weight decay van $1 \times 10^{-4}$.
+    \item Scheduler: Er wordt gebruik gemaakt van een \texttt{CosineAnnealingLR}-scheduler.
+    \item \texttt{EarlyStopping}: Om overfitting te vermijden, wordt \texttt{EarlyStopping} gebruikt tijdens de training.
+\end{itemize}
+
+De training van het objectdetectiemodel gebeurt slechts op een subset van de gelabelde dataset. Er worden twee scenario's onderzocht: een verhouding van 10\% gelabelde data en 90\% ongelabelde data, en een tweede, extremere configuratie met 5\% gelabeld en 95\% ongelabeld. Dit maakt het mogelijk om de effectiviteit van de \gls{byol}-pre-training te evalueren in situaties met weinig gelabelde voorbeelden. Het 10\%-model is voor 75 epochs (1:18:08 uur) gefinetuned en het 5\%-model voor 45 epochs (45:40 minuten). \\
+
+Samenvattend bestaat deze implementatie uit een pre-trainingsfase waarin een krachtige encoder wordt getraind via \gls{byol} op ongesuperviseerde data, gevolgd door een finetuningfase waarin deze encoder geïntegreerd wordt in een Faster \gls{rcnn} detectiemodel. Dankzij het gebruik van een pre-trained backbone, gecontroleerde fine-tuning, en strategieën zoals warm-up, bevroren lagen en \texttt{EarlyStopping}, wordt verwacht de prestaties van het eindmodel te optimaliseren onder beperkte supervisie.

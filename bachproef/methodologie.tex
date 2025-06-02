@@ -5,7 +5,7 @@
 \chapter{Methodologie}%
 \label{ch:methodologie}
 
-Dit onderzoek volgt een gestructureerde aanpak om semi- en self-supervised learning technieken voor objectdetectie in sonardata te implementeren en te evalueren. In deze methodologie wordt een onderverdeling gemaakt van de verschillende fasen in dit onderzoek. Hierbij wordt de basis gelegd voor de experimenten die zullen worden uitgevoerd in de proof of concept.
+Dit onderzoek volgt een gestructureerde aanpak om \gls{ssl} en \gls{self-sl} technieken voor objectdetectie in sonardata te implementeren en te evalueren. In deze methodologie wordt een onderverdeling gemaakt van de verschillende fasen in dit onderzoek. Hierbij wordt de basis gelegd voor de experimenten die zullen worden uitgevoerd in de proof of concept.
 
 \section{Data-acquisitie}
 
@@ -42,6 +42,7 @@ Dit is een probleem waar de UXO-dataset absoluut niet mee kampt. Deze heeft dan 
 Ook de grootte van de dataset is misschien iets te mooi om waar te zijn. De beelden in de dataset zijn namelijk geen onafhankelijke afbeeldingen, maar frames van een continue opname. Dit zorgt ervoor dat er (nagenoeg) geen verschil is tussen afbeelding $n$ en afbeelding $n+1$. Als alle afbeeldingen na elkaar worden afgespeeld, ziet men een opname van een transformatie (rotatie, verschuiving, \dots) van één van de \glspl{blindganger}. Ten slotte staat er telkens maar één object op een afbeelding, wat multiple objectdetectie (meerdere objecten op één afbeelding herkennen) onmogelijk maakt.
 
 \section{Dataverdeling}
+\label{sec:dataverdeling}
 
 In dit onderzoek zullen verschillende modellen getraind worden met verschillende leertechnieken. Daarom is het belangrijk om een duidelijk zicht te krijgen op hoe de gekozen dataset verdeeld moet worden zodat dit efficiënt en effectief kan gebeuren. Zoals vermeld zal er gebruik gemaakt worden van de UATD-dataset. Aangezien deze al opgesplitst is in drie subsets, zal de data als volgt verdeeld worden:
 
@@ -56,6 +57,7 @@ De trainingsset bevat 7600 gelabelde samples. Om de hypotheses in dit onderzoek 
 Omwille van de resource-intensiviteit om deze modellen te trainen en het feit dat dit ``slechts'' een proof of concept is, zullen de \gls{ssl}- en \gls{self-sl}-modellen dit trainingsschema niet volgen. Ze worden getraind op de twee subsets die het interessantst zijn voor dit onderzoek. Een subset van 10\% (760 samples) zal gebruikt worden om de praktische werking in een realistisch scenario aan te tonen. Daarnaast zal een subset van 5\% (380 samples) gebruikt worden om een mogelijk scenario waar data zeer schaars is na te bootsen. De overige samples zullen telkens gebruikt worden als ongelabelde trainingsdata. De modellen worden in se dus telkens op de volledige trainingsset getraind, echter is de leertechniek -- en dus de verhouding gelabeld/ongelabeld -- voor elk model verschillend.
 
 \section{Modelselectie}
+\label{sec:modelselectie}
 
 \subsection{Supervised: Faster R-CNN}
 

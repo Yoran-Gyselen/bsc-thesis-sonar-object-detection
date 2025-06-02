@@ -1,10 +1,79 @@
 \section{Vergelijking van relevante methoden}
 
-%TODO: Schrijven 'Vergelijking van relevante methoden'
-\lipsum[1-3]
+In dit onderzoek zijn verschillende leermethoden onderzocht binnen drie bredere categorieën: supervised learning, \gls{ssl}, en \gls{self-sl}. Binnen elke categorie zijn meerdere representatieve modellen geëvalueerd op basis van hun geschiktheid voor objectdetectie in sonardata, met aandacht voor aspecten zoals precisie, robuustheid, data-efficiëntie, en computationele vereisten. 
 
-% Faster R-CNN
-\autocite{Wang_2023}
-\autocite{Zeng_2021}
-\autocite{Yulin_2020}
-\autocite{Chen_2017}
+\subsection{Gesuperviseerde architecturen}
+
+Binnen het domein van supervised objectdetectie zijn \gls{yolo}, Faster \gls{rcnn} en \gls{ssd} drie toonaangevende architecturen met uiteenlopende sterktes en toepassingsgebieden. Alle drie zijn ontworpen om objectdetectie mogelijk te maken in volledig gelabelde datasets, maar ze verschillen aanzienlijk in hun aanpak van snelheid, nauwkeurigheid en architecturale complexiteit. \\
+
+\gls{yolo} is een single-stage detector die objectdetectie als een regressietaak benadert, waarbij alle voorspellingen in één stap worden gedaan. Dit resulteert in zeer snelle inferentie, waardoor \gls{yolo} bijzonder geschikt is voor real-time toepassingen. De keerzijde is echter dat deze snelheid gepaard gaat met een lagere precisie bij het lokaliseren van kleine of dicht op elkaar liggende objecten -- een mogelijke beperking bij complexere sonarbeelden. \\
+
+Faster \gls{rcnn} daarentegen maakt gebruik van een tweefasige detectiestructuur. Eerst genereert het \gls{rpn} potentiële objectlocaties, waarna een tweede netwerk verantwoordelijk is voor classificatie en verfijning van de \glspl{bounding_box}. Hoewel deze aanpak leidt tot een hogere inferentietijd, is de nauwkeurigheid doorgaans beter, vooral in complexe en ruisgevoelige beelden. Dit maakt Faster \gls{rcnn} conceptueel aantrekkelijker voor toepassingen waarin precisie belangrijker is dan snelheid, zoals bij de analyse van onderwaterbeelden via sonar. \\
+
+\gls{ssd} neemt eveneens een single-shot benadering, maar introduceert verbeteringen zoals meerdere schalen en ankerboxen, wat de nauwkeurigheid enigszins verhoogt ten opzichte van vroege \gls{yolo}-versies. \gls{ssd} biedt een evenwicht tussen snelheid en precisie, maar is nog steeds gevoeliger voor objecten met onregelmatige vormen of weinig contrast -- karakteristiek voor sonaromgevingen.
+
+\begin{table}[H]
+    \centering
+    \begin{tabular}{llll}
+        \toprule
+        \textbf{Eigenschap} & \textbf{\acrshort{yolo}} & \textbf{Faster \acrshort{rcnn}} & \textbf{\acrshort{ssd}} \\
+        \midrule
+        Architectuur            & Single-shot   & Two-stage     & Single-shot \\
+        Nauwkeurigheid          & Gematigd      & Hoog          & Gemiddeld \\
+        Snelheid                & Zeer snel     & Traag         & Snel \\
+        Robuustheid bij ruis    & Beperkt       & Hoog          & Matig \\
+        \bottomrule
+    \end{tabular}
+    \caption[Vergelijking supervised modellen]{\label{tab:comparison_supervised_models} Tabel met een simpele vergelijking tussen de onderzochte supervised modellen binnen dit onderzoek.}
+\end{table}
+
+\subsection{Semi-supervised architecturen}
+
+FixMatch en MixMatch vormen binnen \gls{ssl} twee representatieve methoden die elk op een eigen manier trachten om het leerproces te verbeteren met behulp van een beperkte hoeveelheid gelabelde data en een grotere hoeveelheid ongesuperviseerde samples. Beide modellen zijn gebaseerd op het idee van consistency regularization -- het principe dat het model consistente voorspellingen moet doen voor verschillende transformaties van dezelfde input -- maar implementeren dit op fundamenteel verschillende manieren. \\
+
+MixMatch combineert meerdere technieken in één framework: het genereert soft pseudo-labels via averaging, past entropy minimization toe om de outputdistributie te verscherpen, en gebruikt een MixUp-strategie om input en labelparen te interpoleren. Deze combinatie kan krachtige resultaten opleveren, vooral bij complexe data, maar introduceert ook aanzienlijke modelcomplexiteit en vereist precieze tuning van hyperparameters om optimale prestaties te behalen. Dit kan een uitdaging vormen in domeinspecifieke contexten zoals sonar, waar de optimale instellingen niet altijd intuïtief zijn. \\
+
+FixMatch daarentegen stelt eenvoud centraal: het gebruikt een combinatie van pseudo-labeling op zwak geaugmenteerde voorbeelden, en eist vervolgens consistentie op sterk geaugmenteerde versies van dezelfde input – mits het model voldoende vertrouwen heeft in het pseudo-label. Deze aanpak maakt FixMatch efficiënt en relatief robuust, en bovendien minder afhankelijk van uitgebreid afgestelde parameters. De eenvoud van de methode betekent echter niet per se dat het altijd de beste prestaties levert, zeker niet wanneer het vertrouwen van het model in vroege training nog beperkt is.
+
+\begin{table}[H]
+    \centering
+    \begin{tabular}{lll}
+        \toprule
+        \textbf{Eigenschap} & \textbf{FixMatch} & \textbf{MixMatch} \\
+        \midrule
+        Kernidee                            & \makecell[l]{Pseudo-labeling + \\ consistency} & \makecell[l]{consistency + \\ data mixing} \\
+        Complexiteit                        & Eenvoudig                                    & Complexer \\
+        Afhankelijkheid van tuning          & Laag                                         & Hoog \\
+        Robuustheid                         & Hoog                                         & Matig \\
+        Afhankelijkheid van augmentaties    & Ja (zwak + sterk)                            & Ja (mixing + sharpening) \\
+        Prestaties op kleine datasets       & Goed                                         & Afhankelijk van tuning \\
+        \bottomrule
+    \end{tabular}
+    \caption[Vergelijking semi-supervised modellen]{\label{tab:comparison_ssl_models} Tabel met een simpele vergelijking tussen de onderzochte \gls{ssl}-modellen binnen dit onderzoek.}
+\end{table}
+
+\subsection{Self-supervised learning}
+
+\gls{byol}, \gls{moco} en \gls{simclr} vormen drie invloedrijke methoden binnen \gls{self-sl} die elk proberen om representaties te leren zonder gebruik te maken van gelabelde data. Alle drie maken gebruik van augmentaties en encoderstructuren om betekenisvolle visuele representaties te extraheren, maar verschillen fundamenteel in hoe zij het leerproces structureren -- vooral met betrekking tot het gebruik van contrastieve loss en negatieve voorbeelden. \\
+
+\gls{simclr} is gebaseerd op contrastieve learning en vereist grote \glspl{batch_size} om voldoende negatieve paren te genereren, wat in praktijk computationeel intensief kan zijn. Het model leert door representaties van verschillende augmentaties van hetzelfde beeld dichter bij elkaar te brengen, en andere beelden juist uit elkaar te duwen. Deze aanpak is krachtig op grote, diverse datasets, maar kan kwetsbaar zijn in domeinen met beperkte data of lage variatie, zoals sonarbeelden. \\
+
+\gls{moco} probeert de \gls{batch_size}-beperkingen van \gls{simclr} te omzeilen door gebruik te maken van een momentum-geüpdatete geheugenbank die een groot aantal negatieve representaties opslaat. Hierdoor is \gls{moco} efficiënter in resourcegebruik, maar het introduceert ook extra architecturale complexiteit en is gevoelig voor de consistentie van representaties over tijd -- iets wat uitdagend kan zijn bij sonardata, waar de semantische grenzen tussen objecten niet altijd scherp zijn. \\
+
+\gls{byol} doorbreekt het contrastieve paradigma volledig door géén negatieve voorbeelden te gebruiken. In plaats daarvan traint het een online encoder om consistente representaties te leren ten opzichte van een langzaam geüpdatete target encoder. Deze aanpak is conceptueel eenvoudiger en robuuster, vooral in omgevingen met weinig visuele diversiteit of waar het definiëren van negatieve paren onnatuurlijk is. \gls{byol} vereist bovendien minder computationele resources en presteert stabieler bij kleinere datasets en \glspl{batch_size} -- eigenschappen die relevant zijn voor toepassing op sonardata, waar gelimiteerde data beschikbaar is en objecten visueel subtiel kunnen zijn.
+
+\begin{table}[H]
+    \centering
+    \begin{tabular}{llll}
+        \toprule
+        \textbf{Eigenschap} & \textbf{\acrshort{simclr}} & \textbf{\acrshort{moco}} & \textbf{\acrshort{byol}} \\
+        \midrule
+        Gebruik van negatieve paren?        & Ja        & Ja                        & Nee \\
+        \Gls{batch_size} vereisten          & Hoog      & Laag                      & Laag \\
+        Architectuurcomplexiteit            & Gemiddeld & \makecell[l]{Hoog \\ (met geheugenbank)}   & Gematigd \\
+        Stabiliteit bij kleine datasets     & Laag      & Gematigd                  & Hoog \\
+        Prestaties bij weinig variatie      & Matig     & Matig                     & Goed \\
+        \bottomrule
+    \end{tabular}
+    \caption[Vergelijking self-supervised modellen]{\label{tab:comparison_self_sl_models} Tabel met een simpele vergelijking tussen de onderzochte \gls{self-sl}-modellen binnen dit onderzoek.}
+\end{table}

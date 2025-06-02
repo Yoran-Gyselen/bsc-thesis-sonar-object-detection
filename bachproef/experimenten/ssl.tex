@@ -1,1 +1,19 @@
 \section{Semi-supervised model (FixMatch)}
+
+Vervolgens wordt het \gls{ssl}-model geïmplementeerd. Dit is een FixMatch-model. Details over de keuze van de architectuur kunnen teruggevonden in sectie \ref{sec:modelselectie} van de methodologie. Aangezien dit een semi-supervised architectuur is, zal het model getraind worden op een hybride manier. Specifiek zullen er twee modellen getraind worden. Enerzijds met een verdeling van 10\% gelabeld / 90\% ongelabeld, anderzijds met een verdeling van 5\% gelabeld / 95\% ongelabeld. Deze twee modellen laten het toe de leertechniek effectief te evalueren en de verbetering in performantie beter te begrijpen. \\
+
+Als optimizer wordt \gls{sgd} gebruikt, met aparte \gls{learning_rate} voor de backbone (0.0005) en de head (0.005), een momentum van 0.9 en een weight decay van 0.0005. Er wordt gebruik gemaakt van een \texttt{CosineAnnealingLR}-scheduler, mixed precision learning met PyTorch \gls{amp} en \texttt{EarlyStopping}. \\
+
+Bij elke trainingsstap maakt het model gebruik van een batch van een inputafbeelding en de labelinformatie van de gesuperviseerde dataset en een (andere) inputafbeelding van de ongesuperviseerde dataset. Aangezien de ene dataset significant kleiner is dan de andere, zullen de gelabelde afbeeldingen dus hergebruikt worden om de zoveel trainingsstappen. Eerst en vooral wordt het model getraind op de gesuperviseerde batch. Vervolgens worden er twee verschillende augmentaties gemaakt van de ongesuperviseerde afbeelding: een zwakke en een sterke. \\
+
+Daarna worden de pseudo-labels gegenereerd. Dit gebeurd door inferentie uit te voeren (door hetzelfde model) op de batch van de zwakke augmentaties van de ongesuperviseerde afbeeldingen en dus de \glspl{bounding_box} en classificatielabels te voorspellen. Vervolgens worden de voorspellingen gefilterd om te voorkomen dat het model zou leren van foute voorspellingen. Deze filterstap steunt op twee verschillende condities. Eerst en vooral moet de \gls{confidence_score} groter zijn dan de huidige threshold. Deze threshold wordt berekend op basis van enkele parameters, waaronder de best behaalde \gls{map} op de validatieset tot nu toe. De volledige formule voor de threshold is:
+
+$$
+threshold_{current} = threshold_{min} + (threshold_{max} - threshold_{min}) \times \sqrt{mAP_{best}}
+$$
+
+Hierbij zijn $threshold_{min}$ en $threshold_{max}$ parameters die aangepast kunnen worden. Tijdens de experimenten in dit onderzoek werden deze respectievelijk op 0.5 en 0.95 ingesteld. De vierkantswortel van de beste \gls{map} op de validatieset wordt gebruikt om de groei in het begin te beperken en het model dus gestaag te laten verbeteren. \\
+
+De tweede conditie van de filter controleert dat de oppervlakten van de voorspelde \glspl{bounding_box} groter is dan $8 \times 8 = 64$ pixels. Zo worden de \glspl{bounding_box} met een onmogelijk klein oppervlak -- en dus fout zijn -- niet gebruikt om het model verder te trainen.
+
+Eens de pseudo-gesuperviseerde data gefilterd is, kan ze gebruikt worden om het model verder te trainen. Echter wordt het model niet rechtstreeks getraind op deze data, maar op de sterke augmentatie van de overeenkomstige afbeeldingen. Dit maakt het model enorm robuust tegen verschillende augmentaties. Het 10\%-model is voor 22 epochs (3:43:15 uur) gefinetuned en het 5\%-model voor 24 epochs (4:15:42 minuten).

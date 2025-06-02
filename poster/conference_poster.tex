@@ -6,6 +6,12 @@
 
 \documentclass[a0,portrait]{hogent-poster}
 
+\usepackage[acronym, toc]{glossaries}
+\setglossarystyle{altlist}
+
+\input{../bachproef/woordenlijst_acroniemen}
+\graphicspath{{../graphics/}}
+
 % Info over de opleiding
 \course{Bachelorproef}
 \studyprogramme{toegepaste informatica}
@@ -31,56 +37,32 @@
 \maketitle
 
 \begin{abstract}
-It's only a model.
-You don't vote for kings. Who's that then? We found them. Ni! Ni! Ni! Ni!
-The nose? On second thoughts, let's not go there. It is a silly place. Bloody Peasant! And the hat. She's a witch! Where'd you get the coconuts?
+Sinds de opkomst van krachtige AI- en deep learning-modellen is data uitgegroeid tot een essentiële en vaak beperkende factor in het ontwikkelingsproces. Waar eenvoudige modellen vaak kunnen volstaan met beperkte en eenvoudige datasets, vereisen complexere modellen -- zoals die voor objectdetectie -- steeds grotere en rijkere hoeveelheden gelabelde data. Dit vormt een belangrijk probleem in domeinen zoals sonarbeeldvorming, waar dergelijke datasets niet beschikbaar zijn als kant-en-klare bronnen en handmatige annotatie buitengewoon tijdsintensief en kostbaar is. Dit onderzoek richt zich daarom op de centrale vraag: hoe kunnen semi-supervised en self-supervised leermethoden het labelproces bij objectdetectie in sonardata versnellen, zonder significant verlies aan nauwkeurigheid? \\
+
+Om deze vraag te beantwoorden is een experimenteel kader opgezet waarin drie benaderingen zijn onderzocht: een volledig supervised baseline gebaseerd op Faster R-CNN, een semi-supervised model met FixMatch, en een self-supervised strategie waarbij een BYOL-model wordt gepretraind en vervolgens gebruikt als backbone binnen een Faster R-CNN-architectuur. De experimenten zijn uitgevoerd op een publieke sonardataset bestaande uit 7600 gelabelde sonarbeelden. Voor de supervised baseline is het model getraind op verschillende hoeveelheden gelabelde data: 1\%, 5\%, 10\%, 50\% en 100\%. De bijbehorende mAP-scores tonen een sterke daling in nauwkeurigheid naarmate de hoeveelheid gelabelde data afneemt, met resultaten variërend van 0.7717 (100\%) tot slechts 0.2799 bij gebruik van 1\% van de data. \\
+
+In het semi-supervised scenario is FixMatch toegepast met 5\% en 10\% gelabelde data, terwijl de resterende data werd gebruikt als ongelabelde input. Deze aanpak resulteerde in mAP-scores van respectievelijk 0.6649 en 0.6828, wat duidelijk betere prestaties zijn dan het supervised model op dezelfde labelniveaus. Voor het self-supervised model werd BYOL gepretraind op de volledige dataset zonder labels. De representaties die dit opleverde zijn vervolgens geïntegreerd in Faster R-CNN, waarbij opnieuw 5\% en 10\% van de data gelabeld werd gebruikt voor training. Deze benadering leverde de hoogste nauwkeurigheid binnen de lage-labelscenario's, met mAP-scores van respectievelijk 0.6452 en 0.7230. \\
+
+De resultaten van dit onderzoek tonen aan dat zowel semi-supervised als self-supervised technieken effectief zijn in het verminderen van de afhankelijkheid van handmatig gelabelde data, terwijl de modelprestaties grotendeels behouden blijven. Met name self-supervised pretraining via BYOL blijkt zeer waardevol in situaties met beperkte gelabelde data. Deze bevindingen bieden praktische aanknopingspunten voor het ontwikkelen van efficiëntere workflows in sonarbeeldanalyse, en zijn relevant voor bredere toepassingen in domeinen waar gelabelde data schaars of moeilijk te verkrijgen is. Hoewel de resultaten veelbelovend zijn, is vervolgonderzoek nodig om de generaliseerbaarheid naar andere types sonardata of real-time toepassingen te evalueren.
 \end{abstract}
 
 \begin{multicols}{2} % This is how many columns your poster will be broken into, a portrait poster is generally split into 2 columns
 
 \section{Introductie}
 
-Be quiet! Found them? In Mercia?! The coconut's tropical! But you are dressed as one… Well, what do you want? Knights of Ni, we are but simple travelers who seek the enchanter who lives beyond these woods.
-
-Well, what do you want? It's only a model. Camelot! We found them. We shall say `Ni' again to you, if you do not appease us.
-
-The nose? Shut up! Burn her! I am your king. You don't vote for kings.
-
-You can't expect to wield supreme power just `cause some watery tart threw a sword at you! Well, we did do the nose. I don't want to talk to you no more, you empty-headed animal food trough water! I fart in your general direction! Your mother was a hamster and your father smelt of elderberries! Now leave before I am forced to taunt you a second time!
-
-Why do you think that she is a witch? We want a shrubbery!! I don't want to talk to you no more, you empty-headed animal food trough water! I fart in your general direction! Your mother was a hamster and your father smelt of elderberries! Now leave before I am forced to taunt you a second time!
+In moderne AI-toepassingen, en met name in complexe taken zoals objectdetectie, vormt het verzamelen en annoteren van voldoende gelabelde data vaak een grote uitdaging. Dit is zeker het geval binnen de context van sonarbeeldvorming, waar gelabelde datasets zeldzaam zijn en handmatige annotatie bijzonder arbeidsintensief en kostbaar is. Dit onderzoek vertrekt vanuit de centrale vraag hoe \gls{ssl} en \gls{self-sl} technieken het labelproces kunnen versnellen zonder significante afbreuk te doen aan de nauwkeurigheid van objectdetectiemodellen. Door het inzetten van methodes die leren van grotendeels ongelabelde data, biedt dit onderzoek mogelijke oplossingen voor data-schaarsere omgevingen zoals sonarbeeldanalyse.
 
 \section{Experimenten}
 
-A newt? Camelot! Why? No, no, no! Yes, yes. A bit. But she's got a wart.
-
-Shut up! I dunno. Must be a king. Who's that then? Look, my liege! On second thoughts, let's not go there. It is a silly place.
-
-Shut up! Will you shut up?! No, no, no! Yes, yes. A bit. But she's got a wart. He hasn't got shit all over him. It's only a model. It's only a model.
-
-Bring her forward! I don't want to talk to you no more, you empty-headed animal food trough water! I fart in your general direction! Your mother was a hamster and your father smelt of elderberries! Now leave 
-
-\section{Sectie met figuur}
-
-De {\LaTeX} figure-omgeving bepaalt zelf waar een afbeelding komt en dat is meestal niet op de plek in de tekst waar de figure-omgeving gedefinieerd wordt. Als je wilt forceren dat afbeeldingen toch in de flow van de tekst blijven, dan kan je dat zoals hieronder:
-
-\begin{center}
-  \captionsetup{type=figure}
-  \includegraphics[width=1.0\linewidth]{grail}
-  \captionof{figure}{He hasn't got shit all over him. The nose? Where'd you get the coconuts? What do you mean? We shall say `Ni' again to you, if you do not appease us}
-\end{center}
-
-Let er wel op dat dit tot problemen met bladschikking kan leiden.
+Om de onderzoeksvraag te beantwoorden, werden drie benaderingen experimenteel getest op een publieke dataset van 7600 sonarbeelden: een volledig gesuperviseerd model (Faster \gls{rcnn}), een \gls{ssl} methode (FixMatch), en een \gls{self-sl} strategie waarbij een \gls{byol}-model eerst werd gepretraind zonder labels. De resultaten tonen aan dat het gesuperviseerde model hoge nauwkeurigheid behaalde bij 100\% gelabelde data, maar sterk in performance daalde bij minder beschikbare labels. FixMatch wist bij 5\% en 10\% gelabelde data merkbaar betere prestaties neer te zetten dan het baseline-model, door slim gebruik te maken van pseudo-labeling en consistency training. De best presterende aanpak was echter \gls{self-sl} pretraining met \gls{byol}, waarbij de gegenereerde representaties als backbone dienden voor een Faster \gls{rcnn} model. Deze strategie benaderde bij slechts 10\% gelabelde data bijna het prestatieniveau van volledige supervisie. Dit bevestigt het potentieel van \gls{self-sl} representatieleren als krachtige methode in situaties met beperkte annotatiecapaciteit.
 
 \section{Conclusies}
 
-Don't underestimate the Force. Oh God, my uncle. How am I ever gonna explain this? I suggest you try it again, Luke. This time, let go your conscious self and act on instinct. Don't be too proud of this technological terror you've constructed. The ability to destroy a planet is insignificant next to the power of the Force.
+De experimenten tonen aan dat zowel \gls{ssl} als \gls{self-sl} effectieve strategieën zijn om de afhankelijkheid van gelabelde data bij objectdetectie in sonarbeelden te verminderen. Terwijl het volledig gesuperviseerde Faster \gls{rcnn}-model hoge prestaties behaalde bij volledige annotatie, daalde de nauwkeurigheid sterk bij minder gelabelde data. \gls{ssl} met FixMatch bood hierbij een aanzienlijke verbetering door effectief gebruik te maken van ongelabelde data via pseudo-labeling, vooral bij 5\% en 10\% gelabelde data. De beste resultaten werden echter bereikt met \gls{self-sl} via \gls{byol}, waarbij pretraining op ongesuperviseerde beelden leidde tot robuuste representaties die, eenmaal geïntegreerd in een Faster \gls{rcnn}, bijna het prestatieniveau van het volledig gesuperviseerde model evenaarden bij slechts 10\% gelabelde data. Hiermee bevestigen de resultaten dat FixMatch en vooral \gls{byol} veelbelovende technieken zijn voor objectdetectie in data-schaarsere contexten zoals sonarbeeldanalyse.
 
 \section{Toekomstig onderzoek}
 
-I care. So, what do you think of her, Han? No! Alderaan is peaceful. We have no weapons. You can't possibly… I have traced the Rebel spies to her. Now she is my only link to finding their secret base.
-
-Kid, I've flown from one side of this galaxy to the other. I've seen a lot of strange stuff, but I've never seen anything to make me believe there's one all-powerful Force controlling everything. There's no mystical energy field that controls my destiny. It's all a lot of simple tricks and nonsense. You are a part of the Rebel Alliance and a traitor! Take her away! 
+Hoewel dit onderzoek de meerwaarde van zowel \gls{ssl} als \gls{self-sl} bij objectdetectie op sonarbeelden aantoont, blijven er diverse beloftevolle onderzoekspistes open. Zo is het waardevol om alternatieve \gls{self-sl} pretrainingsmethoden zoals \gls{simclr}, \gls{moco} of \gls{dino} te vergelijken met \gls{byol}, evenals verschillende backbone-architecturen zoals Swin Transformer of ConvNeXt te evalueren op hun geschiktheid voor sonarbeeldvorming. Ook binnen \gls{ssl} kunnen recente methoden zoals FlexMatch, SoftMatch of \gls{uda}, in combinatie met domeinspecifieke augmentaties, mogelijk betere prestaties leveren dan FixMatch. Een veelbelovende richting is het combineren van \gls{self-sl} pretraining met \gls{ssl} fine-tuning om de voordelen van beide benaderingen te benutten. Verder kan transfer learning op basis van grootschalige, ruwe sonardata bijdragen aan de ontwikkeling van generieke sonarbackbones voor uiteenlopende toepassingen. Tot slot kan onderzoek naar actieve labelselectie en foutenanalyse helpen om annotatie-efficiëntie te verhogen en modelbetrouwbaarheid te verbeteren in kritieke contexten zoals defensie of onderwaterrobotica.
 
 \end{multicols}
 \end{document}

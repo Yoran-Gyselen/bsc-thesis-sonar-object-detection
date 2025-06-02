@@ -4,7 +4,9 @@
 
 Zoals al eerder vermeld, is er voor het trainen van een objectdetectiemodel een substantiële hoeveelheid gelabelde data nodig. Tegenwoordig worden veel datasets -- zo goed als volledig geprepareerd voor het trainen van ML-modellen -- online aangeboden onder een vrije licentie. Dit zorgt ervoor dat de datasets opnieuw gepubliceerd en hergebruikt mogen worden met weinig tot geen beperkingen. Het concept van \emph{Open Data} wordt de laatste jaren steeds populairder, aangezien onderzoek zich hoe langer hoe meer ook naar het internet verplaatst. \autocite{Murray_Rust_2008} \\
 
-Platformen zoals \href{https://www.kaggle.com/datasets}{Kaggle} of \href{https://huggingface.co/datasets}{Hugging Face} hebben zich gespecialiseerd in het verspreiden van deze open datasets en kunnen rekenen op een hele community van gebruikers om deze datasets te uploaden naar hun platformen. Ook verschillende overheidsorganisaties en onderzoeksinstellingen maken veel van hun data openbaar. Voorbeelden hiervan zijn \href{https://data.europa.eu/}{data.europa.eu} voor het dataplatform van de Europese Unie, \href{https://data.gov.be/nl}{data.gov.be} voor het Belgische Data Portaal en \href{https://data.gov/}{data.gov} voor open data van de Amerikaanse overheid. \\
+Platformen zoals \href{https://www.kaggle.com/datasets}{Kaggle} of \href{https://huggingface.co/datasets}{Hugging Face} hebben zich gespecialiseerd in het verspreiden van deze open datasets en kunnen rekenen op een hele community van gebruikers om deze datasets te uploaden naar hun platformen. Ook verschillende overheidsorganisaties en onderzoeksinstellingen maken veel van hun data openbaar. Voorbeelden hiervan zijn \href{https://data.europa.eu/}{data.europa.eu} voor het dataplatform van de Europese Unie, \href{https://data.gov.be/nl}{data.gov.be} voor het Belgische Data Portaal en \href{https://data.gov/}{data.gov} voor open data van de Amerikaanse overheid.
+
+\clearpage
 
 Voor datasets over niche onderwerpen zijn de mogelijkheden vaak beperkter. Dit heeft verschillende redenen: eerst en vooral zijn er minder mensen met deze onderwerpen bezig, wat de kan automatisch kleiner maakt dat ze (grote) datasets gaan verzamelen en deze publiek beschikbaar maken. Ten tweede brengt een dataset samenstellen een aanzienlijke kost met zich mee, zeker wanneer deze \textit{from scratch} gemaakt moet worden en men zich bijvoorbeeld niet kan baseren op reeds bestaande datasets. Ten derde is het vaak zo dat deze zeer gespecialiseerde datasets confidentieel moeten blijven, aangezien het bijvoorbeeld gaat over gevoelige data of data over een technologie die nog volop in ontwikkeling is.
 
@@ -44,8 +46,6 @@ Merk op dat al deze datasets nog niet lang geleden zijn gepubliceerd, wat er op 
 Ook de SubPipe-dataset biedt geen echte meerwaarde voor dit onderzoek. Ze bevat namelijk beelden voor de inspectie van pijpleidingen. Echter bewijst deze dataset wel dat er door de initiatieven van de afgelopen jaren datasets ter beschikking gesteld zijn met voldoende data om een robuust model mee te trainen. SubPipe bevat ongeveer 80GB aan data, verdeeld in data voor SLAM, objectdetectie en segmentatie. Ook worden er (normale) foto's in hoge resolutie (gemaakt met een GoPro Hero 10) en annotatie/metadata in verschillende formaten meegeleverd. \autocite{Alvarez_Tunon_2024} \\
 
 Zo blijven er nog 3 datasets over die mogelijks geschikt zijn om in dit onderzoek te gebruiken. 
-
-\newpage
 
 \subsubsection{UATD}
 
@@ -339,9 +339,9 @@ Om de omgeving van de zee zo goed mogelijk te kunnen nabootsen, bouwden de onder
     \caption[Setup waarmee de UXO-dataset gemaakt is]{\label{fig:uxo_setup}. Afbeelding van de setup die gebruikt werd om data te verzamelen voor de UXO-dataset. \autocite{Dahn_2024_UXO}}
 \end{figure}
 
-De dataset is alles samen zo'n 94,7 GB groot. Ze is de meest uitgebreide die in dit onderzoek voorkomt, niet alleen qua grootte, maar ook qua inhoud. De dataset is onderverdeeld in verschillende mappen. De map \texttt{3d\_models} bevat 3D-modellen van de \glspl{blindganger}. De map \texttt{calibration} bevat dan weer de transformaties tussen de kraan en de sensors en de kalibraties van de GoPro. Het merendeel van de dataset zit in de map \texttt{recordings}. Deze bevat mappen per type \gls{blindganger}. In deze mappen zitten dan telkens weer mappen met de datum en tijd van elk experiment. Deze mappen bevatten verschillende mappen en bestanden die de \emph{core} van de data vormen. \autocite{Dahn_2024_UXO}
-
 \clearpage
+
+De dataset is alles samen zo'n 94,7 GB groot. Ze is de meest uitgebreide die in dit onderzoek voorkomt, niet alleen qua grootte, maar ook qua inhoud. De dataset is onderverdeeld in verschillende mappen. De map \texttt{3d\_models} bevat 3D-modellen van de \glspl{blindganger}. De map \texttt{calibration} bevat dan weer de transformaties tussen de kraan en de sensors en de kalibraties van de GoPro. Het merendeel van de dataset zit in de map \texttt{recordings}. Deze bevat mappen per type \gls{blindganger}. In deze mappen zitten dan telkens weer mappen met de datum en tijd van elk experiment. Deze mappen bevatten verschillende mappen en bestanden die de \emph{core} van de data vormen. \autocite{Dahn_2024_UXO}
 
 \begin{itemize}
     \item \textbf{\texttt{aris\_raw}:} map die de \emph{raw} sonarbeelden bevat in PGM formaat. Dit is een eenvoudig rasterafbeeldingsformaat (zoals BMP, cf. figuur \ref{fig:bitmap_example_image}) dat grijswaardenafbeeldingen opslaat. PGM-bestanden kunnen in een ASCII (tekst) of binaire (snellere) variant worden opgeslagen. Elke pixel heeft een intensiteitswaarde tussen 0 (zwart) en een maximumwaarde (meestal 255, wit), waardoor verschillende grijstinten mogelijk zijn. De afbeelding bevat ook een header met het formaat, afmetingen en maximale intensiteit, gevolgd door de pixelgegevens. PGM wordt vaak gebruikt in beeldverwerking en wetenschappelijke toepassingen vanwege de eenvoud en brede compatibiliteit. \autocite{Poskanzer_2016}

@@ -60,7 +60,7 @@ def train_fixmatch(
             else:
                 head_params.append(param)
         return [
-            {"params": backbone_params, "lr": 0.0005},  # smaller LR for pretrained backbone
+            {"params": backbone_params, "lr": 0.0005},
             {"params": head_params, "lr": 0.005},
         ]
 

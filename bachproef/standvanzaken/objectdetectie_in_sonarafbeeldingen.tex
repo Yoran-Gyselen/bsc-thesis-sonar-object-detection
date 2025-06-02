@@ -5,11 +5,11 @@
 
 Objectdetectie is een tak binnen het domein van computer vision dat gericht is op het identificeren en lokaliseren van objecten binnen beelddata (zoals foto's en video's). Dit wordt gebruikt in verschillende domeinen, zoals beveiligingssystemen (bv. om inbrekers te detecteren) of de medische wereld (bv. om tumoren op te sporen). Door de jaren heen is objectdetectie aanzienlijk geëvolueerd dankzij de vooruitgang in deep learning en de grote beschikbaarheid van datasets met beeldmateriaal. \autocite{He_2016} \\
 
-Objectdetectie combineert twee belangrijke zaken in computer vision: objectlokalisatie en objectclassificatie. Objectlokalisatie bepaalt de positie van objecten, meestal in de vorm van \glspl{bounding_box} \autocite{Tompson_2015}, terwijl objectclassificatie bepaalt tot welke categorie een gedetecteerd object behoort. Samen geeft dit de mogelijkheid tot het herkennen van verschillende soorten objecten op één foto. \\
+Objectdetectie combineert twee belangrijke zaken in computer vision: objectlokalisatie en objectclassificatie. Objectlokalisatie bepaalt de positie van objecten, meestal in de vorm van \glspl{bounding_box} \autocite{Tompson_2015}, terwijl objectclassificatie bepaalt tot welke categorie een gedetecteerd object behoort. Samen geeft dit de mogelijkheid tot het herkennen van verschillende soorten objecten op één afbeelding.
 
-Objectdetectie heeft vele toepassingen, ook in domeinen die misschien niet zo voor de hand liggend zijn. Één van deze specialisaties binnen de -- algemene -- objectdetectie is objectdetectie op sonardata. Dit domein is over de laatste jaren erg gegroeid, vooral onder invloed van buitenlandse dreigingen. Zo wordt sonarobjectdetectie gebruikt voor het opsporen van mijnen in zee om ze later onschadelijk te kunnen maken. Naast detectie van mijnen wordt   de techniek ook gebruikt voor verschillende soorten onderzoeken, zoals archeologisch en maritiem onderzoek. Bij deze verschillende toepassingen wordt natuurlijk telkens een kleine variatie op deze techniek gebruikt om telkens andere dingen op te sporen. \autocite{Wang_2024} \\
+Objectdetectie heeft vele toepassingen, ook in domeinen die misschien niet zo voor de hand liggend zijn. Één van deze specialisaties binnen de -- algemene -- objectdetectie is objectdetectie op sonardata. Dit domein is de laatste jaren erg gegroeid, vooral onder invloed van buitenlandse dreigingen. Zo wordt sonarobjectdetectie gebruikt voor het opsporen van mijnen in zee om ze later onschadelijk te kunnen maken. Naast detectie van mijnen wordt de techniek ook gebruikt voor verschillende soorten onderzoeken, zoals archeologisch en maritiem onderzoek. Bij deze verschillende toepassingen wordt natuurlijk telkens een kleine variatie op deze techniek gebruikt om telkens andere dingen op te sporen. \autocite{Wang_2024} \\
 
-Traditioneel worden supervised-learning methoden gebruikt voor objectdetectie. Voorbeelden van populaire architecturen binnen dit domein zijn onder andere Faster \gls{rcnn}, \gls{yolo} en \gls{ssd}. \autocite{Redmon_2016} Omdat dit supervised-learning modellen zijn, presteren  ze uitstekend bij voldoende gelabelde data. De annotatiekosten en tijdsinvestering vormen echter een grote belemmering, vooral bij complexe datasets zoals sonar. Sonardata vereist namelijk gespecialiseerde kennis voor het labelen, wat de annotatie nog uitdagender maakt. \autocite{Long_2015} \\
+Traditioneel worden supervised learning methoden gebruikt voor objectdetectie. Voorbeelden van populaire architecturen binnen dit domein zijn onder andere Faster \gls{rcnn}, \gls{yolo} en \gls{ssd}. \autocite{Redmon_2016} Omdat dit supervised learning modellen zijn, presteren ze uitstekend bij voldoende gelabelde data. De annotatiekosten en tijdsinvestering vormen echter een grote belemmering, vooral bij complexe datasets zoals sonar. Sonardata vereist namelijk gespecialiseerde kennis voor het labelen, wat de annotatie nog uitdagender maakt. \autocite{Long_2015} \\
 
 Deze supervised objectdetectietechnieken vallen onder te verdelen in grofweg twee grote categorieën. Enerzijds zijn er de zogenaamde \emph{single-shot detectors}, anderzijds heb je de \emph{two-stage detectors}. Deze categorieën zijn gebaseerd op hoeveel keer de afbeelding door het netwerk gaat. Bij single-shot detectors gaat de afbeelding slechts één keer door het netwerk, bij two-stage detectors -- logischerwijs -- twee keer. \autocite{Carranza_Garcia_2020} \\
 
@@ -23,13 +23,13 @@ Zowel \gls{yolo} als \gls{ssd} zijn single-shot detectors. Deze architecturen wo
 
 \subsubsection{Two-stage objectdetectie}
 
-Zoals de naam doet vermoeden, is two-stage objectdetectie een type objectdetectie waarbij de afbeelding twee keer door het netwerk gaat. Het resultaat is nog steeds een voorspelling van locaties en klassen, maar in plaats van in één keer -- zoals bij single-shot objectdetectie -- gebeurt de voorspelling nu in twee afzonderlijke stappen. Het resultaat van de eerste \emph{pass} is een set van \emph{proposals} -- voorstellen -- en mogelijke locaties van objecten. Daarna zorgt de tweede \emph{pass} voor een verfijning van deze voorstellen. Dit zorgt dan ook voor de uiteindelijke voorspellingen. Het voordeel van dit type objectdetectie is dat het veel preciezer is dan single-shot objectdetectie, aangezien de afbeelding twee keer geanalyseerd wordt. Het nadeel is dat deze approach veel resource-intensiever is. Het is dus zaak om een afweging te maken tussen de precisie van de voorspellingen en het verbruik van resources. \autocite{Carranza_Garcia_2020} \\
+Zoals de naam doet vermoeden, is two-stage objectdetectie een type objectdetectie waarbij de afbeelding twee keer door het netwerk gaat. Het resultaat is nog steeds een voorspelling van locaties en klassen, maar in plaats van in één keer -- zoals bij single-shot objectdetectie -- gebeurt de voorspelling nu in twee afzonderlijke stappen. Het resultaat van de eerste pass is een set van \emph{proposals} -- voorstellen -- en mogelijke locaties van objecten. Daarna zorgt de tweede pass voor een verfijning van deze voorstellen. Dit zorgt dan ook voor de uiteindelijke voorspellingen. Het voordeel van dit type objectdetectie is dat het veel preciezer is dan single-shot objectdetectie, aangezien de afbeelding twee keer geanalyseerd wordt. Het nadeel is dat deze approach veel resource-intensiever is. Het is dus zaak om een afweging te maken tussen de precisie van de voorspellingen en het verbruik van resources. \autocite{Carranza_Garcia_2020} \\
 
 Over het algemeen wordt voor real-time applicaties single-shot objectdetectie gebruikt en voor cases waar de voorspellingen heel accuraat moeten zijn, wordt two-stage objectdetectie gebruikt. Een voorbeeld van een two-stage detector is de \gls{rcnn}-architectuur van \textcite{Girshick_2013}. Ook alle latere architecturen die hierop gebaseerd zijn, zijn two-stage detectors. Voorbeelden daarvan zijn Fast \gls{rcnn}, Faster \gls{rcnn} en Mask \gls{rcnn}. \autocite{Ren_2015}
 
 \subsection{Meten van performantie binnen objectdetectie}
 
-Gedurende dit onderzoek zal er gewerkt worden met verschillende soorten modellen en architecturen met elk hun sterktes en hun zwaktes. Het is de bedoeling dat al deze modellen vergeleken kunnen worden met elkaar om zo het best presterende model of de best presterende modellen te kunnen selecteren. Om dit te doen zijn er standaard metrieken nodig. Deze kunnen later (tijdens de trainingsfase) dan ook dienen als \gls{loss_functie}. Er zijn enorm veel verschillende metrieken om de performantie van objectdetectiemodellen te meten, maar twee van de bekendste en meest gebruikte zijn \gls{iou} en \gls{map}.
+Gedurende dit onderzoek zal er gewerkt worden met verschillende soorten modellen en architecturen met elk hun sterktes en hun zwaktes. Het is de bedoeling dat al deze modellen vergeleken kunnen worden met elkaar om zo het best presterende model of de best presterende modellen te kunnen selecteren. Om dit te doen zijn er standaard metrieken nodig. Deze kunnen later (tijdens de trainingsfase) dan ook dienen als tussentijdse evaluatiemetriek om te zien hoe het model evolueert. Er zijn enorm veel verschillende metrieken om de performantie van objectdetectiemodellen te meten, maar twee van de bekendste en meest gebruikte zijn \gls{iou} en \gls{map}.
 
 \subsubsection{Intersection over Union (IoU)}
 
@@ -49,9 +49,9 @@ Een andere -- zeer bekende -- metriek is de \acrfull{map}. Ze beoordeelt de nauw
 
 \subsection{Typische uitdagingen bij sonarobjectdetectie}
 
-Objectdetectie op sonarbeelden die gemaakt zijn onderwater wordt geconfronteerd met verschillende uitdagingen die de nauwkeurigheid en betrouwbaarheid van detecties beïnvloeden.
+Objectdetectie op sonarbeelden die gemaakt zijn onderwater wordt geconfronteerd met verschillende uitdagingen die de nauwkeurigheid en betrouwbaarheid van detecties beïnvloeden. \\
 
-Ruis is een van de voornaamste obstakels bij sonarobjectdetectie. Onderwateromgevingen zijn inherent lawaaierig door factoren zoals luchtbellen, \glspl{thermocline} en biologische organismen, wat leidt tot significante ruis in sonarbeelden. Deze ruis bemoeilijkt het onderscheiden van echte objecten van artefacten typisch aan sonarbeelden, waardoor de betrouwbaarheid van de detecties afneemt. \autocite{Aubard_2024_Datasets} \\
+Ruis is één van de voornaamste obstakels bij sonarobjectdetectie. Onderwateromgevingen zijn inherent lawaaierig door factoren zoals luchtbellen, \glspl{thermocline} en biologische organismen, wat leidt tot significante ruis in sonarbeelden. Deze ruis bemoeilijkt het onderscheiden van echte objecten van artefacten typisch aan sonarbeelden, waardoor de betrouwbaarheid van de detecties afneemt. \autocite{Aubard_2024_Datasets} \\
 
 Een andere uitdaging is de lage resolutie van sonarbeelden. In vergelijking met optische sensoren leveren sonars vaak beelden met beperkte detailweergave, wat de identificatie en classificatie van objecten moeilijker maakt. Deze beperking is vooral problematisch bij het detecteren van kleine of complexe objecten, waar detailniveau essentieel is voor nauwkeurige herkenning. \autocite{Lee_2018} \\
 
@@ -62,6 +62,8 @@ Het overwinnen van deze uitdagingen vereist geavanceerde signaalverwerkingstechn
 \subsection{Overzicht van bestaande technieken}
 
 Grofweg zijn er twee stromingen van objectdetectie op sonarafbeeldingen. Enerzijds zijn er de klassieke methoden en anderzijds zijn er de moderne deep learning-technieken. De klassieke methoden werden vooral gebruikt in een tijd waar grote, complexe neurale netwerken trainen onmogelijk was bij gebrek aan voldoende computerkracht, maar worden de dag van vandaag nog altijd gebruikt als pre-processing technieken voor de datasets waarmee de moderne neurale netwerken getraind worden. Deze klassieke methoden berusten enkel op statistische technieken om zo objecten in afbeeldingen te proberen detecteren. Specifiek zijn deze vooral gericht op het verbeteren van beeldkwaliteit en het onderscheiden van objecten van de achtergrond.
+
+\clearpage
 
 \subsubsection{Filtertechnieken}
 
@@ -156,6 +158,8 @@ Een significante ontwikkeling in het domein van objectdetectie was de introducti
     \caption[Faster R-CNN-architectuur.]{\label{fig:faster_rcnn_architecture}Schematische voorstelling van de Faster \gls{rcnn}-architectuur. \autocite{Ren_2015}}
 \end{figure}
 
+\clearpage
+
 Faster \gls{rcnn} is een zogenaamd two-stage detectiemodel, wat inhoudt dat het eerst regio’s in een afbeelding identificeert die mogelijk objecten bevatten, en deze vervolgens classificeert en verfijnt. Hoewel dit proces doorgaans minder snel is dan bij single-stage modellen, biedt het een grotere nauwkeurigheid in zowel lokalisatie als classificatie, wat verklaart waarom het model goed presteert in veel benchmarks. \\
 
 De architectuur bestaat uit vier hoofdcomponenten:
@@ -187,7 +191,7 @@ Een bijkomend voordeel van \gls{ssd} is dat het geen aparte stap nodig heeft voo
 
 De \gls{ssd}-architectuur bestaat uit een basisnetwerk voor feature extractie (zoals VGG16, ResNet of MobileNet), gevolgd door extra lagen die meerdere resoluties van het beeld analyseren. De oorspronkelijke implementatie gebruikte VGG16, maar varianten met lichtere of diepere netwerken zijn later ontwikkeld, afhankelijk van de toepassing. De keuze van het basisnetwerk bepaalt voor een groot deel de balans tussen nauwkeurigheid en gebruik van resources. \\
 
-Omdat \gls{ssd} veel overlappende voorspellingen kan genereren, is een extra stap nodig om dubbele detecties te vermijden. Dit gebeurt via \gls{nms}, een techniek die alleen de meest waarschijnlijke voorspelling voor elk object behoudt en overlappende alternatieven verwijdert. \gls{nms} is hierbij essentieel voor het produceren van duidelijke en bruikbare detectieresultaten. \\
+Omdat \gls{ssd} veel overlappende voorspellingen kan genereren, is een extra stap nodig om dubbele detecties te vermijden. Dit gebeurt via \gls{nms}, een techniek die alleen de meest waarschijnlijke voorspelling voor elk object behoudt en overlappende alternatieven verwijdert. \gls{nms} is hierbij essentieel voor het produceren van duidelijke en bruikbare detectieresultaten.
 
 \begin{figure}[H]
     \centering
@@ -197,13 +201,18 @@ Omdat \gls{ssd} veel overlappende voorspellingen kan genereren, is een extra sta
 
 \gls{ssd} heeft een aantal belangrijke voordelen. Het is snel, eenvoudig en efficiënt in geheugengebruik en computationele resources. Dankzij het gebruik van meerdere feature maps kan het objecten van uiteenlopende groottes detecteren, en voor grote objecten is de nauwkeurigheid vaak uitstekend. Bovendien is de trainingsprocedure doorgaans sneller dan die van two-stage modellen. \\
 
-Tegelijkertijd kent \gls{ssd} ook beperkingen. De nauwkeurigheid bij het detecteren van kleine objecten blijft een uitdaging. Verder kunnen er tijdens training veel 'achtergrondboxen' aanwezig zijn, wat het moeilijker maakt voor het model om onderscheid te maken tussen achtergrond en relevante objecten. Ondanks het gebruik van verschillende schalen, kan het model moeite hebben met objecten die aanzienlijk kleiner of groter zijn dan wat het tijdens training heeft gezien. Ook kunnen de voorspelde locaties minder precies zijn dan bij sommige andere methoden.
-
-\autocite{Ma_2020}
-\autocite{Kumar_2020}
-\autocite{Liu_2016}
-\autocite{Jiang_2020}
+Tegelijkertijd kent \gls{ssd} ook beperkingen. De nauwkeurigheid bij het detecteren van kleine objecten blijft een uitdaging. Verder kunnen er tijdens training veel ``achtergrondboxes'' aanwezig zijn, wat het moeilijker maakt voor het model om onderscheid te maken tussen achtergrond en relevante objecten. Ondanks het gebruik van verschillende schalen, kan het model moeite hebben met objecten die aanzienlijk kleiner of groter zijn dan wat het tijdens training heeft gezien. Ook kunnen de voorspelde locaties minder precies zijn dan bij sommige andere methoden.
 
 \subsection{Specifieke toepassingen}
 
-\lipsum[1-3]
+Objectdetectie met deep learning is de afgelopen jaren breed toepasbaar gebleken in uiteenlopende domeinen, mede dankzij de ontwikkeling van de krachtige modellen hierboven besproken. Elk van deze modellen heeft specifieke sterktes die hen geschikt maken voor verschillende praktische toepassingen, afhankelijk van de vereisten op het vlak van snelheid, nauwkeurigheid en computationele resources. \\
+
+\gls{yolo} is ontworpen met real-time toepassingen in gedachten en blinkt uit in snelheid zonder een al te grote toegeving in nauwkeurigheid. Hierdoor wordt het model veel ingezet in domeinen waar onmiddellijke beslissingen noodzakelijk zijn. \autocite{Diwan_2022} In autonome voertuigen wordt \gls{yolo} bijvoorbeeld gebruikt om verkeersborden, voetgangers en obstakels in real-time te detecteren, wat cruciaal is voor veilige navigatie. Ook in bewakingssystemen komt \gls{yolo} goed tot zijn recht: het detecteert onmiddellijk personen of objecten in videobeelden en maakt snelle interventies mogelijk. Daarnaast zijn er toepassingen in de gezondheidszorg, zoals het lokaliseren van tumoren in medische beelden, en in de landbouw, waar het model ingezet wordt voor het herkennen van gewasziekten of onkruid. Het onderzoek van \textcite{Chen_2023} heeft aangetoond dat \gls{yolo} een praktisch nut biedt binnen onderwaterbeeldvorming. Daarnaast heeft het onderzoek van \textcite{Bochkovskiy_2020} aangetoond dat de ontwikkeling van het model ervoor heeft gezorgd dat het één van de beste keuzes is geworden voor objectdetectie. \\
+
+\gls{ssd} biedt een compromis tussen snelheid en nauwkeurigheid en is daarmee eveneens geschikt voor real-time toepassingen, maar met iets betere detectieprestaties voor kleinere objecten dan \gls{yolo}. \autocite{Kumar_2020} \gls{ssd} wordt vaak ingezet in \gls{ar}-toepassingen, waar het accuraat identificeren van objecten in de fysieke omgeving essentieel is om digitale elementen er realistisch op af te stemmen. Ook in autonome voertuigen wordt \gls{ssd} gebruikt, bijvoorbeeld om bewegende objecten zoals voetgangers of andere auto's op tijd waar te nemen. In beveiligingstoepassingen helpt \gls{ssd} bovendien bij het monitoren van camerabeelden om ongewenste activiteiten automatisch te signaleren. Het onderzoek van \textcite{Ma_2020} heeft \gls{ssd} bijvoorbeeld gebruikt om afval te detecteren. Ook binnen onderwaterobjectdetectie is \gls{ssd} al enkele keren gebruikt, zoals in het onderzoek van \textcite{Jiang_2020}.
+
+\clearpage
+
+Faster \gls{rcnn}, ten slotte, is een model dat zich onderscheidt door zijn hoge nauwkeurigheid, maar in ruil daarvoor minder geschikt is voor real-time toepassingen door de hogere computationele requirements. Het model wordt daarom veel gebruikt in situaties waar precisie belangrijker is dan snelheid. Zo wordt Faster \gls{rcnn} ingezet in lucht- en satellietbeelden voor het identificeren van gebouwen, voertuigen of vegetatie. In de medische beeldanalyse wordt het model toegepast voor het nauwkeurig lokaliseren van afwijkingen zoals tumoren of letsels, wat essentieel is voor een betrouwbare diagnose. Ook in industriële toepassingen, zoals kwaliteitscontrole op productielijnen, helpt Faster \gls{rcnn} bij het detecteren van defecten met een hoge mate van precisie. Ten slotte heeft Faster \gls{rcnn} zijn effectiviteit al bewezen in onderwaterobjectdetectie, zoals in het onderzoek van \textcite{Wang_2023} of \textcite{Zeng_2021}. Het onderzoek van \textcite{Yulin_2020} heeft aangetoond dat het model ook op sonardata effectief is. Daarnaast is het model goed in het detecteren in kleine objecten (wat in sonardata vaak het geval is). Dit is gebleken uit het onderzoek van \textcite{Chen_2017}. \\
+
+De keuze tussen deze modellen is sterk afhankelijk van de specifieke context waarin objectdetectie wordt toegepast. Terwijl \gls{yolo} en \gls{ssd} uitblinken in snelheid voor dynamische omgevingen, biedt Faster \gls{rcnn} de precisie die vereist is in kritieke of specialistische domeinen zoals geneeskunde en geospatiale analyse.
