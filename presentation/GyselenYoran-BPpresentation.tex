@@ -1,0 +1,270 @@
+\documentclass[aspectratio=169]{beamer}
+\usepackage[utf8]{inputenc}
+\usepackage{booktabs}
+
+\usetheme[progressbar=frametitle]{metropolis}
+\setbeamertemplate{frame numbering}[fraction]
+
+\graphicspath{../graphics/}
+
+% title page
+\title{Objectdetectie in sonardata met behulp van semi- en self-supervised learning}
+\subtitle{Een verkennend onderzoek naar het toepassen van moderne leertechnieken op onderwaterbeeldvorming}
+\author{Yoran Gyselen}
+\institute[HOGENT]{Hogeschool Gent}
+\date{2024 -- 2025}
+
+\begin{document}
+    
+    % === Titelpagina ===
+    \begin{frame}{}
+        \titlepage
+    \end{frame}
+    
+    % === Inhoudstafel ===
+    \begin{frame}{Inhoudstafel}
+        \tableofcontents
+    \end{frame}
+    
+    % === Introductie ===
+    \section{Introductie}
+    
+    % Sonar
+    \begin{frame}{Sonar}
+        \begin{itemize}
+            \item Sonar = \textbf{Sound Navigation and Ranging}
+            \item Gebruikt geluidsgolven om \textbf{onderwaterobjecten en omgevingen te visualiseren}
+            \item Types:
+            \begin{itemize}
+                \item \textbf{Side-scan sonar:} breed zicht, gebruikt voor oppervlaktes
+                \item \textbf{Multibeam sonar:} nauwkeurig, gebruikt voor dieptemetingen
+                \item \textbf{Synthetic Aperture Sonar (SAS):} evolutie van SSS, veel hogere resolutie
+                \item \dots
+            \end{itemize}
+            \item Output = \textbf{grayscale beelden} met ruis en lage resolutie
+            \item Vergelijkbaar met \textbf{``zien van geluid''} onder water
+        \end{itemize}
+    \end{frame}
+    
+    % Belang van objectdetectie op sonarbeelden
+    \begin{frame}{Belang van objectdetectie op sonarbeelden}
+        \begin{itemize}
+            \item \textbf{Mijnenopsporing:} militaire veiligheid in zeeën
+            \item \textbf{Archeologisch onderzoek:} wrakken, artefacten vinden
+            \item \textbf{Milieustudies:} detecteren van mariene organismen
+            \item \textbf{Infrastructuurinspecties:} brugfunderingen, pijpleidingen, zeekabels
+        \end{itemize}
+        \begin{itemize}
+            \item Probleem: veel beelden, \textbf{handmatige analyse is traag en foutgevoelig}
+        \end{itemize}
+    \end{frame}
+    
+    % Motivatie
+    \begin{frame}{Motivatie}
+        \begin{itemize}
+            \item Door stage
+            \item Geen ervaring met sonardata
+            \item Interesse in toepassingen van objectdetectie
+            \item \textit{Real-world} probleem: labelen van sonardata is traag en complex
+            \item Toepassen van \textit{cutting-edge} technologieën op bestaand probleem
+        \end{itemize}
+    \end{frame}
+    
+    % === Probleemstelling & Onderzoeksvraag ===
+    \section{Probleemstelling \& Onderzoeksvraag}
+    
+    % Problemen bij sonarobjectdetectie
+    \begin{frame}{Problemen bij sonarobjectdetectie}
+        \begin{itemize}
+            \item Sonarbeelden zijn vaag, ruisachtig en moeilijk te interpreteren
+            \item Labelen vereist expertise (bv. mijnen herkennen, vorm en context)
+            \item Labelproces:
+            \begin{itemize}
+                \item Tijdrovend
+                \item Kostbaar
+                \item Niet schaalbaar
+            \end{itemize}
+        \end{itemize}
+    \end{frame}
+    
+    % Gebrek aan gelabelde data
+    \begin{frame}{Gebrek aan gelabelde data}
+        \begin{itemize}
+            \item \textbf{Geen grote, publieke datasets} zoals bij gewone beelden (COCO, ImageNet)
+            \item Vaak \textbf{geclassificeerd} (militair)
+            \item \textbf{Niche} $\Rightarrow$ weinig onderzoekers
+            \item Veel data nodig voor DL-modellen
+        \end{itemize}
+    \end{frame}
+    
+    % Onderzoeksvraag
+    \begin{frame}{Onderzoeksvraag}
+        \textbf{Doel:} optimaliseren van workflow waarbij (heel) veel gelabelde data nodig is
+        
+        \vspace{\baselineskip}
+        
+        \begin{quote}
+            \textbf{Onderzoeksvraag:} \\
+            Kunnen semi- en self-supervised leermethoden het labelproces versnellen zonder een significant verlies in nauwkeurigheid?
+        \end{quote}
+        
+        \begin{itemize}
+            \item Prestatie van deze methodes t.o.v. volledig supervised modellen?
+            \item Minimale hoeveelheid gelabelde data?
+            \item Best werkende techniek(en)?
+        \end{itemize}
+    \end{frame}
+    
+    % === Achtergrond & Theoretisch kader ===
+    \section{Achtergrond \& Theoretisch kader}
+    
+    % Objectdetectie
+    \begin{frame}{Objectdetectie}
+        \textbf{Doel:} lokaliseren \& classificeren van objecten in afbeeldingen
+        
+        \vspace{\baselineskip}
+        
+        Twee grote types modellen:
+        
+        \begin{itemize}
+            \item \textbf{Single-shot:} heel snel, minder precies \\ Bv. YOLO (You Only Look Once) \& SSD (Single Shot MultiBox Detector)
+            \item \textbf{Two-stage:} trager, maar nauwkeuriger \\ Bv. Faster R-CNN
+        \end{itemize}
+    \end{frame}
+    
+    % Supervised learning
+    \begin{frame}{Supervised learning}
+        \begin{itemize}
+            \item Leert op basis van \textbf{gelabelde data}
+            \item Nodig: afbeeldingen + bounding boxes (bv. mijnen)
+            \item \textbf{Zeer accuraat} bij veel data
+            \item \textbf{Probleem:} labelen is duur \& tijdrovend
+        \end{itemize}
+    \end{frame}
+    
+    % Semi-supervised learning
+    \begin{frame}{Semi-supervised learning}
+        \textbf{Semi-supervised learning (SSL)}
+        \begin{itemize}
+            \item Combineert \textbf{kleine hoeveelheid gelabelde data} met veel ongelabelde data
+            \item Typische technieken:
+            \begin{itemize}
+                \item \textbf{Pseudo-labeling:} model genereert labels voor onbekende data
+                \item \textbf{Consistency regularization:} model leert robuust te blijven bij kleine veranderingen in input (bv. rotatie, ruis)
+            \end{itemize}
+            \item \textbf{Data-augmentatie} speelt een centrale rol
+        \end{itemize}
+    \end{frame}
+    
+    % Self-supervised learning
+    \begin{frame}{Self-supervised learning}
+        \textbf{Self-supervised learning (Self-SL)}
+        \begin{itemize}
+            \item \textbf{Geen gelabelde data nodig} tijdens pre-training
+            \item Model leert door \textbf{pretext-taken}: kunstmatige taken die de structuur van data onthullen
+            \item Typische technieken:
+            \begin{itemize}
+                \item \textbf{Contrastive learning:} vergelijk gelijkaardige vs. niet-gelijkaardige beelden
+                \item \textbf{Predictieve taken:} bv. voorspellen van ontbrekende delen of transformaties
+                \item \textbf{Representation learning:} model leert algemene kenmerken extraheren
+            \end{itemize}
+        \end{itemize}
+    \end{frame}
+    
+    % Voordelen bij sonardata
+    \begin{frame}{Voordelen bij sonardata}
+        \begin{itemize}
+            \item Sonardata is:
+            \begin{itemize}
+                \item Moeilijk te interpreteren
+                \item Schaars in gelabelde vorm
+            \end{itemize}
+            \item SSL \& Self-SL laten modellen leren uit veel \textbf{ongelabelde data}
+        \end{itemize}
+        \begin{enumerate}[$\Rightarrow$]
+            \item Grote tijds- en kostbesparing
+            \item Vergelijkbare nauwkeurigheid bij weinig gelabelde data
+        \end{enumerate}
+    \end{frame}
+    
+    % === Methodologie & Experimentele opzet ===
+    \section{Methodologie \& Experimentele opzet}
+    
+    % Dataset & Data-opzet
+    \begin{frame}{Dataset \& Data-opzet}
+        \textbf{Dataset:}
+        \begin{itemize}
+            \item Publieke sonarbeeld-dataset: \textbf{7600 afbeeldingen}
+            \item Beelden bevatten \textbf{onderwaterobjecten} zoals mijnen of wrakken
+            \item Enkel subset van beelden handmatig gelabeld
+        \end{itemize}
+        \textbf{Dataverdeling:} \\
+        Getest met verschillende labelpercentages:
+        \begin{itemize}
+            \item 1\%, 5\%, 10\%, 50\%, 100\% \textbf{gelabeld}
+            \item Resterende data als \textbf{ongelabelde input}
+        \end{itemize}
+    \end{frame}
+    
+    % Vergelijking van 3 leertechnieken
+    \begin{frame}{Vergelijking van leermethoden}
+        \centering
+        \begin{tabular}{lll}
+            \toprule
+            \textbf{Type} & \textbf{Methode} & \textbf{Doel} \\
+            \midrule
+            Supervised      & Faster R-CNN       & Alleen gelabelde data \\
+            Semi-supervised & + FixMatch         & Weinig labels + pseudo-labels \\
+            Self-supervised & + BYOL (pre-train) & Pre-training zonder labels, daarna fine-tunen \\
+            \bottomrule
+        \end{tabular}
+    \end{frame}
+    
+    % Trainen & Evalueren
+    \begin{frame}{Trainen \& Evalueren}
+        \textbf{Training details:}
+        \begin{itemize}
+            \item Deep learning framework: PyTorch
+            \item Veel gebruik gemaakt van TorchVision
+            \item Gebruik van GPU (NVIDIA RTX A5000)
+            \item Optimalisatietechnieken:
+            \begin{itemize}
+                \item Early stopping
+                \item Mixed precision training
+                \item Lagen bevriezen
+                \item Linear warm-up
+                \item \dots
+            \end{itemize}
+        \end{itemize}
+        \textbf{Evaluatiemethode:}
+        \begin{itemize}
+            \item Prestatie gemeten met mAP-score (mean Average Precision)
+            \item Gebruik van loss-functie voor evaluatie
+        \end{itemize}
+    \end{frame}
+    
+    % Doel van vergelijking
+    \begin{frame}{Doel van vergelijking}
+        \begin{itemize}
+            \item Hoe robuust zijn modellen bij weinig gelabelde data?
+            \item Test per model bij 1\%, 5\%, 10\%, 50\%, 100\% gelabeld
+        \end{itemize}
+        \begin{enumerate}[$\Rightarrow$]
+            \item Directe vergelijking van prestaties
+            \item Welke strategie werkt het best met zo min mogelijk manueel werk?
+        \end{enumerate}
+    \end{frame}
+    
+    % Resultaten
+    \section{Resultaten}
+    \begin{frame}{First slide}
+        Hello world
+    \end{frame}
+    
+    \section{Conclusie \& Reflectie}
+    \begin{frame}{First slide}
+        Hello world
+    \end{frame}
+    
+    \section{Vragen}
+\end{document}
