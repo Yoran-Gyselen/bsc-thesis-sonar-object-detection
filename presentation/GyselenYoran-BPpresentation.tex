@@ -1,11 +1,16 @@
 \documentclass[aspectratio=169]{beamer}
 \usepackage[utf8]{inputenc}
 \usepackage{booktabs}
+\usepackage{tikz}
+\usepackage{subcaption}
+
+\usepackage{pgfplots}
+\pgfplotsset{compat=1.17}
 
 \usetheme[progressbar=frametitle]{metropolis}
 \setbeamertemplate{frame numbering}[fraction]
 
-\graphicspath{../graphics/}
+\graphicspath{{../graphics/}}
 
 % title page
 \title{Objectdetectie in sonardata met behulp van semi- en self-supervised learning}
@@ -46,6 +51,25 @@
         \end{itemize}
     \end{frame}
     
+    \begin{frame}{Voorbeelden van sonarbeelden}
+        \begin{figure}
+            \centering
+            \begin{subfigure}{.5\textwidth}
+                \centering
+                \captionsetup{justification=centering}
+                \includegraphics[width=0.9\linewidth]{SSSFMD_example.jpg}
+                \caption{Voorbeeld van side-scan sonarbeeld}
+            \end{subfigure}%
+            \hfill
+            \begin{subfigure}{.5\textwidth}
+                \centering
+                \captionsetup{justification=centering}
+                \includegraphics[width=0.9\linewidth]{UATD_example.png}
+                \caption{Voorbeeld van multibeam sonarbeeld}
+            \end{subfigure}%
+        \end{figure}
+    \end{frame}
+    
     % Belang van objectdetectie op sonarbeelden
     \begin{frame}{Belang van objectdetectie op sonarbeelden}
         \begin{itemize}
@@ -57,6 +81,13 @@
         \begin{itemize}
             \item Probleem: veel beelden, \textbf{handmatige analyse is traag en foutgevoelig}
         \end{itemize}
+    \end{frame}
+    
+    \begin{frame}{Voorbeeld van een geannoteerd sonarbeeld}
+        \begin{figure}
+            \centering
+            \includegraphics[height=0.9\textheight]{8_gt.png}
+        \end{figure}
     \end{frame}
     
     % Motivatie
@@ -130,6 +161,20 @@
             \item \textbf{Single-shot:} heel snel, minder precies \\ Bv. YOLO (You Only Look Once) \& SSD (Single Shot MultiBox Detector)
             \item \textbf{Two-stage:} trager, maar nauwkeuriger \\ Bv. Faster R-CNN
         \end{itemize}
+    \end{frame}
+    
+    \begin{frame}{SSD- vs. YOLO-architectuur}
+        \begin{figure}
+            \centering
+            \includegraphics[height=0.9\textheight]{ssd_architecture.png}
+        \end{figure}
+    \end{frame}
+    
+    \begin{frame}{Faster R-CNN-architectuur}
+        \begin{figure}
+            \centering
+            \includegraphics[height=0.9\textheight]{faster_rcnn_architecture.png}
+        \end{figure}
     \end{frame}
     
     % Supervised learning
@@ -255,16 +300,209 @@
         \end{enumerate}
     \end{frame}
     
-    % Resultaten
+    % === Resultaten ===
     \section{Resultaten}
-    \begin{frame}{First slide}
-        Hello world
+    
+    % mAP-score (mean Average Precision)
+    \begin{frame}{mAP-score (mean Average Precision)}
+        \textbf{mAP} meet hoe goed het model objecten:
+        \begin{itemize}
+            \item Correct lokaliseert (bounding boxes)
+            \item Correct classificeert
+        \end{itemize}
+        \textbf{Belangrijk:}
+        \begin{itemize}
+            \item Waarde tussen 0 en 1
+            \item Hoe hoger de mAP, hoe beter
+            \item mAP combineert \textit{precision} en \textit{recall} over verschillende klassen en drempels
+        \end{itemize}
     \end{frame}
     
+    % Kwantitatief overzicht van de supervised resultaten
+    \begin{frame}{Kwantitatief overzicht van de supervised resultaten}
+        \centering
+        \begin{tikzpicture}
+            \begin{axis}[
+                ybar,
+                width=\textwidth,
+                height=\textheight,
+                symbolic x coords={100\%, 50\%, 10\%, 5\%, 1\%},
+                xtick=data,
+                ymin=0,
+                bar width=15pt,
+                xlabel={Verschillende data-splits},
+                ylabel={mAP-score},
+                nodes near coords,
+                ]
+                \addplot coordinates {(100\%,0.7717) (50\%,0.7847) (10\%,0.6152) (5\%,0.5298) (1\%,0.2799)};
+            \end{axis}
+        \end{tikzpicture}
+    \end{frame}
+    
+    % Kwalitatief overzicht van de supervised resultaten
+    \begin{frame}{Kwalitatief overzicht van de supervised resultaten}
+        \begin{figure}
+            \centering
+            \begin{subfigure}{.15\textwidth}
+                \centering
+                \captionsetup{justification=centering}
+                \includegraphics[width=0.9\linewidth]{251_faster_rcnn_1pct.png}
+                \caption[Voorspelling Faster R-CNN 1\%]{1\%}
+            \end{subfigure}%
+            \hfill
+            \begin{subfigure}{.15\textwidth}
+                \centering
+                \captionsetup{justification=centering}
+                \includegraphics[width=0.9\linewidth]{251_faster_rcnn_5pct.png}
+                \caption[Voorspelling Faster R-CNN 5\%]{5\%}
+            \end{subfigure}%
+            \hfill
+            \begin{subfigure}{.15\textwidth}
+                \centering
+                \captionsetup{justification=centering}
+                \includegraphics[width=0.9\linewidth]{251_faster_rcnn_10pct.png}
+                \caption[Voorspelling Faster R-CNN 5\%]{5\%}
+            \end{subfigure}%
+            \hfill
+            \begin{subfigure}{.15\textwidth}
+                \centering
+                \captionsetup{justification=centering}
+                \includegraphics[width=0.9\linewidth]{251_faster_rcnn_50pct.png}
+                \caption[Voorspelling Faster R-CNN 50\%]{50\%}
+            \end{subfigure}%
+            \hfill
+            \begin{subfigure}{.15\textwidth}
+                \centering
+                \captionsetup{justification=centering}
+                \includegraphics[width=0.9\linewidth]{251_faster_rcnn_100pct.png}
+                \caption[Voorspelling Faster R-CNN 100\%]{100\%}
+            \end{subfigure}%
+        \end{figure}
+    \end{frame}
+    
+    % Kwantitatief overzicht van de semi- en self-supervised resultaten
+    \begin{frame}{Kwantitatief overzicht van de semi- en self-supervised resultaten}
+        \centering
+        \begin{tikzpicture}
+            \begin{axis}[
+                ybar,
+                bar width=15pt,
+                width=\textwidth,
+                height=0.9\textheight,
+                enlargelimits=0.5,
+                ybar=10pt,
+                legend style={at={(0.5,-0.15)}, anchor=north,legend columns=-1},
+                xlabel={Verschillende data-splits},
+                ylabel={mAP-score},
+                ymax=0.7,
+                symbolic x coords={10\%, 5\%},
+                xtick=data,
+                nodes near coords,
+                nodes near coords align={vertical},
+                ]
+                \addplot coordinates {(10\%,0.6152) (5\%,0.5298)};
+                \addplot coordinates {(10\%,0.6828) (5\%,0.6649)};
+                \addplot coordinates {(10\%,0.7230) (5\%,0.6452)};
+                \legend{Faster R-CNN baseline, FixMatch, BYOL}
+            \end{axis}
+        \end{tikzpicture}
+    \end{frame}
+    
+    % Kwalitatief overzicht van de semi- en self-supervised resultaten
+    \begin{frame}{Kwalitatief overzicht van de semi- en self-supervised resultaten}
+        \begin{figure}
+            \centering
+            \begin{subfigure}{.2\textwidth}
+                \centering
+                \captionsetup{justification=centering}
+                \includegraphics[width=0.9\linewidth]{1_gt.png}
+                \caption{Ground truth}
+            \end{subfigure}%
+            \begin{subfigure}{.2\textwidth}
+                \centering
+                \captionsetup{justification=centering}
+                \includegraphics[width=0.9\linewidth]{1_fixmatch_10pct.png}
+                \caption{FixMatch 10\%}
+            \end{subfigure}%
+            \begin{subfigure}{.2\textwidth}
+                \centering
+                \captionsetup{justification=centering}
+                \includegraphics[width=0.9\linewidth]{1_fixmatch_5pct.png}
+                \caption{FixMatch 5\%}
+            \end{subfigure}%
+            \begin{subfigure}{.2\textwidth}
+                \centering
+                \captionsetup{justification=centering}
+                \includegraphics[width=0.9\linewidth]{1_faster_rcnn_10_byol.png}
+                \caption{BYOL 10\%}
+            \end{subfigure}%
+            \begin{subfigure}{.2\textwidth}
+                \centering
+                \captionsetup{justification=centering}
+                \includegraphics[width=0.9\linewidth]{1_faster_rcnn_5_byol.png}
+                \caption{BYOL 5\%}
+            \end{subfigure}%
+        \end{figure}
+    \end{frame}
+    
+    % === Conclusie & Reflectie ===
     \section{Conclusie \& Reflectie}
-    \begin{frame}{First slide}
-        Hello world
+    
+    % Conclusies uit de resultaten
+    \begin{frame}{Conclusies uit de resultaten}
+        \begin{itemize}
+            \item \textbf{Supervised learning (Faster R-CNN):}
+            \begin{itemize}
+                \item Presteert duidelijk minder met weinig data
+            \end{itemize}
+            \item \textbf{Semi-supervised learning (FixMatch):}
+            \begin{itemize}
+                \item Presteert beter dan supervised bij weinig data (5-10\%)
+                \item Biedt een sterke balans tussen eenvoud en prestatie
+            \end{itemize}
+            \item \textbf{Self-supervised learning (BYOL):}
+            \begin{itemize}
+                \item Beste prestaties bij 10\% gelabelde data
+                \item Groot potentieel voor moeilijk labelbare domeinen zoals sonar
+            \end{itemize}
+        \end{itemize}
     \end{frame}
     
+    % Reflectie op het onderzoek
+    \begin{frame}{Reflectie op het onderzoek}
+        \textbf{Sterke punten:} \\
+        \begin{itemize}
+            \item Geschikte keuze van modellen \& dataset
+            \item Focus op een praktisch probleem uit de industrie
+            \item Heldere vergelijkingsstructuur tussen drie leermethoden
+        \end{itemize}
+        \textbf{Beperkingen:} \\
+        \begin{itemize}
+            \item Moeilijkheden bij implementatie \& optimalisatie van modellen
+            \item Grote computationele requirements
+            \item Slechts beperkte optimalisatie
+        \end{itemize}
+    \end{frame}
+    
+    % Toekomstig onderzoek
+    \begin{frame}{Toekomstig onderzoek}
+        \begin{itemize}
+            \item Andere pre-trainingstechnieken (SimCLR, MoCo, DINO, \dots)
+            \item Andere backbones (ResNet, Swin Transformer, ConvNeXt, \dots)
+            \item Geschiktere SSL-technieken (FlexMatch, SoftMatch, UDA, \dots)
+            \item Transfer learning
+            \item Combinatie van technieken: bv. BYOL + FixMatch
+            \item Actieve leerstrategieën: slim kiezen welke samples gelabeld worden
+            \item Foutenanalyse \& XAI
+            \item \dots
+        \end{itemize}
+    \end{frame}
+    
+    % === Vragen ===
     \section{Vragen}
+    
+    % === Titelpagina ===
+    \begin{frame}{}
+        \titlepage
+    \end{frame}
 \end{document}
