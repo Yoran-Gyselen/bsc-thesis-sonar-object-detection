@@ -9,6 +9,12 @@
 \usepackage[acronym, toc]{glossaries}
 \setglossarystyle{altlist}
 
+\usepackage{float} % Place images where I want
+
+\usepackage{tikz}
+\usepackage{pgfplots}
+\usepackage{subcaption}
+
 \input{../bachproef/woordenlijst_acroniemen}
 \graphicspath{{../graphics/}}
 
@@ -29,7 +35,7 @@
 % Indien ingevuld, wordt deze informatie toegevoegd aan het einde van de
 % abstract. Zet in commentaar als je dit niet wilt.
 \specialisation{AI \& Data Engineering}
-\keywords{Lambda-calculus, Scheme}
+\keywords{Objectdetectie, Semi-supervised, Self-supervised, Sonar-data}
 \projectrepo{https://github.com/YoranGyselen-Hogent/bap-2425-yorangyselen}
 
 \begin{document}
@@ -37,32 +43,103 @@
 \maketitle
 
 \begin{abstract}
-Sinds de opkomst van krachtige AI- en deep learning-modellen is data uitgegroeid tot een essentiële en vaak beperkende factor in het ontwikkelingsproces. Waar eenvoudige modellen vaak kunnen volstaan met beperkte en eenvoudige datasets, vereisen complexere modellen -- zoals die voor objectdetectie -- steeds grotere en rijkere hoeveelheden gelabelde data. Dit vormt een belangrijk probleem in domeinen zoals sonarbeeldvorming, waar dergelijke datasets niet beschikbaar zijn als kant-en-klare bronnen en handmatige annotatie buitengewoon tijdsintensief en kostbaar is. Dit onderzoek richt zich daarom op de centrale vraag: hoe kunnen semi-supervised en self-supervised leermethoden het labelproces bij objectdetectie in sonardata versnellen, zonder significant verlies aan nauwkeurigheid? \\
-
-Om deze vraag te beantwoorden is een experimenteel kader opgezet waarin drie benaderingen zijn onderzocht: een volledig supervised baseline gebaseerd op Faster R-CNN, een semi-supervised model met FixMatch, en een self-supervised strategie waarbij een BYOL-model wordt gepretraind en vervolgens gebruikt als backbone binnen een Faster R-CNN-architectuur. De experimenten zijn uitgevoerd op een publieke sonardataset bestaande uit 7600 gelabelde sonarbeelden. Voor de supervised baseline is het model getraind op verschillende hoeveelheden gelabelde data: 1\%, 5\%, 10\%, 50\% en 100\%. De bijbehorende mAP-scores tonen een sterke daling in nauwkeurigheid naarmate de hoeveelheid gelabelde data afneemt, met resultaten variërend van 0.7717 (100\%) tot slechts 0.2799 bij gebruik van 1\% van de data. \\
-
-In het semi-supervised scenario is FixMatch toegepast met 5\% en 10\% gelabelde data, terwijl de resterende data werd gebruikt als ongelabelde input. Deze aanpak resulteerde in mAP-scores van respectievelijk 0.6649 en 0.6828, wat duidelijk betere prestaties zijn dan het supervised model op dezelfde labelniveaus. Voor het self-supervised model werd BYOL gepretraind op de volledige dataset zonder labels. De representaties die dit opleverde zijn vervolgens geïntegreerd in Faster R-CNN, waarbij opnieuw 5\% en 10\% van de data gelabeld werd gebruikt voor training. Deze benadering leverde de hoogste nauwkeurigheid binnen de lage-labelscenario's, met mAP-scores van respectievelijk 0.6452 en 0.7230. \\
-
-De resultaten van dit onderzoek tonen aan dat zowel semi-supervised als self-supervised technieken effectief zijn in het verminderen van de afhankelijkheid van handmatig gelabelde data, terwijl de modelprestaties grotendeels behouden blijven. Met name self-supervised pretraining via BYOL blijkt zeer waardevol in situaties met beperkte gelabelde data. Deze bevindingen bieden praktische aanknopingspunten voor het ontwikkelen van efficiëntere workflows in sonarbeeldanalyse, en zijn relevant voor bredere toepassingen in domeinen waar gelabelde data schaars of moeilijk te verkrijgen is. Hoewel de resultaten veelbelovend zijn, is vervolgonderzoek nodig om de generaliseerbaarheid naar andere types sonardata of real-time toepassingen te evalueren.
+Het trainen van deep learning-modellen voor objectdetectie vereist doorgaans grote hoeveelheden gelabelde data. In domeinen zoals sonarbeeldvorming, waar dergelijke data schaars en moeilijk te annoteren is, vormt dit een aanzienlijke belemmering. Dit onderzoek onderzoekt hoe semi-supervised en self-supervised leermethoden deze afhankelijkheid kunnen verminderen, met behoud van nauwkeurigheid. Er worden drie benaderingen vergeleken: een volledig supervised model (Faster R-CNN), een semi-supervised model (FixMatch), en een self-supervised aanpak waarbij BYOL-pretraining wordt gebruikt als feature-extractor in Faster R-CNN. Alle modellen zijn geëvalueerd op een publieke dataset met 7600 gelabelde sonarbeelden. Bij het supervised model daalt de nauwkeurigheid aanzienlijk bij minder gelabelde data, met mAP-scores van 0.7717 (100\%) tot 0.2799 (1\%). FixMatch toont duidelijk betere prestaties bij beperkte labels: mAP van 0.6649 bij 5\% en 0.6828 bij 10\% gelabelde data. De beste prestaties bij lage annotatieniveaus worden echter behaald met self-supervised pretraining: BYOL in combinatie met Faster R-CNN behaalt mAP-scores van 0.6452 (5\%) en 0.7230 (10\%). De resultaten tonen aan dat zowel semi- als self-supervised methoden effectief het aantal benodigde labels kunnen verlagen. Vooral self-supervised pretraining blijkt waardevol in dataschaarse scenario’s. Deze bevindingen bieden perspectief voor efficiëntere workflows in sonarbeeldanalyse en vergelijkbare domeinen waar gelabelde data beperkt beschikbaar zijn.
 \end{abstract}
 
 \begin{multicols}{2} % This is how many columns your poster will be broken into, a portrait poster is generally split into 2 columns
 
 \section{Introductie}
 
-In moderne AI-toepassingen, en met name in complexe taken zoals objectdetectie, vormt het verzamelen en annoteren van voldoende gelabelde data vaak een grote uitdaging. Dit is zeker het geval binnen de context van sonarbeeldvorming, waar gelabelde datasets zeldzaam zijn en handmatige annotatie bijzonder arbeidsintensief en kostbaar is. Dit onderzoek vertrekt vanuit de centrale vraag hoe \gls{ssl} en \gls{self-sl} technieken het labelproces kunnen versnellen zonder significante afbreuk te doen aan de nauwkeurigheid van objectdetectiemodellen. Door het inzetten van methodes die leren van grotendeels ongelabelde data, biedt dit onderzoek mogelijke oplossingen voor data-schaarsere omgevingen zoals sonarbeeldanalyse.
+In moderne AI-toepassingen, en met name in complexe taken zoals objectdetectie, vormt het verzamelen en annoteren van voldoende gelabelde data vaak een grote uitdaging. Dit is zeker het geval binnen de context van sonarbeeldvorming, waar gelabelde datasets zeldzaam zijn en handmatige annotatie bijzonder arbeidsintensief en kostbaar is. Dit onderzoek vertrekt vanuit de centrale vraag hoe SSL en Self-SL technieken het labelproces kunnen versnellen zonder significante afbreuk te doen aan de nauwkeurigheid van objectdetectiemodellen. Door het inzetten van methodes die leren van grotendeels ongelabelde data, biedt dit onderzoek mogelijke oplossingen voor data-schaarsere omgevingen zoals sonarbeeldanalyse.
 
 \section{Experimenten}
 
-Om de onderzoeksvraag te beantwoorden, werden drie benaderingen experimenteel getest op een publieke dataset van 7600 sonarbeelden: een volledig gesuperviseerd model (Faster \gls{rcnn}), een \gls{ssl} methode (FixMatch), en een \gls{self-sl} strategie waarbij een \gls{byol}-model eerst werd gepretraind zonder labels. De resultaten tonen aan dat het gesuperviseerde model hoge nauwkeurigheid behaalde bij 100\% gelabelde data, maar sterk in performance daalde bij minder beschikbare labels. FixMatch wist bij 5\% en 10\% gelabelde data merkbaar betere prestaties neer te zetten dan het baseline-model, door slim gebruik te maken van pseudo-labeling en consistency training. De best presterende aanpak was echter \gls{self-sl} pretraining met \gls{byol}, waarbij de gegenereerde representaties als backbone dienden voor een Faster \gls{rcnn} model. Deze strategie benaderde bij slechts 10\% gelabelde data bijna het prestatieniveau van volledige supervisie. Dit bevestigt het potentieel van \gls{self-sl} representatieleren als krachtige methode in situaties met beperkte annotatiecapaciteit.
+Om de onderzoeksvraag te beantwoorden, werden drie benaderingen experimenteel getest op een publieke dataset van 7600 sonarbeelden: een volledig gesuperviseerd model (Faster R-CNN), een SSL-methode (FixMatch), en een Self-SL-strategie waarbij een BYOL-model eerst werd gepretraind zonder labels. De resultaten tonen aan dat het gesuperviseerde model hoge nauwkeurigheid behaalde bij 100\% gelabelde data, maar sterk in performance daalde bij minder beschikbare labels. FixMatch wist bij 5\% en 10\% gelabelde data merkbaar betere prestaties neer te zetten dan het baseline-model, door slim gebruik te maken van pseudo-labeling en consistency training. De best presterende aanpak was echter Self-SL pretraining met BYOL, waarbij de gegenereerde representaties als backbone dienden voor een Faster R-CNN model. Deze strategie benaderde bij slechts 10\% gelabelde data bijna het prestatieniveau van volledige supervisie. Dit bevestigt het potentieel van Self-SL representatieleren als krachtige methode in situaties met beperkte annotatiecapaciteit.
+
+\begin{figure}[H]
+    \centering
+    \begin{subfigure}{.2\linewidth}
+        \centering
+        \captionsetup{justification=centering}
+        \includegraphics[width=0.9\linewidth]{1_gt.png}
+        \caption{Ground truth}
+    \end{subfigure}%
+    \hfill
+    \begin{subfigure}{.2\linewidth}
+        \centering
+        \captionsetup{justification=centering}
+        \includegraphics[width=0.9\linewidth]{1_fixmatch_10pct.png}
+        \caption{FixMatch 10\%}
+    \end{subfigure}%
+    \hfill
+    \begin{subfigure}{.2\linewidth}
+        \centering
+        \captionsetup{justification=centering}
+        \includegraphics[width=0.9\linewidth]{1_fixmatch_5pct.png}
+        \caption{FixMatch 5\%}
+    \end{subfigure}%
+    \hfill
+    \begin{subfigure}{.2\linewidth}
+        \centering
+        \captionsetup{justification=centering}
+        \includegraphics[width=0.9\linewidth]{1_faster_rcnn_10_byol.png}
+        \caption{BYOL 10\%}
+    \end{subfigure}%
+    \hfill
+    \begin{subfigure}{.2\linewidth}
+        \centering
+        \captionsetup{justification=centering}
+        \includegraphics[width=0.9\linewidth]{1_faster_rcnn_5_byol.png}
+        \caption{BYOL 5\%}
+    \end{subfigure}%
+    \caption{Voorspellingen op afbeelding \texttt{00001} van de \texttt{UATD\_Test\_1}-dataset door FixMatch en Faster R-CNN + BYOL getraind op verschillende subsets.}
+\end{figure}
 
 \section{Conclusies}
 
-De experimenten tonen aan dat zowel \gls{ssl} als \gls{self-sl} effectieve strategieën zijn om de afhankelijkheid van gelabelde data bij objectdetectie in sonarbeelden te verminderen. Terwijl het volledig gesuperviseerde Faster \gls{rcnn}-model hoge prestaties behaalde bij volledige annotatie, daalde de nauwkeurigheid sterk bij minder gelabelde data. \gls{ssl} met FixMatch bood hierbij een aanzienlijke verbetering door effectief gebruik te maken van ongelabelde data via pseudo-labeling, vooral bij 5\% en 10\% gelabelde data. De beste resultaten werden echter bereikt met \gls{self-sl} via \gls{byol}, waarbij pretraining op ongesuperviseerde beelden leidde tot robuuste representaties die, eenmaal geïntegreerd in een Faster \gls{rcnn}, bijna het prestatieniveau van het volledig gesuperviseerde model evenaarden bij slechts 10\% gelabelde data. Hiermee bevestigen de resultaten dat FixMatch en vooral \gls{byol} veelbelovende technieken zijn voor objectdetectie in data-schaarsere contexten zoals sonarbeeldanalyse.
+De experimenten tonen aan dat zowel SSL als Self-SL effectieve strategieën zijn om de afhankelijkheid van gelabelde data bij objectdetectie in sonarbeelden te verminderen. Terwijl het volledig gesuperviseerde Faster R-CNN-model hoge prestaties behaalde bij volledige annotatie, daalde de nauwkeurigheid sterk bij minder gelabelde data. SSL met FixMatch bood hierbij een aanzienlijke verbetering door effectief gebruik te maken van ongelabelde data via pseudo-labeling, vooral bij 5\% en 10\% gelabelde data. De beste resultaten werden echter bereikt met Self-SL via BYOL, waarbij pretraining op ongesuperviseerde beelden leidde tot robuuste representaties die, eenmaal geïntegreerd in een Faster R-CNN, bijna het prestatieniveau van het volledig gesuperviseerde model evenaarden bij slechts 10\% gelabelde data. Hiermee bevestigen de resultaten dat FixMatch en vooral BYOL veelbelovende technieken zijn voor objectdetectie in data-schaarsere contexten zoals sonarbeeldanalyse.
+
+\begin{figure}[H]
+    \centering
+    \begin{tikzpicture}
+        \begin{axis}[
+            ybar,
+            bar width=30pt,
+            width=0.8\linewidth,
+            height=0.5\linewidth,
+            enlargelimits=0.5,
+            ybar=30pt,
+            legend style={
+                at={(0.5,-0.20)},
+                anchor=north,
+                legend columns=-1,
+                inner sep=10pt,
+                outer sep=10pt,
+                row sep=5pt,
+                column sep=10pt,
+            },
+            xlabel={Verschillende data-splits},
+            xlabel style={yshift=-20pt},
+            ylabel={mAP-score},
+            ylabel style={yshift=60pt},
+            ymax=0.7,
+            symbolic x coords={10\%, 5\%},
+            xtick=data,
+            nodes near coords,
+            nodes near coords align={vertical},
+            ]
+            \addplot coordinates {(10\%,0.6152) (5\%,0.5298)};
+            \addplot coordinates {(10\%,0.6828) (5\%,0.6649)};
+            \addplot coordinates {(10\%,0.7230) (5\%,0.6452)};
+            \legend{Faster R-CNN baseline, FixMatch, BYOL}
+        \end{axis}
+    \end{tikzpicture}
+    \caption{Overzicht van de mAP voor het supervised Faster R-CNN model, het SSL FixMatch model en het Self-SL BYOL model, getraind op 10\% en 5\% data-splits.}
+\end{figure}
 
 \section{Toekomstig onderzoek}
 
-Hoewel dit onderzoek de meerwaarde van zowel \gls{ssl} als \gls{self-sl} bij objectdetectie op sonarbeelden aantoont, blijven er diverse beloftevolle onderzoekspistes open. Zo is het waardevol om alternatieve \gls{self-sl} pretrainingsmethoden zoals \gls{simclr}, \gls{moco} of \gls{dino} te vergelijken met \gls{byol}, evenals verschillende backbone-architecturen zoals Swin Transformer of ConvNeXt te evalueren op hun geschiktheid voor sonarbeeldvorming. Ook binnen \gls{ssl} kunnen recente methoden zoals FlexMatch, SoftMatch of \gls{uda}, in combinatie met domeinspecifieke augmentaties, mogelijk betere prestaties leveren dan FixMatch. Een veelbelovende richting is het combineren van \gls{self-sl} pretraining met \gls{ssl} fine-tuning om de voordelen van beide benaderingen te benutten. Verder kan transfer learning op basis van grootschalige, ruwe sonardata bijdragen aan de ontwikkeling van generieke sonarbackbones voor uiteenlopende toepassingen. Tot slot kan onderzoek naar actieve labelselectie en foutenanalyse helpen om annotatie-efficiëntie te verhogen en modelbetrouwbaarheid te verbeteren in kritieke contexten zoals defensie of onderwaterrobotica.
+Hoewel dit onderzoek de meerwaarde van zowel SSL als Self-SL bij objectdetectie op sonarbeelden aantoont, blijven er diverse beloftevolle onderzoekspistes open. Zo is het waardevol om alternatieve Self-SL pretrainingsmethoden zoals SimCLR, MoCo of DINO te vergelijken met BYOL, evenals verschillende backbone-architecturen zoals Swin Transformer of ConvNeXt te evalueren op hun geschiktheid voor sonarbeeldvorming. Ook binnen SSL kunnen recente methoden zoals FlexMatch, SoftMatch of UDA, in combinatie met domeinspecifieke augmentaties, mogelijk betere prestaties leveren dan FixMatch. Een veelbelovende richting is het combineren van Self-SL pretraining met SSL fine-tuning om de voordelen van beide benaderingen te benutten. Verder kan transfer learning op basis van grootschalige, ruwe sonardata bijdragen aan de ontwikkeling van generieke sonarbackbones voor uiteenlopende toepassingen. Tot slot kan onderzoek naar actieve labelselectie en foutenanalyse helpen om annotatie-efficiëntie te verhogen en modelbetrouwbaarheid te verbeteren in kritieke contexten zoals defensie of onderwaterrobotica.
 
 \end{multicols}
 \end{document}
