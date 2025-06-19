@@ -115,7 +115,7 @@ Volgende personen hebben bijgedragen aan deze sjablonen:
 
 ## Contact
 
-Voor vragen of bijdragen, neem contact op via [yoran.gyselen@student.hogent.be](mailto:yoran.gyselen@student.hogent.be).
+Voor vragen of bijdragen, neem contact op via [yoran@gyselen.be](mailto:yoran@gyselen.be).
 
 ---
 
