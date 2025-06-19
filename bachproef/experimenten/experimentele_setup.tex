@@ -26,7 +26,7 @@ Voor deze use-case wordt dus meestal gebruik gemaakt van één of meerdere \glsp
 
 Echter is een \gls{gpu} niet speciaal geoptimaliseerd om neurale netwerken te trainen. Dit probleem wordt opgelost door de \gls{tpu}. Dit is een \gls{asic} die speciaal ontworpen is door Google voor het trainen van neurale netwerken. De \gls{tpu} is geoptimaliseerd om matrixvermenigvuldigingen en andere tensoroperaties uit te voeren. \autocite{Jouppi_2017} Het nadeel van de \gls{tpu} is dat de compatibiliteit met third-party frameworks zoals PyTorch beperkt is. \glspl{tpu} werken het beste met TensorFlow, het deep learning-framework van Google zelf. \autocite{Wang_2019} \\
 
-Afhankelijk van modelcomplexiteit, datasetgrootte, batchgrootte en de gebruikte optimalisatie-instellingen kan trainingsduur variëren van enkele uren tot meerdere dagen. Daarom wordt in veel gevallen -- en ook in dit onderzoek -- gebruik gemaakt van vooraf getrainde modellen (pretrained backbones) als uitgangspunt, wat de trainingstijd aanzienlijk kan verkorten en -- vooral bij kleinere datasets -- betere prestaties oplevert. \\
+Afhankelijk van modelcomplexiteit, datasetgrootte, batchgrootte en de gebruikte optimalisatie-instellingen kan trainingsduur variëren van enkele uren tot meerdere dagen. Daarom wordt in veel gevallen -- en ook in dit onderzoek -- gebruik gemaakt van vooraf getrainde modellen (pretrained backbones) als uitgangspunt, wat de trainingstijd aanzienlijk kan verkorten en -- vooral bij kleinere datasets -- betere prestaties oplevert.
 
 \subsubsection{Toegang tot resources}
 

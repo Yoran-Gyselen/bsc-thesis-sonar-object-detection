@@ -3,9 +3,7 @@
 % Meer info op https://github.com/HoGentTIN/latex-hogent-report
 %===============================================================================
 
-\documentclass[dutch,dit,thesis]{hogentreport}
-
-\usepackage{lipsum} % For blind text, can be removed after adding actual content
+\documentclass[dutch,dit,thesis,twoside,openright]{hogentreport}
 
 \usepackage[acronym, toc]{glossaries}
 \setglossarystyle{altlist}
@@ -77,9 +75,6 @@
 \addbibresource{bibliografie/bachproef.bib}            %% Bibliography file
 \addbibresource{../voorstel/bibliografie/voorstel.bib} %% Bibliography research proposal
 \defbibheading{bibempty}{}
-
-%% Prevent empty pages for right-handed chapter starts in twoside mode
-\renewcommand{\cleardoublepage}{\clearpage}
 
 \renewcommand{\arraystretch}{1.2}
 
