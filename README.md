@@ -95,6 +95,23 @@ Download en installeer de `.deb`-file van [jabref.org](https://jabref.org/). De 
 └── 📄 .gitignore        # Bestanden die uitgesloten moeten worden uit versiebeheer
 ```
 
+## Afdrukken
+
+> [!WARNING]  
+> Aangezien deze bachelorproef speciale lettertypen gebruikt en (zelfs) PDF geen allesomvattend formaat is, kunnen er bij het afdrukken artefacten voorkomen. Een voorbeeld hiervan is het afdrukken van de codefragmenten. Zelfs al ziet de PDF er in bewerkingssoftware correct uit, dan nog kunnen dergelijke fouten optreden bij het afdrukken. De beste manier om dit te vermijden, is gebruik te maken van PDF/A, een archiveringsformaat voor PDF die hier robuust tegen is. Echter is dit nogal complex om op te zetten in LaTeX. Daarom kunnen de lettertypen expliciet bij de gewone PDF gevoegd worden met volgend commando.
+>
+> ```bash
+> gs -dCompatibilityLevel=1.7 \
+> -dPDFSETTINGS=/prepress \
+> -dNOPAUSE -dBATCH -dSAFER \
+> -dEmbedAllFonts=true -dSubsetFonts=true \
+> -sColorConversionStrategy=RGB \
+> -sProcessColorModel=DeviceRGB \
+> -sDEVICE=pdfwrite \
+> -sOutputFile=GyselenYoran_BP_Printable_PDFA.pdf \
+> -f GyselenYoran_BP_Printable.pdf
+> ```
+
 ## Bijdragen
 
 - De vormgeving van het bachelorproefsjabloon is gebaseerd op het werk van [Pieter van der Kloet](https://github.com/pvdk/hogent-latex-thesis). Dat sjabloon wordt nu [hier verder onderhouden](https://github.com/HoGentTIN/latex-hogent-report) door Bert Van Vreckem
